@@ -1,0 +1,27 @@
+# spec
+point bathymetry data visualization and storage
+
+# services
+geoserver + postgis
+spring rest in the middle between geoserver and app with custom roles and authorization
+node react + leaflet on frontend
+
+containers:
+postgiscontainer
+geocontainer
+restcontainer
+nodecontainer
+
+# stack
+postgis
+geoserver
+spring
+node
+react
+leaflet(not react)
+
+# spec1
+title page (login page)
+leaflet map with controls
+data import
+data export by polygon selection

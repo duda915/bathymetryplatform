@@ -1,0 +1,5 @@
+# postgis
+sudo docker run -d -p 5432:5432 -t --name postgiscontainer --network appnet -v ~/dockerstack/postgiscontainer:/home/postgis kartoza/postgis 
+
+# geoserver
+sudo docker run -d -p 8081:8080 -t --name geoservercontainer --link postgis:postgiscontainer --network appnet -v ~/dockerstack/geoservercontainer:/home/geoserver kartoza/geoserver
