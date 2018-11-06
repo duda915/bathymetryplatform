@@ -8,7 +8,7 @@ node react + leaflet on frontend
 
 containers:
 postgiscontainer
-geocontainer
+geoservercontainer
 restcontainer
 nodecontainer
 
