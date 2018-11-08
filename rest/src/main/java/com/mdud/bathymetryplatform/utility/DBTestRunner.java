@@ -25,7 +25,6 @@ public class DBTestRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        bathymetryDataRepository.deleteAll();
         Random random = new Random();
 
         BathymetryCollection bathymetryCollection = new BathymetryCollection("TestName", new Date(new java.util.Date().getTime()),
