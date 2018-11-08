@@ -7,7 +7,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class BathymetryplatformApplicationTests {
+public class BathymetryPlatformApplicationTests {
 
 	@Test
 	public void contextLoads() {

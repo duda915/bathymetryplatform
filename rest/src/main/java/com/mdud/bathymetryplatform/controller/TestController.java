@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.controllers;
+package com.mdud.bathymetryplatform.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
