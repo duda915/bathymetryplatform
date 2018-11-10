@@ -1,15 +1,12 @@
 package com.mdud.bathymetryplatform.utility;
 
-import com.mdud.bathymetryplatform.datamodel.*;
+import com.mdud.bathymetryplatform.datamodel.AppUser;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-
 import org.springframework.stereotype.Component;
-
-import java.util.*;
 
 @Component
 public class DBTestRunner implements CommandLineRunner {
@@ -74,15 +71,15 @@ public class DBTestRunner implements CommandLineRunner {
 //            });
 //        });
 
-        AppUser appUser = userRepository.findDistinctByUsername("superuser");
-
-        //parse roles
-        String[] userDetailsRoles = appUser.getUserRoles().stream().map(x -> x.getRole().getRoleName())
-                .toArray(String[]::new);
-
-        for(String roles : userDetailsRoles) {
-            System.out.println(roles);
-        }
+//        AppUser appUser = userRepository.findDistinctByUsername("superuser");
+//
+//        //parse roles
+//        String[] userDetailsRoles = appUser.getUserRoles().stream().map(x -> x.getRole().getRoleName())
+//                .toArray(String[]::new);
+//
+//        for(String roles : userDetailsRoles) {
+//            System.out.println(roles);
+//        }
 
     }
 }
