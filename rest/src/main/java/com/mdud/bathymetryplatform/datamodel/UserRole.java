@@ -16,7 +16,7 @@ public class UserRole {
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
 

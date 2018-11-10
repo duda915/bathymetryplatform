@@ -14,7 +14,7 @@ import java.util.Set;
 @ToString(exclude = "password")
 @Entity @NoArgsConstructor
 @Table(name = "app_user")
-public class User {
+public class AppUser {
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     @Id
@@ -32,7 +32,7 @@ public class User {
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     private Set<UserRole> userRoles;
 
-    public User(String username, String password, Set<UserRole> userRoles) {
+    public AppUser(String username, String password, Set<UserRole> userRoles) {
         this.username = username;
         this.setPassword(password);
         this.userRoles = userRoles;

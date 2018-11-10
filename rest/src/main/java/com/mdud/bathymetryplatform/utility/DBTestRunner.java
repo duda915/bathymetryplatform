@@ -44,7 +44,7 @@ public class DBTestRunner implements CommandLineRunner {
 //
 //        bathymetryDataRepository.save(bathymetryCollection);
 
-        //user test
+//        user test
         Role addRole = roleRepository.findDistinctByRoleName("ADD");
         Role deleteRole = roleRepository.findDistinctByRoleName("DELETE");
         System.out.println(addRole.getId() + addRole.getRoleName());
@@ -54,24 +54,26 @@ public class DBTestRunner implements CommandLineRunner {
         roles.add(role);
         roles.add(delete);
 
-        User newUser = new User("superuser" , "test", roles);
+        AppUser newUser = new AppUser("superuser" , "test", roles);
         userRepository.save(newUser);
 
 
-        Iterable<User> users = userRepository.findAll();
-        users.forEach(user -> {
-            System.out.println("User repo test: ");
-            System.out.println("id: " + user.getId());
-            System.out.println("username: " + user.getUsername());
-            System.out.println("passhash: " + user.getPassword());
+        Iterable<AppUser> users = userRepository.findAll();
+        users.forEach(appUser -> {
+            System.out.println("AppUser repo test: ");
+            System.out.println("id: " + appUser.getId());
+            System.out.println("username: " + appUser.getUsername());
+            System.out.println("passhash: " + appUser.getPassword());
+            System.out.println("matches: " + AppUser.PASSWORD_ENCODER.matches("test", appUser.getPassword()));
             System.out.println("Roles:");
-            Set<UserRole> userRoleSet = user.getUserRoles();
+            Set<UserRole> userRoleSet = appUser.getUserRoles();
             userRoleSet.forEach(userRole -> {
                 System.out.println("roles_set_id: " + userRole.getId());
                 System.out.println("role_id: " + userRole.getRole().getId());
                 System.out.println("role: " + userRole.getRole().getRoleName());
             });
         });
+
 
 
 
