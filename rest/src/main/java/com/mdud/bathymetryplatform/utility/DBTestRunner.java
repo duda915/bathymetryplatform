@@ -45,37 +45,44 @@ public class DBTestRunner implements CommandLineRunner {
 //        bathymetryDataRepository.save(bathymetryCollection);
 
 //        user test
-        Role addRole = roleRepository.findDistinctByRoleName("ADD");
-        Role deleteRole = roleRepository.findDistinctByRoleName("DELETE");
-        System.out.println(addRole.getId() + addRole.getRoleName());
-        UserRole role = new UserRole(null, addRole);
-        UserRole delete = new UserRole(null, deleteRole);
-        Set<UserRole> roles = new HashSet<>();
-        roles.add(role);
-        roles.add(delete);
+//        Role addRole = roleRepository.findDistinctByRoleName("ADD");
+//        Role deleteRole = roleRepository.findDistinctByRoleName("DELETE");
+//        System.out.println(addRole.getId() + addRole.getRoleName());
+//        UserRole role = new UserRole(null, addRole);
+//        UserRole delete = new UserRole(null, deleteRole);
+//        Set<UserRole> roles = new HashSet<>();
+//        roles.add(role);
+//        roles.add(delete);
 
-        AppUser newUser = new AppUser("superuser" , "test", roles);
-        userRepository.save(newUser);
+//        AppUser newUser = new AppUser("norole" , "test", null);
+//        userRepository.save(newUser);
+//
+//
+//        Iterable<AppUser> users = userRepository.findAll();
+//        users.forEach(appUser -> {
+//            System.out.println("AppUser repo test: ");
+//            System.out.println("id: " + appUser.getId());
+//            System.out.println("username: " + appUser.getUsername());
+//            System.out.println("passhash: " + appUser.getPassword());
+//            System.out.println("matches: " + AppUser.PASSWORD_ENCODER.matches("test", appUser.getPassword()));
+//            System.out.println("Roles:");
+//            Set<UserRole> userRoleSet = appUser.getUserRoles();
+//            userRoleSet.forEach(userRole -> {
+//                System.out.println("roles_set_id: " + userRole.getId());
+//                System.out.println("role_id: " + userRole.getRole().getId());
+//                System.out.println("role: " + userRole.getRole().getRoleName());
+//            });
+//        });
 
+        AppUser appUser = userRepository.findDistinctByUsername("superuser");
 
-        Iterable<AppUser> users = userRepository.findAll();
-        users.forEach(appUser -> {
-            System.out.println("AppUser repo test: ");
-            System.out.println("id: " + appUser.getId());
-            System.out.println("username: " + appUser.getUsername());
-            System.out.println("passhash: " + appUser.getPassword());
-            System.out.println("matches: " + AppUser.PASSWORD_ENCODER.matches("test", appUser.getPassword()));
-            System.out.println("Roles:");
-            Set<UserRole> userRoleSet = appUser.getUserRoles();
-            userRoleSet.forEach(userRole -> {
-                System.out.println("roles_set_id: " + userRole.getId());
-                System.out.println("role_id: " + userRole.getRole().getId());
-                System.out.println("role: " + userRole.getRole().getRoleName());
-            });
-        });
+        //parse roles
+        String[] userDetailsRoles = appUser.getUserRoles().stream().map(x -> x.getRole().getRoleName())
+                .toArray(String[]::new);
 
-
-
+        for(String roles : userDetailsRoles) {
+            System.out.println(roles);
+        }
 
     }
 }
