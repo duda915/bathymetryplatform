@@ -3,12 +3,13 @@ package com.mdud.bathymetryplatform.datamodel;
 
 import com.vividsolutions.jts.geom.Point;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "bathymetry")
-@Data
+@Data @NoArgsConstructor
 public class BathymetryMeasure {
 
     @Id

@@ -1,6 +1,6 @@
 CREATE TABLE bathymetry_meta (id SERIAL PRIMARY KEY, name VARCHAR(255), collection_date date, author VARCHAR(255));
 CREATE TABLE bathymetry (gid SERIAL PRIMARY KEY, meta_id INTEGER REFERENCES bathymetry_meta(id), coords GEOMETRY(POINT, 4326), measure DECIMAL);
-CREATE TABLE app_user (id SERIAL PRIMARY KEY, name VARCHAR(50), pass_hash CHAR(56));
+CREATE TABLE app_user (id SERIAL PRIMARY KEY, name VARCHAR(50), pass_hash CHAR(60));
 CREATE TABLE roles(id SERIAL PRIMARY KEY, role_name VARCHAR(25));
 CREATE TABLE user_roles (id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES app_user(id), role_id INTEGER REFERENCES roles(id));
 
