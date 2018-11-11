@@ -13,7 +13,7 @@ public class OAuth2ResourceConfiguration extends ResourceServerConfigurerAdapter
     public void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/api/unauth").permitAll()
+                .antMatchers("/api/unauth", "/api/user/register").permitAll()
                 .anyRequest()
                 .authenticated();
     }
