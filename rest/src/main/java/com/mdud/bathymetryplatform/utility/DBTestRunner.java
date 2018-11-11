@@ -6,10 +6,15 @@ import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Point;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -64,7 +69,6 @@ public class DBTestRunner implements CommandLineRunner {
 //        Set<UserRole> roles = new HashSet<>();
 //        roles.add(role);
 //        roles.add(delete);
-
 //        AppUser newUser = new AppUser("norole" , "test", null);
 //        userRepository.save(newUser);
 //
@@ -95,6 +99,13 @@ public class DBTestRunner implements CommandLineRunner {
 //            System.out.println(roles);
 //        }
 
-
+//        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:32634");
+//        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+//        MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
+//
+//        Geometry geometry = new Point(new Coordinate(367030.05,6025361.85), new PrecisionModel(), 32634);
+//        geometry = JTS.transform(geometry, transform);
+//        Point point = (Point) geometry;
+//        System.out.println(point.getX() + " " + point.getY());
     }
 }

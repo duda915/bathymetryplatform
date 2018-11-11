@@ -5,16 +5,9 @@ import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
 import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
 import com.mdud.bathymetryplatform.datamodel.BathymetryMetaDTO;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import org.geotools.geometry.GeometryBuilder;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Point;
-import org.opengis.referencing.Factory;
+import org.locationtech.jts.geom.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -66,13 +59,11 @@ public class BathymetryDataController {
                     acquisitionDate, dataOwner);
             List<BathymetryMeasure> measures = new ArrayList<>();
 
-            CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326");
-            CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:32634");
+            CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + crs.toString());
+            CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
             MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
 
-            GeometryBuilder builder = new GeometryBuilder( DefaultGeographicCRS.WGS84 );
-
-            GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
+            GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), crs);
 
             String lines[] = new String(data.getBytes(), StandardCharsets.UTF_8).split("\n");
             for(String line : lines) {
@@ -85,15 +76,20 @@ public class BathymetryDataController {
                 Double x = Double.valueOf(elementsList.get(0));
                 Double y = Double.valueOf(elementsList.get(1));
 
-                Geometry geometry = new Point(new Coordinate(x,y), new org.locationtech.jts.geom.PrecisionModel(), crs);
+                Geometry geometry = geometryFactory.createPoint(new Coordinate(x, y));
                 geometry = JTS.transform(geometry, transform);
                 Point point = (Point) geometry;
-                System.out.println(point.getX() + " " + point.getY());
+
+                com.vividsolutions.jts.geom.Point dbPoint = new com.vividsolutions.jts.geom.Point(
+                        new com.vividsolutions.jts.geom.Coordinate(point.getY(), point.getX()),
+                        new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
+                Double depth = Double.valueOf(elementsList.get(2));
+
+                measures.add(new BathymetryMeasure(null, dbPoint, depth));
             }
-
-//            newCollection.setMeasureList(measures);
-
-//            bathymetryDataRepository.save(newCollection);
+            newCollection.setMeasureList(measures);
+            bathymetryDataRepository.save(newCollection);
+            
             return "OK";
         } catch (IOException e) {
             return "File reading error";
