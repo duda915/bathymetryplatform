@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+//for register purposes
 @Getter @Setter @NoArgsConstructor
 public class AppUserDTO {
     private String username;

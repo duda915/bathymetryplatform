@@ -61,7 +61,7 @@ public class UserController {
         if(refresh != null) {
             consumerTokenServices.revokeToken(refresh);
         }
-        
+
         if (authorization != null && authorization.contains("Bearer")){
             String tokenId = authorization.substring("Bearer".length()+1);
             consumerTokenServices.revokeToken(tokenId);
