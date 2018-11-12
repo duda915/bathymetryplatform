@@ -46,8 +46,8 @@ public class BathymetryDataController {
 
         return metaList;
     }
+//
 
-//    @PreAuthorize("hasAuthority('ADD')")
     @PostMapping("/add")
     private String addNewData(@RequestParam("name") String acquisitionName,
                               @RequestParam("date") Date acquisitionDate,
