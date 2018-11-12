@@ -3,6 +3,7 @@ import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 import Form from 'react-bootstrap/lib/Form';
 import Button from 'react-bootstrap/lib/Button';
+import Cookies from 'universal-cookie';
 
 import {RestConfig} from './utility/Rest';
 
@@ -33,11 +34,10 @@ class LoginControl extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-
-        this.handleLogin();
+        this.getToken();
     }
 
-    handleLogin() {
+    getToken() {
         const username = this.state.username;
         const password = this.state.password;
         const data = {
@@ -47,23 +47,59 @@ class LoginControl extends Component {
         };
 
         let formData = new FormData();
-
         for(let d in data) {
             formData.append(d, data[d]);
         }
 
+        let cookie = new Cookies();
+
         fetch(RestConfig.login, {
-            method: 'POST', // or 'PUT'
+            method: 'POST',
             body: formData,
             headers:{
               'Authorization': "Basic " + btoa("bathymetry:bathymetry")
             }
-          }).then(res => {  
-                console.log(res.status);
-                return res.json()
-          }).then(response => {
-                console.log(response)
+          }).then(res => {
+              console.log(res.status);
+
+              if(res.status === 200) {
+                res.json().then(response => {
+                    console.log(response.access_token);
+
+                    let accessTokenExpireDate = new Date();
+                    accessTokenExpireDate.setTime(accessTokenExpireDate.getTime() + 60*60*1000)
+                    cookie.set("access_token", response.access_token, {path: '/', expires: accessTokenExpireDate});
+                    
+                    let refreshTokenExpireDate = new Date();
+                    refreshTokenExpireDate.setTime(refreshTokenExpireDate.getDate + 24*60*60*1000);
+                    cookie.set("refresh_token", response.refresh_token, {path: '/', expires: refreshTokenExpireDate});
+
+                    this.login();
+                });
+              }
+
           });
+    }
+
+    login() {
+        let cookie = new Cookies();
+
+        fetch(RestConfig.logged, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + cookie.get("access_token")
+            }
+        }).then(res => {
+            console.log('login: ' + res.status);
+            if(res.status === 200) {
+                //unmount login control here
+                res.text().then(response => console.log(response));
+            }
+        })
+    }
+
+    componentWillMount() {
+        this.login();
     }
 
     render() {
