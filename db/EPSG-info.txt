@@ -1,0 +1,1 @@
+EPSG-Datasource-properties must be copied to "/"
