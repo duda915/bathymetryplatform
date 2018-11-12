@@ -13,21 +13,32 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/data")
 public class BathymetryDataController {
+    private final Logger logger = LoggerFactory.getLogger(BathymetryDataController.class);
 
     private BathymetryDataRepository bathymetryDataRepository;
 
@@ -103,6 +114,63 @@ public class BathymetryDataController {
         }
 
     }
+
+    @GetMapping("/getdata")
+    private ResponseEntity<byte[]> getData(@RequestParam("id") Long[] ids, HttpServletResponse response) {
+        StringBuilder data = new StringBuilder();
+
+        data.append("X");
+        data.append("\t");
+        data.append("Y");
+        data.append("\t");
+        data.append("Z");
+        data.append("\t");
+        data.append("setName");
+        data.append("\t");
+        data.append("date");
+        data.append("\t");
+        data.append("owner");
+        data.append("\n");
+
+        try {
+            for (Long id : ids) {
+                BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Wrong id"));
+                bathymetryCollection.getMeasureList().forEach(measure -> {
+                    data.append(measure.getMeasureCoords().getX());
+                    data.append("\t");
+
+                    data.append(measure.getMeasureCoords().getY());
+                    data.append("\t");
+
+                    data.append(measure.getMeasure());
+                    data.append("\t");
+
+                    data.append(bathymetryCollection.getAcquisitionName());
+                    data.append("\t");
+
+                    data.append(bathymetryCollection.getAcquisitionDate());
+                    data.append("\t");
+
+                    data.append(bathymetryCollection.getDataOwner());
+                    data.append("\n");
+                });
+            }
+        } catch (NoSuchElementException e) {
+            logger.info("Wrong id in getdata request - aborting file generation");
+            return new ResponseEntity<>("Wrong id".getBytes(), null,  HttpStatus.BAD_REQUEST);
+        }
+
+
+        byte[] outFile = data.toString().getBytes(StandardCharsets.UTF_8);
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("content-disposition", "attachment; filename=" + "results.txt");
+        responseHeaders.add("Content-Type", "application/json");
+
+        return new ResponseEntity<>(outFile, responseHeaders, HttpStatus.OK);
+    }
+
+
 
 
 }
