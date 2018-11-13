@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Navbar from 'react-bootstrap/lib/Navbar';
-import Cookies from 'universal-cookie';
 import {RestFetch} from './utility/Rest';
 import Button from 'react-bootstrap/lib/Button';
 
@@ -13,6 +12,7 @@ class MainWindow extends Component {
         };
 
         this.handleLogout = this.handleLogout.bind(this);
+        // this.setUsername = this.setUsername.bind(this);
     }
 
     componentDidMount() {
@@ -20,34 +20,19 @@ class MainWindow extends Component {
     }
 
     fetchUsername() {
-        let cookie = new Cookies();
+        let setusername = (function (username) {
+            this.setState({
+                username: username
+            })
+        }).bind(this);
 
-        fetch(RestFetch.logged, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + cookie.get("access_token")
-            }
-        }).then(res => {
-            console.log('login: ' + res.status);
-            if(res.status === 200) {
-                res.text().then(response => this.setState({username: response}));
-            }
-        });
+        RestFetch.getUsername(null, setusername);
     }
 
-    handleLogout() {
-        let cookie = new Cookies();
+    
 
-        fetch(RestFetch.logout, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': 'Bearer ' + cookie.get("access_token")
-            }
-        }).then(res => {
-            cookie.remove("access_token", {path: '/'});
-            cookie.remove("refresh_token", {path: '/'});
-            this.props.changeLoginState(false);
-        });
+    handleLogout() {
+        RestFetch.sendLogout(this.props.changeLoginState.bind(null, false));
     }
 
     render() {

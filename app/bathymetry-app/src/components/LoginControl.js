@@ -3,7 +3,6 @@ import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 import Form from 'react-bootstrap/lib/Form';
 import Button from 'react-bootstrap/lib/Button';
-import Cookies from 'universal-cookie';
 
 import {RestFetch} from './utility/Rest';
 
@@ -43,7 +42,8 @@ class LoginControl extends Component {
     }
 
     componentDidMount() {
-        RestFetch.instantLogin(this.props.changeLoginState.bind(null, true));
+        //instant login
+        RestFetch.getUsername(this.props.changeLoginState.bind(null, true), null);
     }
 
     render() {

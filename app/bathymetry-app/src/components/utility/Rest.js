@@ -45,14 +45,17 @@ class Rest {
                     let refreshTokenExpireDate = new Date();
                     refreshTokenExpireDate.setTime(refreshTokenExpireDate.getDate + 24*60*60*1000);
                     this.cookie.set("refresh_token", response.refresh_token, {path: '/', expires: refreshTokenExpireDate});
-                    onSuccessFunction();
+
+                    if(typeof onSuccessFunction === "function") {
+                        onSuccessFunction();
+                    }
                 });
               }
 
           });
     }
 
-    instantLogin(onSuccessFunction) {
+    getUsername(onSuccessFunction, responseDataFunction) {
         fetch(this.logged, {
             method: 'GET',
             headers: {
@@ -61,6 +64,29 @@ class Rest {
         }).then(res => {
             console.log('login: ' + res.status);
             if(res.status === 200) {
+                if(typeof onSuccessFunction === "function") {
+                    onSuccessFunction();
+                }
+                res.text().then(val => {
+                    if(typeof responseDataFunction === "function") {
+                        responseDataFunction(val);
+                    }
+                })
+            }
+        });
+    }
+
+    sendLogout(onSuccessFunction) {
+        fetch(this.logout, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + this.cookie.get("access_token")
+            }
+        }).then(res => {
+            this.cookie.remove("access_token", {path: '/'});
+            this.cookie.remove("refresh_token", {path: '/'});
+            
+            if(typeof onSuccessFunction === "function") {
                 onSuccessFunction();
             }
         });
