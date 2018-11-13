@@ -3,6 +3,7 @@ import Cookies from 'universal-cookie';
 class Rest {
     constructor() {
         const host = "http://localhost:8080/";
+        this.geoserver = "http://51.38.132.245:8081/geoserver/bathymetry/wms?";
         
         this.login = host + "oauth/token";
         this.logged = host + "api/user/logged";
