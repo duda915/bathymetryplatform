@@ -5,7 +5,7 @@ import Form from 'react-bootstrap/lib/Form';
 import Button from 'react-bootstrap/lib/Button';
 import Cookies from 'universal-cookie';
 
-import {RestConfig} from './utility/Rest';
+import {RestFetch} from './utility/Rest';
 
 
 class LoginControl extends Component {
@@ -20,6 +20,7 @@ class LoginControl extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.getToken = this.getToken.bind(this);
     }
 
     handleChange(event) {
@@ -38,68 +39,11 @@ class LoginControl extends Component {
     }
 
     getToken() {
-        const username = this.state.username;
-        const password = this.state.password;
-        const data = {
-            'username': username, 
-            'password': password,
-            'grant_type': "password"
-        };
-
-        let formData = new FormData();
-        for(let d in data) {
-            formData.append(d, data[d]);
-        }
-
-        let cookie = new Cookies();
-
-        fetch(RestConfig.login, {
-            method: 'POST',
-            body: formData,
-            headers:{
-              'Authorization': "Basic " + btoa("bathymetry:bathymetry")
-            }
-          }).then(res => {
-              console.log(res.status);
-
-              if(res.status === 200) {
-                res.json().then(response => {
-                    console.log(response.access_token);
-
-                    let accessTokenExpireDate = new Date();
-                    accessTokenExpireDate.setTime(accessTokenExpireDate.getTime() + 60*60*1000)
-                    cookie.set("access_token", response.access_token, {path: '/', expires: accessTokenExpireDate});
-                    
-                    let refreshTokenExpireDate = new Date();
-                    refreshTokenExpireDate.setTime(refreshTokenExpireDate.getDate + 24*60*60*1000);
-                    cookie.set("refresh_token", response.refresh_token, {path: '/', expires: refreshTokenExpireDate});
-
-                    this.login();
-                });
-              }
-
-          });
+        RestFetch.getLoginToken(this.state.username, this.state.password, this.props.changeLoginState.bind(null, true));
     }
 
-    login() {
-        let cookie = new Cookies();
-
-        fetch(RestConfig.logged, {
-            method: 'GET',
-            headers: {
-                'Authorization': 'Bearer ' + cookie.get("access_token")
-            }
-        }).then(res => {
-            console.log('login: ' + res.status);
-            if(res.status === 200) {
-                //unmount login control here
-                res.text().then(response => console.log(response));
-            }
-        })
-    }
-
-    componentWillMount() {
-        this.login();
+    componentDidMount() {
+        RestFetch.instantLogin(this.props.changeLoginState.bind(null, true));
     }
 
     render() {
