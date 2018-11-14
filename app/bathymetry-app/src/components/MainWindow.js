@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Navbar from 'react-bootstrap/lib/Navbar';
 import {RestFetch} from './utility/Rest';
 import Button from 'react-bootstrap/lib/Button';
+import Row from 'react-bootstrap/lib/Row';
+import Col from'react-bootstrap/lib/Col';
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -14,10 +16,15 @@ class MainWindow extends Component {
 
         this.state = {
             username: '',
+            mapResizedCols: 10,
+            mapCols: 12,
+            isPanelVisible: false
         };
 
+        this.map = null;
+        this.layer = null;
         this.handleLogout = this.handleLogout.bind(this);
-        // this.setUsername = this.setUsername.bind(this);
+        this.togglePanel = this.togglePanel.bind(this);
     }
 
     componentDidMount() {
@@ -40,30 +47,62 @@ class MainWindow extends Component {
     }
 
     initOpenLayers() {
-        var layers = [
+        let baseLayer = [
             new TileLayer({
                 source: new XYZ({
                     url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
                   })
-            }),
-            new TileLayer({
-              source: new TileWMS({
-                url: RestFetch.geoserver,
-                params: {'LAYERS': 'bathymetry:bathymetry', 'TILED': true, 'viewparams': 'selection:21\\,15'},
-                serverType: 'geoserver',
-                transition: 0
-              })
             })
           ];
 
-        new Map({
-            layers: layers,
-            target: 'map',
-            view: new View({
-              center: [19, 51],
-              zoom: 2
-            })
+        
+        let wmsSource = new TileWMS({
+            url: RestFetch.geoserver,
+            params: {'LAYERS': 'bathymetry:bathymetry', 'TILED': true, 'viewparams': 'selection:20\\,21', 'width': '200', 'height': '200'},
+            serverType: 'geoserver',
+            transition: 0
+          }) 
+
+        this.layer = new TileLayer({
+            source: wmsSource
+        });
+
+        let view = new View({
+            center: [19, 51],
+            zoom: 2
           });
+
+        this.map = new Map({
+            layers: baseLayer,
+            target: 'map',
+            view: view
+        });
+
+        this.map.addLayer(this.layer);
+
+        this.map.on('singleclick', function(evt) {
+            
+            var viewResolution = /** @type {number} */ (view.getResolution());
+            var url = wmsSource.getGetFeatureInfoUrl(
+              evt.coordinate, viewResolution, 'EPSG:3857',
+              {'INFO_FORMAT': 'application/json'});
+            if (url) {
+              console.log(url);
+            }
+        });
+    }
+
+    togglePanel() {
+        let mapTargetCols = 12;
+        if(!this.state.isPanelVisible) {
+            mapTargetCols = this.state.mapResizedCols;
+        }
+
+        this.setState({
+            isPanelVisible: !this.state.isPanelVisible,
+            mapCols: mapTargetCols
+        }, callback => this.map.updateSize());
+
     }
 
     render() {
@@ -77,11 +116,23 @@ class MainWindow extends Component {
                             Logged in as: <b>{this.state.username}</b>
                         </Navbar.Text>
                         <Button variant="primary" onClick={this.handleLogout}>Logout</Button>
+                        
+                        <Button variant="primary" onClick={this.togglePanel}>Bar</Button>
+
                     </Navbar.Collapse>
                 </Navbar>
-                <div className='container-fluid p-0' style={{height: 'calc(100vh - 56px)'}}>
-                    <div id="map" className='h-100'>
-                    </div>
+                <div className="container-fluid w-100" style={{height: 'calc(100vh - 56px)'}}>
+                    <Row className='h-100'>
+                        {this.state.isPanelVisible ? (
+                            <Col xs={2} className='h-100 p-0'>
+                                ssss
+                            </Col>
+                        ) : (null)}
+                        <Col xs={this.state.mapCols} className='h-100 p-0'>
+                            <div id="map" className="h-100">
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
             </div>
         );
