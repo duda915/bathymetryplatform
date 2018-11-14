@@ -93,6 +93,23 @@ class Rest {
         });
     }
 
+    getDataSets(onSuccessFunction) {
+        fetch(this.datasets, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + this.cookie.get("access_token")
+            }
+        }).then(res => {
+            if(res.status === 200) {
+                res.json().then(json => {
+                    if(typeof onSuccessFunction === "function") {
+                        onSuccessFunction(json);
+                    }
+                })
+            }
+        })
+    }
+
 
 }
 

@@ -9,6 +9,7 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS.js';
+import MapMenu from './MapMenu';
 
 class MainWindow extends Component {
     constructor(props) {
@@ -109,6 +110,7 @@ class MainWindow extends Component {
         return (
             <div className="mainWindow">
                 <Navbar bg="dark" variant="dark">
+                <Button variant="primary" onClick={this.togglePanel}>Menu</Button>
                     <Navbar.Brand>Bathymetry Platform</Navbar.Brand>
                     <Navbar.Toggle />
                     <Navbar.Collapse className="justify-content-end">
@@ -116,16 +118,13 @@ class MainWindow extends Component {
                             Logged in as: <b>{this.state.username}</b>
                         </Navbar.Text>
                         <Button variant="primary" onClick={this.handleLogout}>Logout</Button>
-                        
-                        <Button variant="primary" onClick={this.togglePanel}>Bar</Button>
-
                     </Navbar.Collapse>
                 </Navbar>
                 <div className="container-fluid w-100" style={{height: 'calc(100vh - 56px)'}}>
                     <Row className='h-100'>
                         {this.state.isPanelVisible ? (
                             <Col xs={2} className='h-100 p-0'>
-                                ssss
+                                <MapMenu></MapMenu>
                             </Col>
                         ) : (null)}
                         <Col xs={this.state.mapCols} className='h-100 p-0'>
