@@ -24,8 +24,14 @@ class MainWindow extends Component {
 
         this.map = null;
         this.layer = null;
+        this.wmsSource = null;
+        this.olOnClickFunction = null;
+        this.olView = null;
+
         this.handleLogout = this.handleLogout.bind(this);
         this.togglePanel = this.togglePanel.bind(this);
+        this.loadLayer = this.loadLayer.bind(this);
+        this.olGenerateGetFeatureInfoFunction = this.olGenerateGetFeatureInfoFunction.bind(this); 
     }
 
     componentDidMount() {
@@ -56,19 +62,7 @@ class MainWindow extends Component {
             })
           ];
 
-        
-        let wmsSource = new TileWMS({
-            url: RestFetch.geoserver,
-            params: {'LAYERS': 'bathymetry:bathymetry', 'TILED': true, 'viewparams': 'selection:20\\,21', 'width': '200', 'height': '200'},
-            serverType: 'geoserver',
-            transition: 0
-          }) 
-
-        this.layer = new TileLayer({
-            source: wmsSource
-        });
-
-        let view = new View({
+        this.olView = new View({
             center: [19, 51],
             zoom: 2
           });
@@ -76,21 +70,55 @@ class MainWindow extends Component {
         this.map = new Map({
             layers: baseLayer,
             target: 'map',
-            view: view
+            view: this.olView
         });
 
+        // this.map.on('singleclick', function(evt) {
+            
+        //     var viewResolution = /** @type {number} */ (view.getResolution());
+        //     var url = wmsSource.getGetFeatureInfoUrl(
+        //       evt.coordinate, viewResolution, 'EPSG:3857',
+        //       {'INFO_FORMAT': 'application/json'});
+        //     if (url) {
+        //       console.log(url);
+        //     }
+        // });
+    }
+
+    loadLayer(id) {
+        this.prepareLayerChange();
+        this.wmsSource = new TileWMS({
+            url: RestFetch.geoserver,
+            params: {'LAYERS': 'bathymetry:bathymetry', 'TILED': true, 'viewparams': 'selection:'+id, 'width': '200', 'height': '200'},
+            serverType: 'geoserver',
+            transition: 0
+          }) 
+
+        this.layer = new TileLayer({
+            source: this.wmsSource
+        });
         this.map.addLayer(this.layer);
 
-        this.map.on('singleclick', function(evt) {
-            
-            var viewResolution = /** @type {number} */ (view.getResolution());
-            var url = wmsSource.getGetFeatureInfoUrl(
-              evt.coordinate, viewResolution, 'EPSG:3857',
-              {'INFO_FORMAT': 'application/json'});
-            if (url) {
-              console.log(url);
-            }
-        });
+        this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
+        this.map.on('singleclick', this.olOnClickFunction);
+    }
+
+    prepareLayerChange() {
+        this.map.removeLayer(this.layer);
+        this.map.un('singleclick', this.olOnClickFunction);
+    }
+
+    olGenerateGetFeatureInfoFunction(evt) {
+        let viewResolution = /** @type {number} */ (this.olView.getResolution());
+        let url = this.wmsSource.getGetFeatureInfoUrl(
+            evt.coordinate, viewResolution, 'EPSG:3857',
+            {'INFO_FORMAT': 'application/json'});
+        if (url) {
+            console.log(url);
+            fetch(url).then(response => response.json().then(json => {
+                console.log(json);
+            }));
+        }
     }
 
     togglePanel() {
@@ -124,7 +152,7 @@ class MainWindow extends Component {
                     <Row className='h-100'>
                         {this.state.isPanelVisible ? (
                             <Col xs={2} className='h-100 p-0'>
-                                <MapMenu></MapMenu>
+                                <MapMenu loadLayer={this.loadLayer}></MapMenu>
                             </Col>
                         ) : (null)}
                         <Col xs={this.state.mapCols} className='h-100 p-0'>

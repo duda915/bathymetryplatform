@@ -13,6 +13,7 @@ class MapMenu extends Component {
         }
         
         this.parseDataSets = this.parseDataSets.bind(this);
+        this.rowOnclick = this.rowOnclick.bind(this);
     }
 
     componentDidMount() {
@@ -27,7 +28,7 @@ class MapMenu extends Component {
         console.log(json);
         this.setState({
             Sets: json.map((record) => (
-                <tr key={record.id}>
+                <tr key={record.id} onClick={() => this.rowOnclick(record.id)}>
                     <td>{record.id}</td>
                     <td>{record.acquisitionName}</td>
                     <td>{record.acquisitionDate}</td>
@@ -35,6 +36,10 @@ class MapMenu extends Component {
                 </tr>
             ))
         });
+    }
+
+    rowOnclick(key) {
+        this.props.loadLayer(key);
     }
 
     render() {
