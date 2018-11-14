@@ -133,6 +133,29 @@ class Rest {
         })
     }
 
+    downloadDataSet(id) {
+        let url = new URL(this.downloadData);
+        let params = {
+            id: id
+        }
+        url.search = new URLSearchParams(params);
+
+        let download = require("downloadjs");
+
+        fetch(url, { 
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + this.cookie.get("access_token")
+            }
+        }).then(response => {
+            if(response.status === 200){
+                response.blob().then(blob => {
+                    download(blob, "bathymetry"+id+".csv", "text/plain");
+                })
+            }
+        })
+    }
+
 
 }
 
