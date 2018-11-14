@@ -18,7 +18,7 @@ class MainWindow extends Component {
 
         this.state = {
             username: '',
-            mapResizedCols: 10,
+            mapResizedCols: 9,
             mapCols: 12,
             isPanelVisible: false,
             showInfo: false,
@@ -172,7 +172,7 @@ class MainWindow extends Component {
                 <div className="container-fluid w-100" style={{height: 'calc(100vh - 56px)'}}>
                     <Row className='h-100'>
                         {this.state.isPanelVisible ? (
-                            <Col xs={2} className='h-100 p-0'>
+                            <Col xs={3} className='h-100 p-0'>
                                 <MapMenu loadLayer={this.loadLayer}></MapMenu>
                             </Col>
                         ) : (null)}

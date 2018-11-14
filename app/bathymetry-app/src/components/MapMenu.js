@@ -3,6 +3,7 @@ import {RestFetch} from './utility/Rest';
 import Tabs from 'react-bootstrap/lib/Tabs';
 import Tab from 'react-bootstrap/lib/Tab';
 import Table from 'react-bootstrap/lib/Table';
+import Button from 'react-bootstrap/lib/Button';
 import AddData from './AddData';
 
 class MapMenu extends Component {
@@ -34,6 +35,7 @@ class MapMenu extends Component {
                     <td>{record.acquisitionName}</td>
                     <td>{record.acquisitionDate}</td>
                     <td>{record.dataOwner}</td>
+                    <td><Button variant="alert" onClick={() => RestFetch.downloadDataSet(record.id)}>D</Button></td>
                 </tr>
             ))
         });
@@ -48,13 +50,14 @@ class MapMenu extends Component {
             <div className='h-100' style={{overflow: 'auto'}}>
                 <Tabs defaultActiveKey="data" >
                     <Tab eventKey="data" title="Data Sets">
-                            <Table striped bordered hover>
+                            <Table striped bordered hover size="sm" variant="dark">
                                 <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Name</th>
                                         <th>Date</th>
                                         <th>Owner</th>
+                                        <th>Download</th>
                                     </tr>
                                 </thead>
                                 <tbody >
