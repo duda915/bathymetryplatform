@@ -3,6 +3,7 @@ import {RestFetch} from './utility/Rest';
 import Tabs from 'react-bootstrap/lib/Tabs';
 import Tab from 'react-bootstrap/lib/Tab';
 import Table from 'react-bootstrap/lib/Table';
+import AddData from './AddData';
 
 class MapMenu extends Component {
     constructor(props) {
@@ -46,7 +47,7 @@ class MapMenu extends Component {
         return(
             <div className='h-100' style={{overflow: 'auto'}}>
                 <Tabs defaultActiveKey="data" >
-                    <Tab eventKey="data" title="Data Sets"  >
+                    <Tab eventKey="data" title="Data Sets">
                             <Table striped bordered hover>
                                 <thead>
                                     <tr>
@@ -62,7 +63,7 @@ class MapMenu extends Component {
                             </Table>
                     </Tab>
                     <Tab eventKey="add" title="Add Data">
-                    
+                        <AddData></AddData>
                     </Tab>
                 </Tabs>
             </div>

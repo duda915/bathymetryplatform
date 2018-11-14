@@ -110,6 +110,29 @@ class Rest {
         })
     }
 
+    addDataRequest(params, file) {
+        let url = new URL(this.addData);
+        url.search = new URLSearchParams(params);
+        let data = {
+            file: file
+        }
+
+        let formData = new FormData();
+        for(let d in data) {
+            formData.append(d, data[d]);
+        }
+
+        fetch(url,{
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + this.cookie.get("access_token")
+            },
+            body: formData
+        }).then(response => {
+            console.log(response);
+        })
+    }
+
 
 }
 
