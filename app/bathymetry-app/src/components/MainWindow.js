@@ -10,6 +10,7 @@ import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS.js';
 import MapMenu from './MapMenu';
+import DataModal from './DataModal';
 
 class MainWindow extends Component {
     constructor(props) {
@@ -19,7 +20,9 @@ class MainWindow extends Component {
             username: '',
             mapResizedCols: 10,
             mapCols: 12,
-            isPanelVisible: false
+            isPanelVisible: false,
+            showInfo: false,
+            measure: null,
         };
 
         this.map = null;
@@ -32,6 +35,8 @@ class MainWindow extends Component {
         this.togglePanel = this.togglePanel.bind(this);
         this.loadLayer = this.loadLayer.bind(this);
         this.olGenerateGetFeatureInfoFunction = this.olGenerateGetFeatureInfoFunction.bind(this); 
+        this.showFeatureInfo = this.showFeatureInfo.bind(this);
+        this.closeFeatureInfo = this.closeFeatureInfo.bind(this);
     }
 
     componentDidMount() {
@@ -116,7 +121,9 @@ class MainWindow extends Component {
         if (url) {
             console.log(url);
             fetch(url).then(response => response.json().then(json => {
-                console.log(json);
+                if(json.features.length !== 0) {
+                    this.showFeatureInfo(json.features[0].properties.measure)
+                }
             }));
         }
     }
@@ -134,6 +141,19 @@ class MainWindow extends Component {
 
     }
 
+    showFeatureInfo(measure) {
+        this.setState({
+            showInfo: true,
+            measure: measure
+        });
+    }
+
+    closeFeatureInfo() {
+        this.setState({
+            showInfo: false
+        })
+    }
+
     render() {
         return (
             <div className="mainWindow">
@@ -148,6 +168,7 @@ class MainWindow extends Component {
                         <Button variant="primary" onClick={this.handleLogout}>Logout</Button>
                     </Navbar.Collapse>
                 </Navbar>
+                <DataModal show={this.state.showInfo} measure={this.state.measure} close={this.closeFeatureInfo}></DataModal>
                 <div className="container-fluid w-100" style={{height: 'calc(100vh - 56px)'}}>
                     <Row className='h-100'>
                         {this.state.isPanelVisible ? (
