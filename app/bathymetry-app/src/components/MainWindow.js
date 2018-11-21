@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import CSSTransition from 'react-transition-group/CSSTransition';
+
 import {RestFetch} from './utility/Rest';
 
 import 'primereact/resources/primereact.min.css';
@@ -27,7 +29,7 @@ class MainWindow extends Component {
             username: '',
             mapResizedCols: 10,
             mapCols: 12,
-            sidebarVisible: false,
+            sidebarVisible: true,
             showInfo: false,
             measure: null,
         };
@@ -198,19 +200,23 @@ class MainWindow extends Component {
                         </Toolbar>
 
                         <div className="p-grid p-nogutter" style={{width: '100%', height: 'calc(100vh - 50px)'}}> 
-                            {this.state.sidebarVisible ? 
-                                <div className="p-col-fixed" style={{width: '200px'}}>
+                            <CSSTransition in={this.state.sidebarVisible} timeout={2000}  classNames="menuslide">
+                                <div className="p-col-fixed menuslide-init">
                                     <ScrollPanel>
                                         xxxx
                                     </ScrollPanel>
                                 </div>
-                                : null
-                            }
+                            </CSSTransition>
 
+                            {/* main panel */}
                             <div className="p-col">
                                 <div id="map" style={{height: '100%'}}></div>
                             </div>
                         </div>
+                            {/* <div className="p-col width-transition">
+                                <div id="map" style={{height: '100%'}}></div>
+                            </div> */}
+                        {/* </div> */}
                         {/* left menu */}
                         {/* {this.state.sidebarVisible ? 
                                 <ScrollPanel>
