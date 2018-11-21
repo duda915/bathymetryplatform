@@ -1,9 +1,4 @@
 import React, { Component } from 'react';
-import Row from 'react-bootstrap/lib/Row';
-import Col from 'react-bootstrap/lib/Col';
-import Form from 'react-bootstrap/lib/Form';
-// import Button from 'react-bootstrap/lib/Button';
-
 
 import {Panel} from 'primereact/panel';
 import {InputText} from 'primereact/inputtext';
@@ -58,34 +53,6 @@ class LoginControl extends Component {
 
     render() {
         return(
-            // <div className="container-fluid">
-            //     <Row style={{height: '100px'}}>
-            //     </Row>
-            //     <Row>
-            //         <Col xs={4}/>
-            //         <Col xs={4} className="border border-primary p-4">
-            //             <Form onSubmit={this.handleSubmit}>
-            //                 <Form.Group controlId="formUsername">
-            //                     <Form.Label>Username</Form.Label>
-            //                     <Form.Control required type="text" placeholder="Enter username" name="username" value={this.state.username} onChange={this.handleChange}/>
-            //                 </Form.Group>
-                            
-            //                 <Form.Group controlId="formPassword">
-            //                     <Form.Label>Password</Form.Label>
-            //                     <Form.Control required type="password" placeholder="Enter password" name="password" value={this.state.password} onChange={this.handleChange}/>
-            //                 </Form.Group>
-
-            //                 <Form.Group controlId="formCheckbox">
-            //                     <Form.Check type="checkbox" label="Register" name="register" checked={this.state.register} onChange={this.handleChange}/>
-            //                 </Form.Group>
-            //                 <Button variant="primary" type="submit" >
-            //                     Login
-            //                 </Button>
-            //             </Form>
-            //         </Col>
-            //         <Col xs={4}/>
-            //     </Row>
-            // </div>
             <div className="loginControl">
                 <div className="p-grid p-fluid" >
                 

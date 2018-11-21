@@ -1,9 +1,16 @@
 import React, { Component } from 'react';
-import Navbar from 'react-bootstrap/lib/Navbar';
 import {RestFetch} from './utility/Rest';
-import Button from 'react-bootstrap/lib/Button';
-import Row from 'react-bootstrap/lib/Row';
-import Col from'react-bootstrap/lib/Col';
+
+import 'primereact/resources/primereact.min.css';
+import 'primereact/resources/themes/nova-colored/theme.css';
+import 'primeflex/primeflex.css';
+import 'primeicons/primeicons.css';
+
+import {Toolbar} from 'primereact/toolbar';
+import {Button} from 'primereact/button';
+import {ScrollPanel} from 'primereact/scrollpanel';
+
+
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
@@ -18,9 +25,9 @@ class MainWindow extends Component {
 
         this.state = {
             username: '',
-            mapResizedCols: 9,
+            mapResizedCols: 10,
             mapCols: 12,
-            isPanelVisible: false,
+            sidebarVisible: false,
             showInfo: false,
             measure: null,
         };
@@ -77,17 +84,6 @@ class MainWindow extends Component {
             target: 'map',
             view: this.olView
         });
-
-        // this.map.on('singleclick', function(evt) {
-            
-        //     var viewResolution = /** @type {number} */ (view.getResolution());
-        //     var url = wmsSource.getGetFeatureInfoUrl(
-        //       evt.coordinate, viewResolution, 'EPSG:3857',
-        //       {'INFO_FORMAT': 'application/json'});
-        //     if (url) {
-        //       console.log(url);
-        //     }
-        // });
     }
 
     loadLayer(id) {
@@ -130,12 +126,12 @@ class MainWindow extends Component {
 
     togglePanel() {
         let mapTargetCols = 12;
-        if(!this.state.isPanelVisible) {
+        if(!this.state.sidebarVisible) {
             mapTargetCols = this.state.mapResizedCols;
         }
 
         this.setState({
-            isPanelVisible: !this.state.isPanelVisible,
+            sidebarVisible: !this.state.sidebarVisible,
             mapCols: mapTargetCols
         }, callback => this.map.updateSize());
 
@@ -152,37 +148,83 @@ class MainWindow extends Component {
         this.setState({
             showInfo: false
         })
+
     }
 
     render() {
         return (
+            // <div className="mainWindow">
+            //     <Navbar bg="dark" variant="dark">
+            //     <Button variant="primary" onClick={this.togglePanel}>Menu</Button>
+            //         <Navbar.Brand>Bathymetry Platform</Navbar.Brand>
+            //         <Navbar.Toggle />
+            //         <Navbar.Collapse className="justify-content-end">
+            //             <Navbar.Text className="p-2">
+            //                 Logged in as: <b>{this.state.username}</b>
+            //             </Navbar.Text>
+            //             <Button variant="primary" onClick={this.handleLogout}>Logout</Button>
+            //         </Navbar.Collapse>
+            //     </Navbar>
+            //     <DataModal show={this.state.showInfo} measure={this.state.measure} close={this.closeFeatureInfo}></DataModal>
+            //     <div className="container-fluid w-100" style={{height: 'calc(100vh - 56px)'}}>
+            //         <Row className='h-100'>
+            //             {this.state.sidebarVisible ? (
+            //                 <Col xs={3} className='h-100 p-0'>
+            //                     <MapMenu loadLayer={this.loadLayer}></MapMenu>
+            //                 </Col>
+            //             ) : (null)}
+            //             <Col xs={this.state.mapCols} className='h-100 p-0'>
+            //                 <div id="map" className="h-100">
+            //                 </div>
+            //             </Col>
+            //         </Row>
+            //     </div>
+            // </div>
+
+            // <div className="p-grid p-nogutter" >
+            //         <div className="p-col-12" style={{height: '50px'}}>
+            // </div>
+
             <div className="mainWindow">
-                <Navbar bg="dark" variant="dark">
-                <Button variant="primary" onClick={this.togglePanel}>Menu</Button>
-                    <Navbar.Brand>Bathymetry Platform</Navbar.Brand>
-                    <Navbar.Toggle />
-                    <Navbar.Collapse className="justify-content-end">
-                        <Navbar.Text className="p-2">
-                            Logged in as: <b>{this.state.username}</b>
-                        </Navbar.Text>
-                        <Button variant="primary" onClick={this.handleLogout}>Logout</Button>
-                    </Navbar.Collapse>
-                </Navbar>
-                <DataModal show={this.state.showInfo} measure={this.state.measure} close={this.closeFeatureInfo}></DataModal>
-                <div className="container-fluid w-100" style={{height: 'calc(100vh - 56px)'}}>
-                    <Row className='h-100'>
-                        {this.state.isPanelVisible ? (
-                            <Col xs={3} className='h-100 p-0'>
-                                <MapMenu loadLayer={this.loadLayer}></MapMenu>
-                            </Col>
-                        ) : (null)}
-                        <Col xs={this.state.mapCols} className='h-100 p-0'>
-                            <div id="map" className="h-100">
+                
+                        {/* main bar */}
+                        <Toolbar className="toolbar-topbar" style={{height: '50px'}}>
+                            <div className="p-toolbar-group-left">
+                                <Button icon="pi pi-bars" onClick={this.togglePanel}/>
                             </div>
-                        </Col>
-                    </Row>
+                            <div className="p-toolbar-group-right">
+                                <Button icon="pi pi-sign-out" onClick={this.handleLogout}/>
+                            </div>
+                        </Toolbar>
+
+                        <div className="p-grid p-nogutter" style={{width: '100%', height: 'calc(100vh - 50px)'}}> 
+                            {this.state.sidebarVisible ? 
+                                <div className="p-col-fixed" style={{width: '200px'}}>
+                                    <ScrollPanel>
+                                        xxxx
+                                    </ScrollPanel>
+                                </div>
+                                : null
+                            }
+
+                            <div className="p-col">
+                                <div id="map" style={{height: '100%'}}></div>
+                            </div>
+                        </div>
+                        {/* left menu */}
+                        {/* {this.state.sidebarVisible ? 
+                                <ScrollPanel>
+                                    xxxx
+                                </ScrollPanel>
+                                : null} */}
+                    {/* <div className="p-col-10 p-lg-10" style={{height: 'calc(100vh - 50px)'}}> */}
+                        {/* content */}
+                        {/* <div id="map" style={{height: '100%'}}></div> */}
+                    {/* </div> */}
+
                 </div>
-            </div>
+
+            // </div>
         );
     }
 } 

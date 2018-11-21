@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import LoginControl from './components/LoginControl';
 import MainWindow from './components/MainWindow';
+import './components/utility/Utility.css';
 
 class App extends Component {
   constructor(props) {

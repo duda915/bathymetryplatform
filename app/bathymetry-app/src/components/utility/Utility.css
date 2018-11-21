@@ -1,0 +1,9 @@
+body {
+    margin: 0;
+}
+
+.p-toolbar.toolbar-topbar {
+    border: 0;
+    border-radius: 0;
+    height: 100%;
+}
