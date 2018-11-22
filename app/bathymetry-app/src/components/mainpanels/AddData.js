@@ -49,36 +49,43 @@ class AddData extends Component {
 
     render() {
         return(
-            <Form onSubmit={this.handleSubmit}>
-                <Form.Group controlId="formName">
-                    <Form.Label>Data name</Form.Label>
-                    <Form.Control required type="text" autoComplete="off" placeholder="Name" name="name" value={this.state.name} onChange={this.handleChange} />
-                </Form.Group>
+            // <Form onSubmit={this.handleSubmit}>
+            //     <Form.Group controlId="formName">
+            //         <Form.Label>Data name</Form.Label>
+            //         <Form.Control required type="text" autoComplete="off" placeholder="Name" name="name" value={this.state.name} onChange={this.handleChange} />
+            //     </Form.Group>
 
-                <Form.Group controlId="formOwner">
-                    <Form.Label>Data owner</Form.Label>
-                    <Form.Control required type="text" autoComplete="off" placeholder="Owner" name="owner" value={this.state.owner} onChange={this.handleChange} />
-                </Form.Group>
+            //     <Form.Group controlId="formOwner">
+            //         <Form.Label>Data owner</Form.Label>
+            //         <Form.Control required type="text" autoComplete="off" placeholder="Owner" name="owner" value={this.state.owner} onChange={this.handleChange} />
+            //     </Form.Group>
 
-                <Form.Group controlId="formDate">
-                    <Form.Label>Date</Form.Label>
-                    <Form.Control required type="date" placeholder="Date" name="date" value={this.state.date} onChange={this.handleChange} />
-                </Form.Group>
+            //     <Form.Group controlId="formDate">
+            //         <Form.Label>Date</Form.Label>
+            //         <Form.Control required type="date" placeholder="Date" name="date" value={this.state.date} onChange={this.handleChange} />
+            //     </Form.Group>
 
-                <Form.Group controlId="formCRS">
-                    <Form.Label>CRS</Form.Label>
-                    <Form.Control required type="number" autoComplete="off" placeholder="CRS" name="crs" value={this.state.crs} onChange={this.handleChange} />
-                </Form.Group>
+            //     <Form.Group controlId="formCRS">
+            //         <Form.Label>CRS</Form.Label>
+            //         <Form.Control required type="number" autoComplete="off" placeholder="CRS" name="crs" value={this.state.crs} onChange={this.handleChange} />
+            //     </Form.Group>
 
-                <Form.Group controlId="formFile">
-                    <Form.Label>File</Form.Label>
-                    <Form.Control required type="file" name="file" onChange={this.handleFileChange} />
-                </Form.Group>
+            //     <Form.Group controlId="formFile">
+            //         <Form.Label>File</Form.Label>
+            //         <Form.Control required type="file" name="file" onChange={this.handleFileChange} />
+            //     </Form.Group>
 
-                <Button variant="primary" type="submit" >
-                    Submit
-                </Button>
-            </Form>
+            //     <Button variant="primary" type="submit" >
+            //         Submit
+            //     </Button>
+            // </Form>
+            <div className="p-grid">
+                <form>
+                    <div className="p-row-12">
+                    
+                    </div>
+                </form>
+            </div>
         )
     }
 }

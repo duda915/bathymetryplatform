@@ -29,7 +29,7 @@ class MenuPanel extends Component {
     render() {
         return(
             <div>
-                <Menu model={this.state.menuItems} className="margin-center"/>
+                <Menu model={this.state.menuItems} style={{width: '225px'}} className="margin-center"/>
             </div>
         );
     }

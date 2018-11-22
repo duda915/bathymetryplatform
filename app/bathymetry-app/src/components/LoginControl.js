@@ -9,7 +9,7 @@ import 'primereact/resources/primereact.min.css';
 import 'primereact/resources/themes/nova-colored/theme.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
-import {RestFetch} from './utility/Rest';
+import UserService from '../services/UserService';
 
 
 class LoginControl extends Component {
@@ -25,6 +25,8 @@ class LoginControl extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.getToken = this.getToken.bind(this);
+
+        this.userService = new UserService();
     }
 
     handleChange(event) {
@@ -39,16 +41,20 @@ class LoginControl extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.getToken();
+
+        this.userService.loginUser(this.state.username, this.state.password)
+        .then(response => this.props.changeLoginState(true));
     }
 
     getToken() {
-        RestFetch.getLoginToken(this.state.username, this.state.password, this.props.changeLoginState.bind(null, true));
+        // RestFetch.getLoginToken(this.state.username, this.state.password, this.props.changeLoginState.bind(null, true));
     }
 
     componentDidMount() {
         //instant login
-        RestFetch.getUsername(this.props.changeLoginState.bind(null, true), null);
+        // RestFetch.getUsername(this.props.changeLoginState.bind(null, true), null);
+        this.userService.getUser()
+        .then(response => this.props.changeLoginState(true));
     }
 
     render() {

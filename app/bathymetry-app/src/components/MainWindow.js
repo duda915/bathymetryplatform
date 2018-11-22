@@ -15,6 +15,8 @@ import MenuPanel from './MenuPanel';
 import TopBar from './TopBar';
 import AddData from './mainpanels/AddData';
 import MapMenu from './mainpanels/MapMenu';
+import DataComponent from './mainpanels/DataComponent';
+import UserService from '../services/UserService';
 
 
 class MainWindow extends Component {
@@ -35,6 +37,8 @@ class MainWindow extends Component {
 
     componentDidMount() {
         this.fetchUsername();
+        let userService = new UserService();
+        userService.loginUser("newuser", "password");
     }
 
     fetchUsername() {
@@ -91,7 +95,7 @@ class MainWindow extends Component {
                                                 <MapComponent ref={this.mapRefreshRef}/>
                                             )
                                         }} />
-                                        <Route path="/add" component={AddData}/>
+                                        <Route path="/add" component={DataComponent}/>
                                         <Route path="/select" component={MapMenu}/>
                                     </div>
                                 </Router>

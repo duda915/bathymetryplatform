@@ -14,17 +14,17 @@ body {
 }
 
 .menuslide-init {
-    width: 200px;
+    width: 250px;
     transition: width .5s;
 }
 .menuslide-enter {
-    width: 200px;
+    width: 250px;
 }
 .menuslide-enter.menuslide-enter-active {
-    width: 200px;
+    width: 250px;
 }
 .menuslide-enter-done {
-    width: 200px;
+    width: 250px;
 }
 
 .menuslide-exit {
@@ -40,6 +40,10 @@ body {
 
 .margin-center {
     margin: auto;
+}
+
+.bathymetry-app-padding {
+    padding: 10px;
 }
 
 
