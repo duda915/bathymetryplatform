@@ -200,12 +200,11 @@ class MainWindow extends Component {
                         </Toolbar>
 
                         <div className="p-grid p-nogutter" style={{width: '100%', height: 'calc(100vh - 50px)'}}> 
+                            {/* left menu */}
                             <CSSTransition in={this.state.sidebarVisible} timeout={2000}  classNames="menuslide">
-                                <div className="p-col-fixed menuslide-init">
-                                    <ScrollPanel>
-                                        xxxx
-                                    </ScrollPanel>
-                                </div>
+                                <ScrollPanel className="p-col-fixed menuslide-init">
+
+                                </ScrollPanel>
                             </CSSTransition>
 
                             {/* main panel */}
@@ -213,20 +212,6 @@ class MainWindow extends Component {
                                 <div id="map" style={{height: '100%'}}></div>
                             </div>
                         </div>
-                            {/* <div className="p-col width-transition">
-                                <div id="map" style={{height: '100%'}}></div>
-                            </div> */}
-                        {/* </div> */}
-                        {/* left menu */}
-                        {/* {this.state.sidebarVisible ? 
-                                <ScrollPanel>
-                                    xxxx
-                                </ScrollPanel>
-                                : null} */}
-                    {/* <div className="p-col-10 p-lg-10" style={{height: 'calc(100vh - 50px)'}}> */}
-                        {/* content */}
-                        {/* <div id="map" style={{height: '100%'}}></div> */}
-                    {/* </div> */}
 
                 </div>
 
