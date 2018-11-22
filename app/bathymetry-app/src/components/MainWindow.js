@@ -13,6 +13,8 @@ import {Button} from 'primereact/button';
 import {ScrollPanel} from 'primereact/scrollpanel';
 
 import MapComponent from './mainpanels/MapComponent';
+import MenuPanel from './MenuPanel';
+// import { none } from 'ol/rotationconstraint';
 
 class MainWindow extends Component {
     constructor(props) {
@@ -65,34 +67,37 @@ class MainWindow extends Component {
     render() {
         return (
             <div className="mainWindow">
-                        {/* main bar */}
-                        <Toolbar className="toolbar-topbar" style={{height: '50px'}}>
-                            <div className="p-toolbar-group-left">
-                                <Button icon="pi pi-bars" onClick={this.togglePanel}/>
-                            </div>
-                            <div className="p-toolbar-group-right">
-                                <Button icon="pi pi-sign-out" onClick={this.handleLogout}/>
-                            </div>
-                        </Toolbar>
+                <div className="p-grid p-nogutter">
+                    
+                    {/* left menu */}
+                    <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
+                    onExited={() => this.tryMapSizeUpdate()}>
+                        <ScrollPanel className="p-col-fixed menuslide-init ">
+                            <MenuPanel />
+                        </ScrollPanel>
+                    </CSSTransition>
 
-                        <div className="p-grid p-nogutter" style={{width: '100%', height: 'calc(100vh - 50px)'}}> 
-                            {/* left menu */}
-                            <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
-                            onExited={() => this.tryMapSizeUpdate()}>
-                                <ScrollPanel className="p-col-fixed menuslide-init">
-
-                                </ScrollPanel>
-                            </CSSTransition>
-
+                    <div className="p-col">
+                        <div className="p-grid p-nogutter">
+                            <div className="p-col-12">
+                                {/* main bar */}
+                                <Toolbar className="toolbar-topbar" style={{height: '50px'}}>
+                                    <div className="p-toolbar-group-left">
+                                        <Button icon="pi pi-bars" onClick={this.togglePanel}/>
+                                    </div>
+                                    <div className="p-toolbar-group-right">
+                                        <Button icon="pi pi-sign-out" onClick={this.handleLogout}/>
+                                    </div>
+                                </Toolbar>
+                            </div>                   
                             {/* main panel */}
-                            <div className="p-col">
+                            <div className="p-col-12" style={{height: 'calc(100vh - 50px)'}}>
                                 <MapComponent ref={this.mapRefreshRef}/>
                             </div>
                         </div>
-
+                        </div>
                 </div>
-
-            // </div>
+            </div>
         );
     }
 } 
