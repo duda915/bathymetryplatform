@@ -15,8 +15,12 @@ class MenuPanel extends Component {
                 }, 
                 {
                     label: 'Data',
-                    items: [{label: 'Select Data', icon: 'pi pi-fw pi-cog',command:()=>{ window.location.hash="/select"; }},
-                            {label: 'Add Data', icon: 'pi pi-fw pi-cloud-upload',command:()=>{ window.location.hash="/add"; }}]
+                    items: [{label: 'Select Data', icon: 'pi pi-search',command:()=>{ window.location.hash="/select"; }},
+                            {label: 'Add Data', icon: 'pi pi-cloud-upload',command:()=>{ window.location.hash="/add"; }}]
+                },
+                {
+                    label: 'User',
+                    items: [{label: 'Logout', icon: 'pi pi-sign-out',command:()=>{ this.props.logoutFun() }}],
                 }
             ],
         }

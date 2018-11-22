@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
-import {RestFetch} from './utility/Rest';
+import { RestFetch } from './utility/Rest';
 
-import 'primereact/resources/primereact.min.css';
-import 'primereact/resources/themes/nova-colored/theme.css';
-import 'primeflex/primeflex.css';
-import 'primeicons/primeicons.css';
-
-import {Toolbar} from 'primereact/toolbar';
-import {Button} from 'primereact/button';
-import {ScrollPanel} from 'primereact/scrollpanel';
+import { ScrollPanel } from 'primereact/scrollpanel';
 
 import MapComponent from './mainpanels/MapComponent';
 import MenuPanel from './MenuPanel';
-// import { none } from 'ol/rotationconstraint';
+import TopBar from './TopBar';
+
 
 class MainWindow extends Component {
     constructor(props) {
@@ -45,7 +39,7 @@ class MainWindow extends Component {
 
         RestFetch.getUsername(null, setusername);
     }
-    
+
     handleLogout() {
         RestFetch.sendLogout(this.props.changeLoginState.bind(null, false));
     }
@@ -59,7 +53,7 @@ class MainWindow extends Component {
 
     tryMapSizeUpdate() {
         // this.mapRefreshRef = React.createRef();
-        if(this.mapRefreshRef != null) {
+        if (this.mapRefreshRef != null) {
             this.mapRefreshRef.current.updateMapSize();
         }
     }
@@ -68,38 +62,31 @@ class MainWindow extends Component {
         return (
             <div className="mainWindow">
                 <div className="p-grid p-nogutter">
-                    
+
                     {/* left menu */}
                     <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
-                    onExited={() => this.tryMapSizeUpdate()}>
+                        onExited={() => this.tryMapSizeUpdate()}>
                         <ScrollPanel className="p-col-fixed menuslide-init ">
-                            <MenuPanel />
+                            <MenuPanel logoutFun={this.handleLogout} />
                         </ScrollPanel>
                     </CSSTransition>
 
                     <div className="p-col">
                         <div className="p-grid p-nogutter">
-                            <div className="p-col-12">
+                            <div className="p-col-12" style={{ height: '50px' }}>
                                 {/* main bar */}
-                                <Toolbar className="toolbar-topbar" style={{height: '50px'}}>
-                                    <div className="p-toolbar-group-left">
-                                        <Button icon="pi pi-bars" onClick={this.togglePanel}/>
-                                    </div>
-                                    <div className="p-toolbar-group-right">
-                                        <Button icon="pi pi-sign-out" onClick={this.handleLogout}/>
-                                    </div>
-                                </Toolbar>
-                            </div>                   
+                                <TopBar togglePanel={this.togglePanel} logoutFun={this.handleLogout} />
+                            </div>
                             {/* main panel */}
-                            <div className="p-col-12" style={{height: 'calc(100vh - 50px)'}}>
-                                <MapComponent ref={this.mapRefreshRef}/>
+                            <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}>
+                                <MapComponent ref={this.mapRefreshRef} />
                             </div>
                         </div>
-                        </div>
+                    </div>
                 </div>
             </div>
         );
     }
-} 
+}
 
 export default MainWindow;
