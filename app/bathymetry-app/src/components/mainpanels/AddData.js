@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {RestFetch} from './utility/Rest';
+import {RestFetch} from '../utility/Rest';
 import Form from 'react-bootstrap/lib/Form';
 import Button from 'react-bootstrap/lib/Button';
 

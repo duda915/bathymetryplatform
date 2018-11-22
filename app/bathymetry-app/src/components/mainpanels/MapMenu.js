@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {RestFetch} from './utility/Rest';
+import {RestFetch} from '../utility/Rest';
 import Tabs from 'react-bootstrap/lib/Tabs';
 import Tab from 'react-bootstrap/lib/Tab';
 import Table from 'react-bootstrap/lib/Table';

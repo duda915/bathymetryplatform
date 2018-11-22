@@ -11,7 +11,7 @@ class MenuPanel extends Component {
             menuItems: [
                 {
                     label: 'Map',
-                    items: [{label: 'Map', icon: 'pi pi-map-marker',command:()=>{ window.location.hash="/map"; }}],
+                    items: [{label: 'Map', icon: 'pi pi-map-marker',command:()=>{ window.location.hash="/"; }}],
                 }, 
                 {
                     label: 'Data',

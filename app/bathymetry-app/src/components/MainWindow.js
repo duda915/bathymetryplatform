@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+import {
+    HashRouter as Router,
+    Route,
+    Link
+  } from 'react-router-dom';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
 import { RestFetch } from './utility/Rest';
@@ -8,6 +13,8 @@ import { ScrollPanel } from 'primereact/scrollpanel';
 import MapComponent from './mainpanels/MapComponent';
 import MenuPanel from './MenuPanel';
 import TopBar from './TopBar';
+import AddData from './mainpanels/AddData';
+import MapMenu from './mainpanels/MapMenu';
 
 
 class MainWindow extends Component {
@@ -52,8 +59,7 @@ class MainWindow extends Component {
     }
 
     tryMapSizeUpdate() {
-        // this.mapRefreshRef = React.createRef();
-        if (this.mapRefreshRef != null) {
+        if (this.mapRefreshRef.current != null) {
             this.mapRefreshRef.current.updateMapSize();
         }
     }
@@ -78,9 +84,18 @@ class MainWindow extends Component {
                                 <TopBar togglePanel={this.togglePanel} logoutFun={this.handleLogout} />
                             </div>
                             {/* main panel */}
-                            <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}>
-                                <MapComponent ref={this.mapRefreshRef} />
-                            </div>
+                                <Router>
+                                    <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}> 
+                                        <Route exact path="/" render={() => {
+                                            return(
+                                                <MapComponent ref={this.mapRefreshRef}/>
+                                            )
+                                        }} />
+                                        <Route path="/add" component={AddData}/>
+                                        <Route path="/select" component={MapMenu}/>
+                                    </div>
+                                </Router>
+                                {/* <MapComponent ref={this.mapRefreshRef} /> */}
                         </div>
                     </div>
                 </div>
