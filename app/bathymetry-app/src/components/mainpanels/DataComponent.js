@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import {RestFetch} from '../utility/Rest';
 
-import {Panel} from 'primereact/panel';
 import {DataTable} from 'primereact/datatable';
 
 export default class DataComponent extends Component {

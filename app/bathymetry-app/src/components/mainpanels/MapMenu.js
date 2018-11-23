@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import {RestFetch} from '../utility/Rest';
+// import {RestFetch} from '../utility/Rest';
+import DataService from '../../services/DataService';
 import Tabs from 'react-bootstrap/lib/Tabs';
 import Tab from 'react-bootstrap/lib/Tab';
 import Table from 'react-bootstrap/lib/Table';
@@ -16,6 +17,7 @@ class MapMenu extends Component {
         
         this.parseDataSets = this.parseDataSets.bind(this);
         this.rowOnclick = this.rowOnclick.bind(this);
+        this.dataService = new DataService();
     }
 
     componentDidMount() {
@@ -23,7 +25,7 @@ class MapMenu extends Component {
     }
 
     fetchDataSets() {
-        RestFetch.getDataSets(this.parseDataSets);
+        this.dataService.getDataSets().then(response => this.parseDataSets(response.data));
     }
 
     parseDataSets(json) {
@@ -35,7 +37,6 @@ class MapMenu extends Component {
                     <td>{record.acquisitionName}</td>
                     <td>{record.acquisitionDate}</td>
                     <td>{record.dataOwner}</td>
-                    <td><Button variant="alert" onClick={() => RestFetch.downloadDataSet(record.id)}>D</Button></td>
                 </tr>
             ))
         });

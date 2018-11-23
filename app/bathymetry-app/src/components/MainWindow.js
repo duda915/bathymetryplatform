@@ -6,8 +6,6 @@ import {
   } from 'react-router-dom';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
-import { RestFetch } from './utility/Rest';
-
 import { ScrollPanel } from 'primereact/scrollpanel';
 
 import MapComponent from './mainpanels/MapComponent';
@@ -32,27 +30,21 @@ class MainWindow extends Component {
         this.togglePanel = this.togglePanel.bind(this);
 
         this.mapRefreshRef = React.createRef();
-
+        this.userService = new UserService();
     }
 
     componentDidMount() {
         this.fetchUsername();
-        let userService = new UserService();
-        userService.loginUser("newuser", "password");
     }
 
     fetchUsername() {
-        let setusername = (function (username) {
-            this.setState({
-                username: username
-            })
-        }).bind(this);
-
-        RestFetch.getUsername(null, setusername);
+        this.userService.getUser()
+        .then(response => this.setState({username: response.data}));
     }
 
     handleLogout() {
-        RestFetch.sendLogout(this.props.changeLoginState.bind(null, false));
+        this.userService.logoutUser()
+        .then(response => this.props.changeLoginState(false));
     }
 
     togglePanel() {
@@ -99,7 +91,6 @@ class MainWindow extends Component {
                                         <Route path="/select" component={MapMenu}/>
                                     </div>
                                 </Router>
-                                {/* <MapComponent ref={this.mapRefreshRef} /> */}
                         </div>
                     </div>
                 </div>

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import {RestFetch} from '../utility/Rest';
 import Form from 'react-bootstrap/lib/Form';
 import Button from 'react-bootstrap/lib/Button';
+import DataService from '../../services/DataService';
 
 class AddData extends Component {
     constructor(props) {
@@ -18,6 +19,7 @@ class AddData extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
+        this.dataService = new DataService();
     }
 
     handleChange(event) {
