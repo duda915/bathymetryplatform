@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 
 import {DataTable} from 'primereact/datatable';
+import {Column} from 'primereact/column';
+import DataService from '../../services/DataService';
 
 export default class DataComponent extends Component {
     constructor(props) {
@@ -8,37 +10,29 @@ export default class DataComponent extends Component {
 
         this.state = {
         }
+        this.dataService = new DataService();
     }
 
-    // componentDidMount() {
-    //     this.fetchDataSets();
-    // }
+    componentDidMount() {
+        this.fetchDataSets();
+    }
 
-    // fetchDataSets() {
-    //     RestFetch.getDataSets(this.parseDataSets);
-    // }
-
-    // parseDataSets(json) {
-    //     console.log(json);
-    //     this.setState({
-    //         Sets: json.map((record) => (
-    //             <tr key={record.id} onClick={() => this.rowOnclick(record.id)}>
-    //                 <td>{record.id}</td>
-    //                 <td>{record.acquisitionName}</td>
-    //                 <td>{record.acquisitionDate}</td>
-    //                 <td>{record.dataOwner}</td>
-    //                 <td><Button variant="alert" onClick={() => RestFetch.downloadDataSet(record.id)}>D</Button></td>
-    //             </tr>
-    //         ))
-    //     });
-    // }
+    fetchDataSets() {
+        this.dataService.getDataSets()
+        .then(response => this.setState({data: response.data}))
+        .then(response => console.log(this.state.data));
+    }
 
     render() {
         return (
             <div className="p-grid p-nogutter p-fluid bathymetry-app-padding">
                 <div className="p-row-12">
-                    <DataTable header="Datasets">
-                    
+                    <DataTable header="Datasets" value={this.state.data} responsive={true} selectionMode="multiple" selection={this.state.selection}
+                    onSelectionChange={e => this.setState({selection: e.value})} metaKeySelection={false}>
+                        <Column field="id" header="Id" />
+                        <Column field="acquisitionName" header="Name"/>
+                        <Column field="acquisitionDate" header="Date"/>
+                        <Column field="dataOwner" header="Owner"/>
                     </DataTable>
                 </div>
             </div>

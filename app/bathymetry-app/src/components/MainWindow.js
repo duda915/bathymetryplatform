@@ -87,7 +87,7 @@ class MainWindow extends Component {
                                                 <MapComponent ref={this.mapRefreshRef}/>
                                             )
                                         }} />
-                                        <Route path="/add" component={DataComponent}/>
+                                        <Route path="/mydata" component={DataComponent}/>
                                         <Route path="/select" component={MapMenu}/>
                                     </div>
                                 </Router>
