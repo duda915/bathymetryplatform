@@ -23,7 +23,13 @@ export default class DataService {
     }
 
     async downloadDataSet(id) {
-        return axios.get(this.downloadDataEndpoint, this.userService.getConfig())
+        let params = {
+            id: id
+        };
+        let url = new URL(this.downloadDataEndpoint);
+        url.search = new URLSearchParams(params);
+
+        return axios.get(url, this.userService.getConfig())
         .then(response => {
             downloadjs(response.data, "bathymetry"+id+".csv", "text/plain");
         })
