@@ -75,8 +75,14 @@ class MainWindow extends Component {
                     {/* left menu */}
                     <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
                         onExited={() => this.tryMapSizeUpdate()}>
-                        <ScrollPanel className="p-col-fixed menuslide-init ">
+                        <ScrollPanel className="p-col-fixed menuslide-init leftmenu">
+
+                        <div className="p-grid p-justify-center">
+                        <div className="p-col-12" style={{height: '10vh'}}/>
+                        <div className="p-col">
                             <MenuPanel logoutFun={this.handleLogout} />
+                        </div>
+                        </div>
                         </ScrollPanel>
                     </CSSTransition>
 
