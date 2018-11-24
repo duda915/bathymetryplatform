@@ -69,14 +69,14 @@ class LoginControl extends Component {
                     <div className="p-col-1 p-lg-4"></div>
                     <div className="p-col p-lg-4">
                         <Panel header="Login">
-                            <form onSubmit={this.handleSubmit}>
+                            <form onSubmit={this.handleSubmit} >
                                 <div className="p-grid">
                                     <div className="p-col">
                                         <div className="p-inputgroup">
                                             <span className="p-inputgroup-addon">
                                                 <i className="pi pi-user"></i>
                                             </span>
-                                            <InputText placeholder="Username" name="username" value={this.state.username} onChange={this.handleChange}></InputText>
+                                            <InputText autoComplete="off" placeholder="Username" name="username" value={this.state.username} onChange={this.handleChange}></InputText>
                                         </div>
                                     </div>
                                 </div>

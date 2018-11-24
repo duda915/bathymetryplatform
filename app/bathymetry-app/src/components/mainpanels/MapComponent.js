@@ -92,7 +92,8 @@ export default class MapComponent extends Component{
             console.log(url);
             fetch(url).then(response => response.json().then(json => {
                 if(json.features.length !== 0) {
-                    this.showFeatureInfo(json.features[0].properties.measure)
+                    // this.showFeatureInfo(json.features[0].properties.measure)
+                    console.log(json);
                 }
             }));
         }

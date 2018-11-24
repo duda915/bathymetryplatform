@@ -4,10 +4,6 @@ import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
 
 export default class TopBar extends Component {
-    constructor(props) {
-        super(props);
-
-    }
 
     render() {
         return (

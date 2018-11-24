@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
     HashRouter as Router,
     Route,
-    Link
   } from 'react-router-dom';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
@@ -11,10 +10,9 @@ import { ScrollPanel } from 'primereact/scrollpanel';
 import MapComponent from './mainpanels/MapComponent';
 import MenuPanel from './MenuPanel';
 import TopBar from './TopBar';
-import AddData from './mainpanels/AddData';
-import MapMenu from './mainpanels/MapMenu';
 import DataComponent from './mainpanels/DataComponent';
 import UserService from '../services/UserService';
+import DataManager from './mainpanels/DataManager';
 
 
 class MainWindow extends Component {
@@ -96,12 +94,12 @@ class MainWindow extends Component {
                                                 <MapComponent ref={this.mapReference} layers={this.state.selectedLayers}/>
                                             )
                                         }} />
-                                        <Route path="/mydata" render={() => {
+                                        <Route path="/select" render={() => {
                                             return(
                                                 <DataComponent loadLayersFun={this.loadSelectedLayers}/>
                                             )
                                         }}/>
-                                        <Route path="/select" component={MapMenu}/>
+                                        <Route path="/mydata" component={DataManager}/>
                                     </div>
                                 </Router>
                         </div>

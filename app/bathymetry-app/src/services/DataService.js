@@ -33,6 +33,8 @@ export default class DataService {
         let formData = new FormData();
         formData.append("file", file);
 
+        console.log(url);
+
         return axios.post(url, formData, this.userService.getConfig());
     }
 }
