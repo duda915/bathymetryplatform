@@ -1,10 +1,13 @@
 package com.mdud.bathymetryplatform.controller;
 
 
+import com.mdud.bathymetryplatform.datamodel.AppUser;
 import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
 import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
-import com.mdud.bathymetryplatform.datamodel.BathymetryMetaDTO;
+import com.mdud.bathymetryplatform.datamodel.BathymetryMeta;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
+import com.mdud.bathymetryplatform.repository.BathymetryMetaRepository;
+import com.mdud.bathymetryplatform.repository.UserRepository;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.*;
@@ -26,6 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,19 +43,23 @@ public class BathymetryDataController {
     private final Logger logger = LoggerFactory.getLogger(BathymetryDataController.class);
 
     private BathymetryDataRepository bathymetryDataRepository;
+    private BathymetryMetaRepository bathymetryMetaRepository;
+    private UserRepository userRepository;
 
-    public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository) {
+    public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository,
+                                    @Autowired BathymetryMetaRepository bathymetryMetaRepository,
+                                    @Autowired UserRepository userRepository) {
         this.bathymetryDataRepository = bathymetryDataRepository;
+        this.bathymetryMetaRepository = bathymetryMetaRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/datasets")
-    private List<BathymetryMetaDTO> getDataSetsMeta() {
-        Iterable<BathymetryCollection> measures = bathymetryDataRepository.findAll();
+    private List<BathymetryMeta> getDataSetsMeta() {
+        Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAll();
+        List<BathymetryMeta> metaList = new ArrayList<>();
 
-        List<BathymetryMetaDTO> metaList = new ArrayList<>();
-        measures.forEach(measure -> {
-            metaList.add(new BathymetryMetaDTO(measure));
-        });
+        dataSets.forEach(metaList::add);
 
         return metaList;
     }
@@ -62,9 +70,11 @@ public class BathymetryDataController {
                               @RequestParam("date") Date acquisitionDate,
                               @RequestParam("owner") String dataOwner,
                               @RequestParam("crs") Integer crs,
-                              @RequestParam("file") MultipartFile data) {
+                              @RequestParam("file") MultipartFile data,
+                              Principal principal) {
         try {
-            BathymetryCollection newCollection = new BathymetryCollection(acquisitionName,
+            AppUser user = userRepository.findDistinctByUsername(principal.getName());
+            BathymetryCollection newCollection = new BathymetryCollection(user, acquisitionName,
                     acquisitionDate, dataOwner);
             List<BathymetryMeasure> measures = new ArrayList<>();
 

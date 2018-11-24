@@ -1,24 +1,23 @@
 package com.mdud.bathymetryplatform.datamodel;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "bathymetry_meta")
 @Data @NoArgsConstructor
-public class BathymetryCollection {
-
+public class BathymetryMeta {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
     @JoinColumn(name = "id", referencedColumnName = "user_id", nullable = false)
+    @JsonIgnore
     private AppUser appUser;
 
     @Column(name = "name")
@@ -30,13 +29,4 @@ public class BathymetryCollection {
     @Column(name = "author")
     private String dataOwner;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "meta_id", referencedColumnName = "id", nullable = false)
-    private List<BathymetryMeasure> measureList;
-
-    public BathymetryCollection(AppUser appUser, String acquisitionName, Date acquisitionDate, String dataOwner) {
-        this.acquisitionName = acquisitionName;
-        this.acquisitionDate = acquisitionDate;
-        this.dataOwner = dataOwner;
-    }
 }

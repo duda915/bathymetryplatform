@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
-import { transformWithProjections } from 'ol/proj';
 import UserService from '../services/UserService';
 
 export default class TopBar extends Component {
@@ -27,7 +26,7 @@ export default class TopBar extends Component {
                     <Button icon="pi pi-bars" onClick={this.props.togglePanel} />
                 </div>
                 <div className="p-toolbar-group-right">
-                <i class="pi pi-user p-toolbar-separator" style={{marginRight: '0'}}></i>
+                <i className="pi pi-user p-toolbar-separator" style={{marginRight: '0'}}></i>
                 <span className="p-toolbar-separator" style={{marginLeft: '0'}}>{this.state.user}</span>
                     <Button icon="pi pi-sign-out" onClick={this.props.logoutFun} />
                 </div>
