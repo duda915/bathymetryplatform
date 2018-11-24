@@ -5,11 +5,10 @@ import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
-import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
-import com.mdud.bathymetryplatform.repository.BathymetryMetaRepository;
-import com.mdud.bathymetryplatform.repository.RoleRepository;
-import com.mdud.bathymetryplatform.repository.UserRepository;
+import com.mdud.bathymetryplatform.repository.*;
 import com.mdud.bathymetryplatform.utility.AppRoles;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import com.vividsolutions.jts.util.GeometricShapeFactory;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.*;
@@ -36,7 +35,6 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @CrossOrigin
 @RestController
@@ -48,15 +46,18 @@ public class BathymetryDataController {
     private BathymetryMetaRepository bathymetryMetaRepository;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
+    private BathymetryMeasureRepository bathymetryMeasureRepository;
 
     public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository,
                                     @Autowired BathymetryMetaRepository bathymetryMetaRepository,
                                     @Autowired UserRepository userRepository,
-                                    @Autowired RoleRepository roleRepository) {
+                                    @Autowired RoleRepository roleRepository,
+                                    @Autowired BathymetryMeasureRepository bathymetryMeasureRepository) {
         this.bathymetryDataRepository = bathymetryDataRepository;
         this.bathymetryMetaRepository = bathymetryMetaRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
+        this.bathymetryMeasureRepository = bathymetryMeasureRepository;
 
     }
 
@@ -111,6 +112,8 @@ public class BathymetryDataController {
             MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
 
             GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), crs);
+            com.vividsolutions.jts.geom.GeometryFactory hibernateGeometryFactory =
+                    new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
 
             String lines[] = new String(data.getBytes(), StandardCharsets.UTF_8).split("\n");
             for(String line : lines) {
@@ -127,9 +130,8 @@ public class BathymetryDataController {
                 geometry = JTS.transform(geometry, transform);
                 Point point = (Point) geometry;
 
-                com.vividsolutions.jts.geom.Point dbPoint = new com.vividsolutions.jts.geom.Point(
-                        new com.vividsolutions.jts.geom.Coordinate(point.getY(), point.getX()),
-                        new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
+                com.vividsolutions.jts.geom.Point dbPoint =
+                        hibernateGeometryFactory.createPoint(new com.vividsolutions.jts.geom.Coordinate(point.getY(), point.getX()));
                 Double depth = Double.valueOf(elementsList.get(2));
 
                 measures.add(new BathymetryMeasure(null, dbPoint, depth));
@@ -212,6 +214,59 @@ public class BathymetryDataController {
         }
 
         bathymetryDataRepository.delete(bathymetryCollection);
+    }
+
+    @GetMapping(value = "/getdata/geometry", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    private ResponseEntity<byte[]> getDataWithinGeometry(@RequestParam("id") Long ids[], @RequestParam("coords") double coords[], HttpServletResponse response) {
+        com.vividsolutions.jts.geom.GeometryFactory geometryFactory =
+                new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(),4326);
+
+        com.vividsolutions.jts.geom.Geometry geometry = geometryFactory.createPolygon(new com.vividsolutions.jts.geom.Coordinate[]{
+                new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[1]),
+                new com.vividsolutions.jts.geom.Coordinate(coords[2], coords[3]),
+                new com.vividsolutions.jts.geom.Coordinate(coords[4], coords[5]),
+                new com.vividsolutions.jts.geom.Coordinate(coords[6], coords[7]),
+                new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[1])
+        });
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("X");
+        builder.append("\t");
+        builder.append("Y");
+        builder.append("\t");
+        builder.append("Z");
+        builder.append("\n");
+
+        List<BathymetryMeasure> bathymetryMeasures = new ArrayList<>();
+
+        for(Long id : ids) {
+            List<BathymetryMeasure> measures = bathymetryMeasureRepository.findAllWithinGeometry(id, geometry).orElse(null);
+            if(measures == null) {
+                break;
+            }
+            measures.forEach(bathymetryMeasures::add);
+        }
+
+        if(bathymetryMeasures.size() == 0) {
+            throw new ResourceNotFoundException("no resources selected");
+        }
+
+        bathymetryMeasures.forEach(bathymetryMeasure -> {
+            builder.append(bathymetryMeasure.getMeasureCoords().getX());
+            builder.append("\t");
+            builder.append(bathymetryMeasure.getMeasureCoords().getY());
+            builder.append("\t");
+            builder.append(bathymetryMeasure.getMeasure());
+            builder.append("\n");
+        });
+
+        byte[] outFile = builder.toString().getBytes(StandardCharsets.UTF_8);
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.add("content-disposition", "attachment; filename=" + "results.txt");
+        responseHeaders.add("Content-Type", "application/json");
+
+        return new ResponseEntity<>(outFile, responseHeaders, HttpStatus.OK);
     }
 
 
