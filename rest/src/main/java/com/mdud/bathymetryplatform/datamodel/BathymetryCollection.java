@@ -1,6 +1,7 @@
 package com.mdud.bathymetryplatform.datamodel;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,8 @@ public class BathymetryCollection {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
+    @JsonIgnore
     private AppUser appUser;
 
     @Column(name = "name")
@@ -35,6 +37,7 @@ public class BathymetryCollection {
     private List<BathymetryMeasure> measureList;
 
     public BathymetryCollection(AppUser appUser, String acquisitionName, Date acquisitionDate, String dataOwner) {
+        this.appUser = appUser;
         this.acquisitionName = acquisitionName;
         this.acquisitionDate = acquisitionDate;
         this.dataOwner = dataOwner;

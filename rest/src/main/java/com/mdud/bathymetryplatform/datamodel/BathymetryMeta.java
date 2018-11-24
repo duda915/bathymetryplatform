@@ -16,7 +16,7 @@ public class BathymetryMeta {
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "id", referencedColumnName = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @JsonIgnore
     private AppUser appUser;
 

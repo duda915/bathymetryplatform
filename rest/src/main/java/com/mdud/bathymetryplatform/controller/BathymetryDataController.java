@@ -52,6 +52,9 @@ public class BathymetryDataController {
         this.bathymetryDataRepository = bathymetryDataRepository;
         this.bathymetryMetaRepository = bathymetryMetaRepository;
         this.userRepository = userRepository;
+
+        bathymetryDataRepository.deleteAll();
+
     }
 
     @GetMapping("/datasets")
@@ -61,6 +64,16 @@ public class BathymetryDataController {
 
         dataSets.forEach(metaList::add);
 
+        return metaList;
+    }
+
+    @GetMapping("/datasets/user")
+    private List<BathymetryMeta> getUserDataSets(Principal principal) {
+        AppUser appUser = userRepository.findDistinctByUsername(principal.getName());
+        Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAllByAppUser(appUser);
+        List<BathymetryMeta> metaList = new ArrayList<>();
+
+        dataSets.forEach(metaList::add);
         return metaList;
     }
 //
@@ -74,6 +87,9 @@ public class BathymetryDataController {
                               Principal principal) {
         try {
             AppUser user = userRepository.findDistinctByUsername(principal.getName());
+
+            logger.info("addNewData by: " + user.getUsername());
+
             BathymetryCollection newCollection = new BathymetryCollection(user, acquisitionName,
                     acquisitionDate, dataOwner);
             List<BathymetryMeasure> measures = new ArrayList<>();
