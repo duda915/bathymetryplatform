@@ -1,12 +1,12 @@
 package com.mdud.bathymetryplatform.controller;
 
 
-import com.mdud.bathymetryplatform.datamodel.AppUser;
-import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
-import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
-import com.mdud.bathymetryplatform.datamodel.BathymetryMeta;
+import com.mdud.bathymetryplatform.datamodel.*;
+import com.mdud.bathymetryplatform.exception.AccessDeniedException;
+import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.BathymetryMetaRepository;
+import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
@@ -45,15 +45,16 @@ public class BathymetryDataController {
     private BathymetryDataRepository bathymetryDataRepository;
     private BathymetryMetaRepository bathymetryMetaRepository;
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository,
                                     @Autowired BathymetryMetaRepository bathymetryMetaRepository,
-                                    @Autowired UserRepository userRepository) {
+                                    @Autowired UserRepository userRepository,
+                                    @Autowired RoleRepository roleRepository) {
         this.bathymetryDataRepository = bathymetryDataRepository;
         this.bathymetryMetaRepository = bathymetryMetaRepository;
         this.userRepository = userRepository;
-
-        bathymetryDataRepository.deleteAll();
+        this.roleRepository = roleRepository;
 
     }
 
@@ -194,7 +195,19 @@ public class BathymetryDataController {
         return new ResponseEntity<>(outFile, responseHeaders, HttpStatus.OK);
     }
 
+    @DeleteMapping("/datasets/user/delete")
+    @ResponseStatus(HttpStatus.OK)
+    private void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
+        AppUser user = userRepository.findDistinctByUsername(principal.getName());
+        BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
+        Role deleteRole = roleRepository.findDistinctByRoleName("DELETE");
 
+        if(bathymetryCollection.getAppUser() != user || user.checkRole(deleteRole)) {
+            throw new AccessDeniedException("insufficient privileges");
+        }
+
+        bathymetryDataRepository.delete(bathymetryCollection);
+    }
 
 
 }

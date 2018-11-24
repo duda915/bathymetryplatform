@@ -42,5 +42,14 @@ public class AppUser {
         this.password = PASSWORD_ENCODER.encode(password);
     }
 
+    public boolean checkRole(Role role) {
+        for(UserRole userRole : userRoles) {
+            if(userRole.getRole().getRoleName() == role.getRoleName()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
