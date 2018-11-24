@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.security;
 
+import com.mdud.bathymetryplatform.utility.AppRoles;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
@@ -16,7 +17,7 @@ public class OAuth2ResourceConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/api/unauth", "/api/user/register").permitAll()
-                .antMatchers("/api/data/*").hasAuthority("ADD")
+                .antMatchers("/api/data/*").hasAuthority(AppRoles.USER)
                 .anyRequest().authenticated();
     }
 }

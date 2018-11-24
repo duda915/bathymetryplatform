@@ -8,6 +8,7 @@ import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.BathymetryMetaRepository;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
+import com.mdud.bathymetryplatform.utility.AppRoles;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.*;
@@ -71,11 +72,19 @@ public class BathymetryDataController {
     @GetMapping("/datasets/user")
     private List<BathymetryMeta> getUserDataSets(Principal principal) {
         AppUser appUser = userRepository.findDistinctByUsername(principal.getName());
-        Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAllByAppUser(appUser);
-        List<BathymetryMeta> metaList = new ArrayList<>();
+        Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
 
-        dataSets.forEach(metaList::add);
-        return metaList;
+        if(!appUser.checkRole(superUserRole)) {
+            Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAllByAppUser(appUser);
+            List<BathymetryMeta> metaList = new ArrayList<>();
+            dataSets.forEach(metaList::add);
+            return metaList;
+        } else {
+            Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAll();
+            List<BathymetryMeta> metaList = new ArrayList<>();
+            dataSets.forEach(metaList::add);
+            return metaList;
+        }
     }
 //
 
@@ -200,9 +209,9 @@ public class BathymetryDataController {
     private void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
         AppUser user = userRepository.findDistinctByUsername(principal.getName());
         BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
-        Role deleteRole = roleRepository.findDistinctByRoleName("DELETE");
+        Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
 
-        if(bathymetryCollection.getAppUser() != user || user.checkRole(deleteRole)) {
+        if(bathymetryCollection.getAppUser() != user && !user.checkRole(superUserRole)) {
             throw new AccessDeniedException("insufficient privileges");
         }
 

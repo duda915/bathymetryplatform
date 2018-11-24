@@ -7,7 +7,7 @@ CREATE TABLE roles(id SERIAL PRIMARY KEY, role_name VARCHAR(25));
 DROP TABLE IF EXISTS user_roles CASCADE;
 CREATE TABLE user_roles (id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES app_user(id), role_id INTEGER REFERENCES roles(id));
 
-INSERT INTO roles(role_name) VALUES ('ADD'), ('DELETE');
+INSERT INTO roles(role_name) VALUES ('USER'), ('SUPERUSER');
 
 -- check geoserver sqlview after this
 DROP TABLE IF EXISTS bathymetry_meta CASCADE;
