@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import {RestFetch} from '../utility/Rest';
 
 import Map from 'ol/Map';
 import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS.js';
+import ServiceMeta from '../../services/ServiceMeta';
 
 export default class MapComponent extends Component{
     constructor(props) {
@@ -16,10 +16,14 @@ export default class MapComponent extends Component{
         this.wmsSource = null;
         this.olOnClickFunction = null;
         this.olView = null;
+
+        this.olGenerateGetFeatureInfoFunction = this.olGenerateGetFeatureInfoFunction.bind(this);
+        this.serviceMeta = new ServiceMeta();
     }
 
     componentDidMount() {
         this.initOpenLayers();
+        this.loadLayer(this.props.layers);
     }
 
     initOpenLayers() {
@@ -43,11 +47,24 @@ export default class MapComponent extends Component{
         });
     }
 
-    loadLayer(id) {
+    loadLayer(layersId) {
+        let selection = 'selection:' + layersId[0]; 
+        for(let i = 1; i < layersId.length; i++) {
+            selection += "\\," + layersId[i];
+        }
+
+        let wmsParams = {
+            'LAYERS': 'bathymetry:bathymetry',
+            'TILED': true,
+            'viewparams': selection,
+            'width': '200',
+            'height': '200'
+        };
+
         this.prepareLayerChange();
         this.wmsSource = new TileWMS({
-            url: RestFetch.geoserver,
-            params: {'LAYERS': 'bathymetry:bathymetry', 'TILED': true, 'viewparams': 'selection:'+id, 'width': '200', 'height': '200'},
+            url: this.serviceMeta.getGeoServerServiceAddress(),
+            params: wmsParams,
             serverType: 'geoserver',
             transition: 0
           }) 
@@ -67,7 +84,7 @@ export default class MapComponent extends Component{
     }
 
     olGenerateGetFeatureInfoFunction(evt) {
-        let viewResolution = /** @type {number} */ (this.olView.getResolution());
+        let viewResolution = this.olView.getResolution();
         let url = this.wmsSource.getGetFeatureInfoUrl(
             evt.coordinate, viewResolution, 'EPSG:3857',
             {'INFO_FORMAT': 'application/json'});

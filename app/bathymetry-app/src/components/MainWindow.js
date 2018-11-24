@@ -24,13 +24,16 @@ class MainWindow extends Component {
         this.state = {
             username: '',
             menuVisible: true,
+            selectedLayers: [0],
         };
 
         this.handleLogout = this.handleLogout.bind(this);
         this.togglePanel = this.togglePanel.bind(this);
 
-        this.mapRefreshRef = React.createRef();
+        this.mapReference = React.createRef();
         this.userService = new UserService();
+
+        this.loadSelectedLayers = this.loadSelectedLayers.bind(this);
     }
 
     componentDidMount() {
@@ -55,9 +58,15 @@ class MainWindow extends Component {
     }
 
     tryMapSizeUpdate() {
-        if (this.mapRefreshRef.current != null) {
-            this.mapRefreshRef.current.updateMapSize();
+        if (this.mapReference.current != null) {
+            this.mapReference.current.updateMapSize();
         }
+    }
+
+    loadSelectedLayers(ids) {
+        this.setState({
+            selectedLayers: ids,
+        })
     }
 
     render() {
@@ -84,10 +93,14 @@ class MainWindow extends Component {
                                     <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}> 
                                         <Route exact path="/" render={() => {
                                             return(
-                                                <MapComponent ref={this.mapRefreshRef}/>
+                                                <MapComponent ref={this.mapReference} layers={this.state.selectedLayers}/>
                                             )
                                         }} />
-                                        <Route path="/mydata" component={DataComponent}/>
+                                        <Route path="/mydata" render={() => {
+                                            return(
+                                                <DataComponent loadLayersFun={this.loadSelectedLayers}/>
+                                            )
+                                        }}/>
                                         <Route path="/select" component={MapMenu}/>
                                     </div>
                                 </Router>
