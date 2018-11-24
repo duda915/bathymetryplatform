@@ -4,12 +4,13 @@ import {Panel} from 'primereact/panel';
 import {InputText} from 'primereact/inputtext';
 import {Password} from 'primereact/password';
 import {Button} from 'primereact/button';
+import {Growl} from 'primereact/growl';
 
-import 'primereact/resources/primereact.min.css';
-import 'primereact/resources/themes/nova-colored/theme.css';
-import 'primeflex/primeflex.css';
-import 'primeicons/primeicons.css';
+
+
 import UserService from '../services/UserService';
+import LoadingComponent from './utility/LoadingComponent';
+import { toStringHDMS } from 'ol/coordinate';
 
 
 class LoginControl extends Component {
@@ -24,7 +25,6 @@ class LoginControl extends Component {
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.getToken = this.getToken.bind(this);
 
         this.userService = new UserService();
     }
@@ -41,26 +41,30 @@ class LoginControl extends Component {
 
     handleSubmit(event) {
         event.preventDefault();
-
+        this.progress.showProgress(true);
         this.userService.loginUser(this.state.username, this.state.password)
-        .then(response => this.props.changeLoginState(true));
-    }
-
-    getToken() {
-        // RestFetch.getLoginToken(this.state.username, this.state.password, this.props.changeLoginState.bind(null, true));
+        .then(response => {
+            this.props.changeLoginState(true);
+        })
+        .catch(response => {
+            this.progress.showProgress(false);
+            this.growl.show({severity: 'error', summary: 'Error', detail:'Wrong credentials.', closable: false})
+        });
     }
 
     componentDidMount() {
-        //instant login
-        // RestFetch.getUsername(this.props.changeLoginState.bind(null, true), null);
+        this.progress.showProgress(true);
         this.userService.getUser()
-        .then(response => this.props.changeLoginState(true));
+        .then(response => this.props.changeLoginState(true))
+        .catch(response => this.progress.showProgress(false));
     }
 
     render() {
         return(
             <div className="loginControl">
-                <div className="p-grid p-fluid" >
+                <Growl ref={(ref) => this.growl = ref} />
+                <LoadingComponent ref={(ref) => this.progress = ref}/>
+                <div className="p-grid p-nogutter p-fluid" >
                 
                     {/* first row */}
                     <div className="p-col-12" style={{height: '25vh'}}></div>

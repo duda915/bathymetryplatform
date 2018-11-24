@@ -26,18 +26,17 @@ export default class UserService {
         };
 
         return axios.post(this.tokenEndpoint, formData, loginConfig)
-        .then(response => {
-            let accessTokenExpireDate = new Date();
-            accessTokenExpireDate.setTime(accessTokenExpireDate.getTime() + 60*60*1000)
-            this.cookie.set("access_token", response.data.access_token, {path: '/', expires: accessTokenExpireDate});
-            
-            let refreshTokenExpireDate = new Date();
-            refreshTokenExpireDate.setTime(refreshTokenExpireDate.getDate + 24*60*60*1000);
-            this.cookie.set("refresh_token", response.data.refresh_token, {path: '/', expires: refreshTokenExpireDate});
+        .then(response => this.saveTokens(response));
+    }
 
-
-
-        })
+    saveTokens(tokenResponse) {
+        let accessTokenExpireDate = new Date();
+        accessTokenExpireDate.setTime(accessTokenExpireDate.getTime() + 60*60*1000)
+        this.cookie.set("access_token", tokenResponse.data.access_token, {path: '/', expires: accessTokenExpireDate});
+        
+        let refreshTokenExpireDate = new Date();
+        refreshTokenExpireDate.setTime(refreshTokenExpireDate.getDate + 24*60*60*1000);
+        this.cookie.set("refresh_token", tokenResponse.data.refresh_token, {path: '/', expires: refreshTokenExpireDate});
     }
 
     getConfig() {
