@@ -72,7 +72,7 @@ export default class DataManager extends Component {
     render() {
         return (
             <div className="p-grid p-nogutter p-fluid bathymetry-app-padding">
-                <div className="p-col-12 p-lg-2">
+                <div className="p-col-12 p-lg-3">
                     <Panel header="Add Data">
                         <form onSubmit={this.handleSubmit} autoComplete="off">
                             <div className="p-grid">
