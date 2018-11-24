@@ -3,6 +3,7 @@ package com.mdud.bathymetryplatform.controller;
 
 import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
+import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.BathymetryMetaRepository;
@@ -89,12 +90,13 @@ public class BathymetryDataController {
 //
 
     @PostMapping("/add")
-    private String addNewData(@RequestParam("name") String acquisitionName,
+    @ResponseStatus(HttpStatus.OK)
+    private void addNewData(@RequestParam("name") String acquisitionName,
                               @RequestParam("date") Date acquisitionDate,
                               @RequestParam("owner") String dataOwner,
                               @RequestParam("crs") Integer crs,
                               @RequestParam("file") MultipartFile data,
-                              Principal principal) {
+                              Principal principal) throws ResourceAddException {
         try {
             AppUser user = userRepository.findDistinctByUsername(principal.getName());
 
@@ -134,17 +136,16 @@ public class BathymetryDataController {
             }
             newCollection.setMeasureList(measures);
             bathymetryDataRepository.save(newCollection);
-            
-            return "OK";
-        } catch (IOException e) {
-            return "File reading error";
+        } catch (NumberFormatException e) {
+            throw new ResourceAddException("data parsing error");
         } catch (NoSuchAuthorityCodeException e) {
-            e.printStackTrace();
-            return "Wrong EPSG code";
+            throw new ResourceAddException("wrong epsg code");
         } catch (FactoryException e) {
-            return "GT error";
+            throw new ResourceAddException("geotools error");
         } catch (TransformException e) {
-            return "Transform error";
+            throw new ResourceAddException("data transformation error");
+        } catch (IOException e) {
+            throw new ResourceAddException("data format unrecognized");
         }
 
     }
@@ -166,32 +167,27 @@ public class BathymetryDataController {
         data.append("owner");
         data.append("\n");
 
-        try {
-            for (Long id : ids) {
-                BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new NoSuchElementException("Wrong id"));
-                bathymetryCollection.getMeasureList().forEach(measure -> {
-                    data.append(measure.getMeasureCoords().getX());
-                    data.append("\t");
+        for (Long id : ids) {
+            BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
+            bathymetryCollection.getMeasureList().forEach(measure -> {
+                data.append(measure.getMeasureCoords().getX());
+                data.append("\t");
 
-                    data.append(measure.getMeasureCoords().getY());
-                    data.append("\t");
+                data.append(measure.getMeasureCoords().getY());
+                data.append("\t");
 
-                    data.append(measure.getMeasure());
-                    data.append("\t");
+                data.append(measure.getMeasure());
+                data.append("\t");
 
-                    data.append(bathymetryCollection.getAcquisitionName());
-                    data.append("\t");
+                data.append(bathymetryCollection.getAcquisitionName());
+                data.append("\t");
 
-                    data.append(bathymetryCollection.getAcquisitionDate());
-                    data.append("\t");
+                data.append(bathymetryCollection.getAcquisitionDate());
+                data.append("\t");
 
-                    data.append(bathymetryCollection.getDataOwner());
-                    data.append("\n");
-                });
-            }
-        } catch (NoSuchElementException e) {
-            logger.info("Wrong id in getdata request - aborting file generation");
-            return new ResponseEntity<>("Wrong id".getBytes(), null,  HttpStatus.BAD_REQUEST);
+                data.append(bathymetryCollection.getDataOwner());
+                data.append("\n");
+            });
         }
 
 
