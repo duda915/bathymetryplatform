@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     HashRouter as Router,
     Route,
-  } from 'react-router-dom';
+} from 'react-router-dom';
 import CSSTransition from 'react-transition-group/CSSTransition';
 
 import { ScrollPanel } from 'primereact/scrollpanel';
@@ -40,12 +40,12 @@ class MainWindow extends Component {
 
     fetchUsername() {
         this.userService.getUser()
-        .then(response => this.setState({username: response.data}));
+            .then(response => this.setState({ username: response.data }));
     }
 
     handleLogout() {
         this.userService.logoutUser()
-        .then(response => this.props.changeLoginState(false));
+            .then(response => this.props.changeLoginState(false));
     }
 
     togglePanel() {
@@ -77,12 +77,12 @@ class MainWindow extends Component {
                         onExited={() => this.tryMapSizeUpdate()}>
                         <ScrollPanel className="p-col-fixed menuslide-init leftmenu">
 
-                        <div className="p-grid p-justify-center">
-                        <div className="p-col-12" style={{height: '10vh'}}/>
-                        <div className="p-col">
-                            <MenuPanel logoutFun={this.handleLogout} />
-                        </div>
-                        </div>
+                            <div className="p-grid p-justify-center">
+                                <div className="p-col-12" style={{ height: '10vh' }} />
+                                <div className="p-col ">
+                                    <MenuPanel logoutFun={this.handleLogout} />
+                                </div>
+                            </div>
                         </ScrollPanel>
                     </CSSTransition>
 
@@ -93,21 +93,21 @@ class MainWindow extends Component {
                                 <TopBar togglePanel={this.togglePanel} logoutFun={this.handleLogout} />
                             </div>
                             {/* main panel */}
-                                <Router>
-                                    <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}> 
-                                        <Route exact path="/" render={() => {
-                                            return(
-                                                <MapComponent ref={this.mapReference} layers={this.state.selectedLayers}/>
-                                            )
-                                        }} />
-                                        <Route path="/select" render={() => {
-                                            return(
-                                                <DataComponent loadLayersFun={this.loadSelectedLayers}/>
-                                            )
-                                        }}/>
-                                        <Route path="/mydata" component={DataManager}/>
-                                    </div>
-                                </Router>
+                            <Router>
+                                <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}>
+                                    <Route exact path="/" render={() => {
+                                        return (
+                                            <MapComponent ref={this.mapReference} layers={this.state.selectedLayers} />
+                                        )
+                                    }} />
+                                    <Route path="/select" render={() => {
+                                        return (
+                                            <DataComponent loadLayersFun={this.loadSelectedLayers} />
+                                        )
+                                    }} />
+                                    <Route path="/mydata" component={DataManager} />
+                                </div>
+                            </Router>
                         </div>
                     </div>
                 </div>

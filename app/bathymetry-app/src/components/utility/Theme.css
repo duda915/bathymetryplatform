@@ -2,6 +2,19 @@
     background: #005494;
 }
 
+.leftmenu-container{
+    border: 0 !important;
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+.leftmenu-container .p-submenu-header{
+    border: 0 !important;
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+}
+
 .font-color {
     color: white;
 }
