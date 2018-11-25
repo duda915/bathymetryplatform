@@ -43,6 +43,10 @@ public class BathymetryDataParser {
         List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
         elementsList.removeAll(Arrays.asList(""));
 
+        if(elementsList.size() == 0) {
+            return null;
+        }
+
         //0 - x, 1 - y 2 - z
         Double x = Double.valueOf(elementsList.get(0));
         Double y = Double.valueOf(elementsList.get(1));

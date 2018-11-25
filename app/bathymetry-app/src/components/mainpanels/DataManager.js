@@ -149,7 +149,7 @@ export default class DataManager extends Component {
                                         </div>
                                     </div>
                                     <div className="p-col-12">
-                                        <FileUpload mode="basic" accept="*" maxFileSize={10000000} onSelect={this.onFileSelect} onBeforeSend={this.onSelectAbort} />
+                                        <FileUpload mode="basic" accept="*" maxFileSize={50000000} onSelect={this.onFileSelect} onBeforeSend={this.onSelectAbort} />
                                     </div>
                                     <div className="p-col-12">
                                         <Button label="Upload" type="submit" />

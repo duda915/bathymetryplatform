@@ -120,11 +120,10 @@ public class BathymetryDataController {
 
             for(int i = 1; i < lines.length; i++) {
                 BathymetryMeasureDTO measureDTO = dataParser.parsePoint(lines[i]);
+                if(measureDTO == null)
+                    continue;
                 measures.add(new BathymetryMeasure(measureDTO));
 
-                if(i % 50 == 0) {
-
-                }
             }
 
 //            newCollection.setMeasureList(measures);
