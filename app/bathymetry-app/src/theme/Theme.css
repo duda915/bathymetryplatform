@@ -1,23 +1,37 @@
 .leftmenu {
-    background: #005494;
+    background: #292929;
 }
 
 .leftmenu-container{
-    border: 0 !important;
+    border: 0px !important;
+    border-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    width: 250px;
+}
+.leftmenu-container .p-submenu-header{
+
     border-radius: 0 !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
 }
-.leftmenu-container .p-submenu-header{
-    border: 0 !important;
+
+.leftmenu-container .p-menuitem-link{
+    /* background: #f4f4f4; */
     border-radius: 0 !important;
     border-top-left-radius: 0 !important;
     border-top-right-radius: 0 !important;
+}
+
+.main-window {
+    background: #f4f4f4;
 }
 
 .font-color {
     color: white;
 }
+
+/* #005597 */
 
 .loading-container {
     display: block;

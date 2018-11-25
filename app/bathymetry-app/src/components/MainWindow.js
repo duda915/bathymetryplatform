@@ -78,7 +78,7 @@ class MainWindow extends Component {
                         <ScrollPanel className="p-col-fixed menuslide-init leftmenu">
 
                             <div className="p-grid p-justify-center">
-                                <div className="p-col-12" style={{ height: '10vh' }} />
+                                <div className="p-col-12" style={{ height: '15vh' }} />
                                 <div className="p-col ">
                                     <MenuPanel logoutFun={this.handleLogout} />
                                 </div>
@@ -86,7 +86,7 @@ class MainWindow extends Component {
                         </ScrollPanel>
                     </CSSTransition>
 
-                    <div className="p-col">
+                    <div className="p-col main-window">
                         <div className="p-grid p-nogutter">
                             <div className="p-col-12" style={{ height: '50px' }}>
                                 {/* main bar */}

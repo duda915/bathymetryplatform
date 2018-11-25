@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import LoginControl from './components/LoginControl';
 import MainWindow from './components/MainWindow';
 import 'primereact/resources/primereact.min.css';
-import 'primereact/resources/themes/nova-colored/theme.css';
+import './theme/PrimeReactTheme.scss';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 
-import './components/utility/Utility.css';
-import './components/utility/Theme.css';
+import './theme/Theme.css';
+import './theme/Utility.css';
 
 class App extends Component {
   constructor(props) {
