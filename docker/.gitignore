@@ -1,0 +1,7 @@
+second/nodecontainer/public/
+second/nodecontainer/node_modules/
+second/nodecontainer/src/
+second/nodecontainer/package.json
+second/nodecontainer/package-lock.json
+second/nodecontainer/README.md
+second/restcontainer/*.jar

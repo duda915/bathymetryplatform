@@ -1,0 +1,22 @@
+version: '3.5'
+services:
+  postgiscontainer:
+    container_name: postgis
+    image: kartoza/postgis
+    ports:
+      - "5432:5432"
+    networks:
+      - appnetwork
+  geoservercontainer:
+    container_name: geoserver
+    image: kartoza/geoserver
+    ports:
+    - "8081:8080"
+    networks:
+    - appnetwork
+    depends_on:
+      - postgiscontainer
+networks:
+  appnetwork:
+    driver: bridge
+    name: appnet
