@@ -1,6 +1,7 @@
 package com.mdud.bathymetryplatform.controller;
 
 
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataParser;
 import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
@@ -107,37 +108,34 @@ public class BathymetryDataController {
                     acquisitionDate, dataOwner);
             List<BathymetryMeasure> measures = new ArrayList<>();
 
-            CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + crs.toString());
-            CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
-            MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS);
+            BathymetryDataParser dataParser = new BathymetryDataParser(crs);
 
-            GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), crs);
-            com.vividsolutions.jts.geom.GeometryFactory hibernateGeometryFactory =
-                    new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
+            double parsingStart = System.currentTimeMillis();
 
             String lines[] = new String(data.getBytes(), StandardCharsets.UTF_8).split("\n");
-            for(String line : lines) {
-                String elements[] = line.replaceAll("\\s+", " ").split(" ");
 
-                List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
-                elementsList.removeAll(Arrays.asList(""));
-
-                //0 - x, 1 - y 2 - z
-                Double x = Double.valueOf(elementsList.get(0));
-                Double y = Double.valueOf(elementsList.get(1));
-
-                Geometry geometry = geometryFactory.createPoint(new Coordinate(x, y));
-                geometry = JTS.transform(geometry, transform);
-                Point point = (Point) geometry;
-
-                com.vividsolutions.jts.geom.Point dbPoint =
-                        hibernateGeometryFactory.createPoint(new com.vividsolutions.jts.geom.Coordinate(point.getY(), point.getX()));
-                Double depth = Double.valueOf(elementsList.get(2));
-
-                measures.add(new BathymetryMeasure(null, dbPoint, depth));
+            try {
+                BathymetryMeasureDTO headerCheck = dataParser.parsePoint(lines[0]);
+                measures.add(new BathymetryMeasure(headerCheck));
+            } catch (NumberFormatException e) {
+                logger.info("Cannot parse first line of file - header?");
             }
+
+            for(int i = 1; i < lines.length; i++) {
+                BathymetryMeasureDTO measureDTO = dataParser.parsePoint(lines[i]);
+                measures.add(new BathymetryMeasure(measureDTO));
+            }
+
             newCollection.setMeasureList(measures);
+
+            double parsingEnd = System.currentTimeMillis() - parsingStart;
+            double persistenceStart = System.currentTimeMillis();
+            logger.info("Parsing time: " + parsingEnd);
+
             bathymetryDataRepository.save(newCollection);
+
+            double persistenceEnd = System.currentTimeMillis() - persistenceStart;
+            logger.info("Persistence time: " + persistenceEnd);
         } catch (NumberFormatException e) {
             throw new ResourceAddException("data parsing error");
         } catch (NoSuchAuthorityCodeException e) {

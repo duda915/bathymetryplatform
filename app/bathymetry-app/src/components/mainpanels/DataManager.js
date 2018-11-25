@@ -89,6 +89,7 @@ export default class DataManager extends Component {
             })
             .catch(error => {
                 this.growl.show({severity: 'error', summary: 'Error', detail: 'File upload failed', closable: false})
+                console.log(error.response);
             })
             .finally(response => {
                 this.progress.showProgress(false);

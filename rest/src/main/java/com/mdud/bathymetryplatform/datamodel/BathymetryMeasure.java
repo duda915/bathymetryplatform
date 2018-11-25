@@ -30,4 +30,9 @@ public class BathymetryMeasure {
         this.measureCoords = measureCoords;
         this.measure = measure;
     }
+
+    public BathymetryMeasure(BathymetryMeasureDTO bathymetryMeasureDTO) {
+        this.measureCoords = bathymetryMeasureDTO.getMeasureCoords();
+        this.measure = bathymetryMeasureDTO.getMeasure();
+    }
 }
