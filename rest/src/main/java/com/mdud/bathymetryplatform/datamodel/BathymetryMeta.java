@@ -29,4 +29,11 @@ public class BathymetryMeta {
     @Column(name = "author")
     private String dataOwner;
 
+    public BathymetryMeta(AppUser appUser, String acquisitionName, Date acquisitionDate, String dataOwner) {
+        this.appUser = appUser;
+        this.acquisitionName = acquisitionName;
+        this.acquisitionDate = acquisitionDate;
+        this.dataOwner = dataOwner;
+    }
+
 }

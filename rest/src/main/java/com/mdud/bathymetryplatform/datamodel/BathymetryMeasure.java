@@ -16,7 +16,7 @@ public class BathymetryMeasure {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long gid;
 
-    @Column(name = "meta_id", insertable = false, updatable = false)
+    @Column(name = "meta_id", updatable = false)
     private Long metaId;
 
     @Column(name = "coords")

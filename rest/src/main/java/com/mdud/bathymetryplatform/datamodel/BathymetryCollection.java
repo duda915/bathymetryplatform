@@ -33,7 +33,7 @@ public class BathymetryCollection {
     private String dataOwner;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "meta_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "meta_id", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
     private List<BathymetryMeasure> measureList;
 
     public BathymetryCollection(AppUser appUser, String acquisitionName, Date acquisitionDate, String dataOwner) {

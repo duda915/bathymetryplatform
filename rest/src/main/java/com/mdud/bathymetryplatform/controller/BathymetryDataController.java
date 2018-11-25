@@ -8,15 +8,8 @@ import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.repository.*;
 import com.mdud.bathymetryplatform.utility.AppRoles;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.util.GeometricShapeFactory;
-import org.geotools.geometry.jts.JTS;
-import org.geotools.referencing.CRS;
-import org.locationtech.jts.geom.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +21,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @CrossOrigin
@@ -48,17 +42,20 @@ public class BathymetryDataController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private BathymetryMeasureRepository bathymetryMeasureRepository;
+    private EntityManagerFactory entityManagerFactory;
 
     public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository,
                                     @Autowired BathymetryMetaRepository bathymetryMetaRepository,
                                     @Autowired UserRepository userRepository,
                                     @Autowired RoleRepository roleRepository,
-                                    @Autowired BathymetryMeasureRepository bathymetryMeasureRepository) {
+                                    @Autowired BathymetryMeasureRepository bathymetryMeasureRepository,
+                                    @Autowired EntityManagerFactory entityManagerFactory) {
         this.bathymetryDataRepository = bathymetryDataRepository;
         this.bathymetryMetaRepository = bathymetryMetaRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bathymetryMeasureRepository = bathymetryMeasureRepository;
+        this.entityManagerFactory = entityManagerFactory;
 
     }
 
@@ -104,7 +101,7 @@ public class BathymetryDataController {
 
             logger.info("addNewData by: " + user.getUsername());
 
-            BathymetryCollection newCollection = new BathymetryCollection(user, acquisitionName,
+            BathymetryMeta newCollection = new BathymetryMeta(user, acquisitionName,
                     acquisitionDate, dataOwner);
             List<BathymetryMeasure> measures = new ArrayList<>();
 
@@ -124,18 +121,41 @@ public class BathymetryDataController {
             for(int i = 1; i < lines.length; i++) {
                 BathymetryMeasureDTO measureDTO = dataParser.parsePoint(lines[i]);
                 measures.add(new BathymetryMeasure(measureDTO));
+
+                if(i % 50 == 0) {
+
+                }
             }
 
-            newCollection.setMeasureList(measures);
+//            newCollection.setMeasureList(measures);
 
             double parsingEnd = System.currentTimeMillis() - parsingStart;
             double persistenceStart = System.currentTimeMillis();
             logger.info("Parsing time: " + parsingEnd);
 
-            bathymetryDataRepository.save(newCollection);
+//            bathymetryDataRepository.save(newCollection);
+            //new save
+            EntityManager entityManager = entityManagerFactory.createEntityManager();
+            entityManager.getTransaction().begin();
+            entityManager.persist(newCollection);
+            entityManager.flush();
+            entityManager.clear();
+            for(int i = 0; i < measures.size(); i++) {
+                measures.get(i).setMetaId(newCollection.getId());
+                entityManager.persist(measures.get(i));
+                if(i % 50 == 0) {
+                    entityManager.flush();
+                    entityManager.clear();
+                }
+            }
+            entityManager.getTransaction().commit();
+            entityManager.close();
 
             double persistenceEnd = System.currentTimeMillis() - persistenceStart;
             logger.info("Persistence time: " + persistenceEnd);
+
+
+
         } catch (NumberFormatException e) {
             throw new ResourceAddException("data parsing error");
         } catch (NoSuchAuthorityCodeException e) {
