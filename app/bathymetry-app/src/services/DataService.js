@@ -13,6 +13,7 @@ export default class DataService {
         this.addDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/add";
         this.downloadDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/getdata";
         this.deleteUserDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/user/delete";
+        this.downloadSelectedDataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/getdata/geometry";
 
         this.cookie = new Cookies();
         this.userService = new UserService();
@@ -33,6 +34,23 @@ export default class DataService {
         .then(response => {
             downloadjs(response.data, "bathymetry"+id+".csv", "text/plain");
         })
+    }
+
+    async downloadSelectedDataSets(ids, polygon) {
+        let url = new URL(this.downloadSelectedDataSetsEndpoint);
+        url+="?";
+        
+        ids.forEach(element => {
+            url+=("id="+element+"&");
+        });
+
+        polygon.forEach(element => {
+            url+=("coords="+element+"&");
+        })
+
+        console.log(polygon);
+
+        return axios.get(url, this.userService.getConfig());
     }
 
     async addData(params, file) {
@@ -58,5 +76,9 @@ export default class DataService {
         url.search = new URLSearchParams(params);
 
         return axios.delete(url, this.userService.getConfig());
+    }
+
+    async geoserverGetFeatureInfo(url) {
+        return axios.get(url);
     }
 }

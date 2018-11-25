@@ -123,7 +123,7 @@ export default class DataManager extends Component {
                                     <div className="p-col-12">
                                         <div className="p-inputgroup">
                                             <span className="p-inputgroup-addon">
-                                                <i className="pi pi-user"></i>
+                                                <i className="pi pi-tag"></i>
                                             </span>
                                             <InputText placeholder="Data name" name="dataName" value={this.state.dataName} onChange={this.handleChange}></InputText>
                                         </div>
@@ -142,7 +142,7 @@ export default class DataManager extends Component {
                                     <div className="p-col-12">
                                         <div className="p-inputgroup">
                                             <span className="p-inputgroup-addon">
-                                                <i className="pi pi-user"></i>
+                                                <i className="pi pi-globe"></i>
                                             </span>
                                             <InputText placeholder="EPSG" name="crs" value={this.state.crs} onChange={this.handleChange}></InputText>
                                         </div>

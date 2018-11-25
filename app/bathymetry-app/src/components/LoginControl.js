@@ -10,7 +10,6 @@ import {Growl} from 'primereact/growl';
 
 import UserService from '../services/UserService';
 import LoadingComponent from './utility/LoadingComponent';
-import { toStringHDMS } from 'ol/coordinate';
 
 
 class LoginControl extends Component {

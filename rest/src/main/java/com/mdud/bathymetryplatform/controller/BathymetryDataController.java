@@ -223,9 +223,9 @@ public class BathymetryDataController {
 
         com.vividsolutions.jts.geom.Geometry geometry = geometryFactory.createPolygon(new com.vividsolutions.jts.geom.Coordinate[]{
                 new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[1]),
+                new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[3]),
                 new com.vividsolutions.jts.geom.Coordinate(coords[2], coords[3]),
-                new com.vividsolutions.jts.geom.Coordinate(coords[4], coords[5]),
-                new com.vividsolutions.jts.geom.Coordinate(coords[6], coords[7]),
+                new com.vividsolutions.jts.geom.Coordinate(coords[2], coords[1]),
                 new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[1])
         });
 
