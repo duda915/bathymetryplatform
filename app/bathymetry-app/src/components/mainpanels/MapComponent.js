@@ -14,6 +14,7 @@ import {Growl} from 'primereact/growl';
 import {Dialog} from 'primereact/dialog';
 import {Button} from 'primereact/button';
 import downloadjs from 'downloadjs';
+import LoadingComponent from '../utility/LoadingComponent';
 
 export default class MapComponent extends Component {
     constructor(props) {
@@ -73,6 +74,9 @@ export default class MapComponent extends Component {
         dragBox.on('boxend', function () {
             // features that intersect the box are added to the collection of
             // selected features
+
+            this.progress.showProgress(true);
+
             let extent = dragBox.getGeometry().getExtent();
             let transformed = transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
             console.log(extent);
@@ -83,7 +87,11 @@ export default class MapComponent extends Component {
                 let records = response.data.split(/\r\n|\r|\n/).length - 2;
                 this.setState({selectionData: response.data, selectionRecords: records}, callback => this.setState({downloadDialog: true}))
             })
-            .catch(error => console.log(error.response))
+            .catch(error => {
+                console.log(error.response)
+                this.growl.show({severity: 'info', summary: 'No data', detail: 'No data found within polygon'})
+            })
+            .finally(e => this.progress.showProgress(false));
         }.bind(this));
 
     }
@@ -170,6 +178,7 @@ export default class MapComponent extends Component {
 
         return (
             <div className="mapComponent" style={{ height: '100%' }}>
+            <LoadingComponent ref={(ref) => this.progress = ref}/>
             <Dialog header="Download selection" footer={dialogFooter} visible={this.state.downloadDialog} width="350px" modal={true} onHide={this.hideDialog}>
                 Found {this.state.selectionRecords} records.
             </Dialog>

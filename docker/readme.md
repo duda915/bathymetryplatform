@@ -8,6 +8,7 @@
 1. Start docker-compose in first/
 2. Wait for full postgis start and run initdb.sh in first/postgiscontainer
 3. Bash to geoserver $CATALINA_HOME/webapps/geoserver/WEB-INF
+4. Change serviceStrategy to SPEED
 4. Paste <filter> from first/geoservercontainer/cors.xml to web.xml BEFORE first <filter-mapping>
 5. Paste <filter-mapping> from cors.xml to web.xml AFTER first <filter-mapping>
 5. Go to geoserver website login as admin:geoserver
