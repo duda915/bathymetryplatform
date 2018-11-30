@@ -259,7 +259,7 @@ public class BathymetryDataController {
         for(Long id : ids) {
             List<BathymetryMeasure> measures = bathymetryMeasureRepository.findAllWithinGeometry(id, geometry).orElse(null);
             if(measures == null) {
-                break;
+                continue;
             }
             measures.forEach(bathymetryMeasures::add);
         }

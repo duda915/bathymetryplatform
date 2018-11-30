@@ -116,7 +116,8 @@ export default class MapComponent extends Component {
             'TILED': true,
             'viewparams': selection,
             'width': '200',
-            'height': '200'
+            'height': '200',
+            'format': 'image/png8'
         };
 
         this.prepareLayerChange();
