@@ -2,12 +2,19 @@ package com.mdud.bathymetryplatform.controller;
 
 
 import com.mdud.bathymetryplatform.bathymetry.BathymetryDataParser;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryFileBuilder;
 import com.mdud.bathymetryplatform.datamodel.*;
+import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
+import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMetaDTO;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.repository.*;
-import com.mdud.bathymetryplatform.utility.AppRoles;
+import com.mdud.bathymetryplatform.security.AppRoles;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -38,20 +45,17 @@ public class BathymetryDataController {
     private final Logger logger = LoggerFactory.getLogger(BathymetryDataController.class);
 
     private BathymetryDataRepository bathymetryDataRepository;
-    private BathymetryMetaRepository bathymetryMetaRepository;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private BathymetryMeasureRepository bathymetryMeasureRepository;
     private EntityManagerFactory entityManagerFactory;
 
     public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository,
-                                    @Autowired BathymetryMetaRepository bathymetryMetaRepository,
                                     @Autowired UserRepository userRepository,
                                     @Autowired RoleRepository roleRepository,
                                     @Autowired BathymetryMeasureRepository bathymetryMeasureRepository,
                                     @Autowired EntityManagerFactory entityManagerFactory) {
         this.bathymetryDataRepository = bathymetryDataRepository;
-        this.bathymetryMetaRepository = bathymetryMetaRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bathymetryMeasureRepository = bathymetryMeasureRepository;
@@ -60,33 +64,27 @@ public class BathymetryDataController {
     }
 
     @GetMapping("/datasets")
-    private List<BathymetryMeta> getDataSetsMeta() {
-        Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAll();
-        List<BathymetryMeta> metaList = new ArrayList<>();
-
-        dataSets.forEach(metaList::add);
-
-        return metaList;
+    private List<BathymetryMetaDTO> getDataSetsMeta() {
+        List<BathymetryMetaDTO> dataSets = new ArrayList<>();
+        bathymetryDataRepository.findAll().forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
+        return dataSets;
     }
 
     @GetMapping("/datasets/user")
-    private List<BathymetryMeta> getUserDataSets(Principal principal) {
+    private List<BathymetryMetaDTO> getUserDataSets(Principal principal) {
         AppUser appUser = userRepository.findDistinctByUsername(principal.getName());
         Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
 
+        List<BathymetryMetaDTO> dataSets = new ArrayList<>();
+
         if(!appUser.checkRole(superUserRole)) {
-            Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAllByAppUser(appUser);
-            List<BathymetryMeta> metaList = new ArrayList<>();
-            dataSets.forEach(metaList::add);
-            return metaList;
+            bathymetryDataRepository.findAllByAppUser(appUser).forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
+            return dataSets;
         } else {
-            Iterable<BathymetryMeta> dataSets = bathymetryMetaRepository.findAll();
-            List<BathymetryMeta> metaList = new ArrayList<>();
-            dataSets.forEach(metaList::add);
-            return metaList;
+            bathymetryDataRepository.findAll().forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
+            return dataSets;
         }
     }
-//
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.OK)
@@ -101,8 +99,11 @@ public class BathymetryDataController {
 
             logger.info("addNewData by: " + user.getUsername());
 
-            BathymetryMeta newCollection = new BathymetryMeta(user, acquisitionName,
-                    acquisitionDate, dataOwner);
+            String layerName = user.getUsername() + acquisitionName.hashCode();
+
+            BathymetryCollection newCollection = new BathymetryCollection(null, user, acquisitionName,
+                    acquisitionDate, dataOwner, layerName, null);
+
             List<BathymetryMeasure> measures = new ArrayList<>();
 
             BathymetryDataParser dataParser = new BathymetryDataParser(crs);
@@ -126,14 +127,10 @@ public class BathymetryDataController {
 
             }
 
-//            newCollection.setMeasureList(measures);
-
             double parsingEnd = System.currentTimeMillis() - parsingStart;
             double persistenceStart = System.currentTimeMillis();
             logger.info("Parsing time: " + parsingEnd);
 
-//            bathymetryDataRepository.save(newCollection);
-            //new save
             EntityManager entityManager = entityManagerFactory.createEntityManager();
             entityManager.getTransaction().begin();
             entityManager.persist(newCollection);
@@ -153,8 +150,6 @@ public class BathymetryDataController {
             double persistenceEnd = System.currentTimeMillis() - persistenceStart;
             logger.info("Persistence time: " + persistenceEnd);
 
-
-
         } catch (NumberFormatException e) {
             throw new ResourceAddException("data parsing error");
         } catch (NoSuchAuthorityCodeException e) {
@@ -171,46 +166,15 @@ public class BathymetryDataController {
 
     @GetMapping(value = "/getdata", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     private ResponseEntity<byte[]> getData(@RequestParam("id") Long[] ids, HttpServletResponse response) {
-        StringBuilder data = new StringBuilder();
+        BathymetryFileBuilder fileBuilder = new BathymetryFileBuilder();
 
-        data.append("X");
-        data.append("\t");
-        data.append("Y");
-        data.append("\t");
-        data.append("Z");
-        data.append("\t");
-        data.append("setName");
-        data.append("\t");
-        data.append("date");
-        data.append("\t");
-        data.append("owner");
-        data.append("\n");
-
-        for (Long id : ids) {
-            BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
-            bathymetryCollection.getMeasureList().forEach(measure -> {
-                data.append(measure.getMeasureCoords().getX());
-                data.append("\t");
-
-                data.append(measure.getMeasureCoords().getY());
-                data.append("\t");
-
-                data.append(measure.getMeasure());
-                data.append("\t");
-
-                data.append(bathymetryCollection.getAcquisitionName());
-                data.append("\t");
-
-                data.append(bathymetryCollection.getAcquisitionDate());
-                data.append("\t");
-
-                data.append(bathymetryCollection.getDataOwner());
-                data.append("\n");
-            });
+        for(Long id : ids) {
+            BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("wrong id"));
+            fileBuilder.append(bathymetryCollection);
         }
 
-
-        byte[] outFile = data.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("content-disposition", "attachment; filename=" + "results.txt");
@@ -235,49 +199,35 @@ public class BathymetryDataController {
 
     @GetMapping(value = "/getdata/geometry", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     private ResponseEntity<byte[]> getDataWithinGeometry(@RequestParam("id") Long ids[], @RequestParam("coords") double coords[], HttpServletResponse response) {
-        com.vividsolutions.jts.geom.GeometryFactory geometryFactory =
-                new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(),4326);
-
-        com.vividsolutions.jts.geom.Geometry geometry = geometryFactory.createPolygon(new com.vividsolutions.jts.geom.Coordinate[]{
-                new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[1]),
-                new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[3]),
-                new com.vividsolutions.jts.geom.Coordinate(coords[2], coords[3]),
-                new com.vividsolutions.jts.geom.Coordinate(coords[2], coords[1]),
-                new com.vividsolutions.jts.geom.Coordinate(coords[0], coords[1])
+        GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),4326);
+        Geometry geometry = geometryFactory.createPolygon(new Coordinate[]{
+                new Coordinate(coords[0], coords[1]),
+                new Coordinate(coords[0], coords[3]),
+                new Coordinate(coords[2], coords[3]),
+                new Coordinate(coords[2], coords[1]),
+                new Coordinate(coords[0], coords[1])
         });
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("X");
-        builder.append("\t");
-        builder.append("Y");
-        builder.append("\t");
-        builder.append("Z");
-        builder.append("\n");
+        BathymetryFileBuilder fileBuilder = new BathymetryFileBuilder();
 
-        List<BathymetryMeasure> bathymetryMeasures = new ArrayList<>();
-
+        List<BathymetryMeasure> measures = new ArrayList<>();
         for(Long id : ids) {
-            List<BathymetryMeasure> measures = bathymetryMeasureRepository.findAllWithinGeometry(id, geometry).orElse(null);
-            if(measures == null) {
+            Iterable<BathymetryMeasure> bathymetryMeasures = bathymetryMeasureRepository.findAllWithinGeometry(id, geometry)
+                    .orElse(null);
+            if(bathymetryMeasures == null) {
                 continue;
             }
-            measures.forEach(bathymetryMeasures::add);
+
+            bathymetryMeasures.forEach(measures::add);
         }
 
-        if(bathymetryMeasures.size() == 0) {
+        if(measures.size() == 0) {
             throw new ResourceNotFoundException("no resources selected");
         }
 
-        bathymetryMeasures.forEach(bathymetryMeasure -> {
-            builder.append(bathymetryMeasure.getMeasureCoords().getX());
-            builder.append("\t");
-            builder.append(bathymetryMeasure.getMeasureCoords().getY());
-            builder.append("\t");
-            builder.append(bathymetryMeasure.getMeasure());
-            builder.append("\n");
-        });
+        measures.forEach(fileBuilder::append);
 
-        byte[] outFile = builder.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("content-disposition", "attachment; filename=" + "results.txt");
@@ -285,6 +235,4 @@ public class BathymetryDataController {
 
         return new ResponseEntity<>(outFile, responseHeaders, HttpStatus.OK);
     }
-
-
 }

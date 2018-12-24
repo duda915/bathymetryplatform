@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.utility;
+package com.mdud.bathymetryplatform.security;
 
 public class AppRoles {
     public static final String USER = "USER";

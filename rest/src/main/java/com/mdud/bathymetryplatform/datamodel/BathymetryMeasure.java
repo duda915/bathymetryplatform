@@ -1,6 +1,7 @@
 package com.mdud.bathymetryplatform.datamodel;
 
 
+import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
 import com.vividsolutions.jts.geom.Point;
 import lombok.Data;
 import lombok.NoArgsConstructor;

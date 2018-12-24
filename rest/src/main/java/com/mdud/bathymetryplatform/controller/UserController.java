@@ -1,7 +1,7 @@
 package com.mdud.bathymetryplatform.controller;
 
 import com.mdud.bathymetryplatform.datamodel.AppUser;
-import com.mdud.bathymetryplatform.datamodel.AppUserDTO;
+import com.mdud.bathymetryplatform.datamodel.dto.AppUserDTO;
 import com.mdud.bathymetryplatform.datamodel.Role;
 import com.mdud.bathymetryplatform.datamodel.UserRole;
 import com.mdud.bathymetryplatform.repository.RoleRepository;

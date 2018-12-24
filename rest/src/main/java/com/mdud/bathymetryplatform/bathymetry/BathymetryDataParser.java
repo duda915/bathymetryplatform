@@ -1,11 +1,10 @@
 package com.mdud.bathymetryplatform.bathymetry;
 
-import com.mdud.bathymetryplatform.datamodel.BathymetryMeasureDTO;
+import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.*;
 import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;

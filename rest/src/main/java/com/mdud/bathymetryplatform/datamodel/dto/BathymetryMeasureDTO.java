@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.datamodel;
+package com.mdud.bathymetryplatform.datamodel.dto;
 
 import com.vividsolutions.jts.geom.Point;
 import lombok.Getter;
