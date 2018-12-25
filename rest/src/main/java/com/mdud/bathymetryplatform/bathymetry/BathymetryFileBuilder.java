@@ -4,8 +4,7 @@ import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
 import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
 
 public class BathymetryFileBuilder {
-    private String breakLine = "\n";
-    private String tab = "\t";
+
     private StringBuilder builder;
 
     public BathymetryFileBuilder() {
@@ -13,6 +12,9 @@ public class BathymetryFileBuilder {
     }
 
     public void append(BathymetryMeasure bathymetryMeasure) {
+        String breakLine = "\n";
+        String tab = "\t";
+
         StringBuilder builder = new StringBuilder();
 
         builder.append(bathymetryMeasure.getMeasureCoords().getX());

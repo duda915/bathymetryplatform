@@ -33,7 +33,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -52,19 +51,15 @@ public class BathymetryDataController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private BathymetryMeasureRepository bathymetryMeasureRepository;
-    private EntityManagerFactory entityManagerFactory;
 
     public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository,
                                     @Autowired UserRepository userRepository,
                                     @Autowired RoleRepository roleRepository,
-                                    @Autowired BathymetryMeasureRepository bathymetryMeasureRepository,
-                                    @Autowired EntityManagerFactory entityManagerFactory) {
+                                    @Autowired BathymetryMeasureRepository bathymetryMeasureRepository) {
         this.bathymetryDataRepository = bathymetryDataRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bathymetryMeasureRepository = bathymetryMeasureRepository;
-        this.entityManagerFactory = entityManagerFactory;
-
     }
 
     @GetMapping("/datasets")
@@ -83,11 +78,11 @@ public class BathymetryDataController {
 
         if(!appUser.checkRole(superUserRole)) {
             bathymetryDataRepository.findAllByAppUser(appUser).forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
-            return dataSets;
         } else {
             bathymetryDataRepository.findAll().forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
-            return dataSets;
         }
+
+        return dataSets;
     }
 
     @PostMapping("/add")
@@ -146,11 +141,7 @@ public class BathymetryDataController {
 
         byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
 
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.add("content-disposition", "attachment; filename=" + "results.txt");
-        responseHeaders.add("Content-Type", "application/json");
-
-        return new ResponseEntity<>(outFile, responseHeaders, HttpStatus.OK);
+        return createFileResponseEntity(outFile);
     }
 
     @DeleteMapping("/datasets/user/delete")
@@ -199,10 +190,15 @@ public class BathymetryDataController {
 
         byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
 
+        return createFileResponseEntity(outFile);
+    }
+
+    private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("content-disposition", "attachment; filename=" + "results.txt");
         responseHeaders.add("Content-Type", "application/json");
 
         return new ResponseEntity<>(outFile, responseHeaders, HttpStatus.OK);
     }
+
 }

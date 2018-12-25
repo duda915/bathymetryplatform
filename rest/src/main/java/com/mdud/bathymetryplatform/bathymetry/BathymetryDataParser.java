@@ -46,7 +46,7 @@ public class BathymetryDataParser {
                 new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
     }
 
-    public BathymetryMeasureDTO parsePoint(String lineData) throws TransformException, NumberFormatException {
+    private BathymetryMeasureDTO parsePoint(String lineData) throws TransformException, NumberFormatException {
         String elements[] = lineData.replaceAll("\\s+", " ").split(" ");
 
         List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
