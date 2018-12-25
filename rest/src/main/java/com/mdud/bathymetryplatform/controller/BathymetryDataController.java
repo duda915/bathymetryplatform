@@ -52,10 +52,11 @@ public class BathymetryDataController {
     private RoleRepository roleRepository;
     private BathymetryMeasureRepository bathymetryMeasureRepository;
 
-    public BathymetryDataController(@Autowired BathymetryDataRepository bathymetryDataRepository,
-                                    @Autowired UserRepository userRepository,
-                                    @Autowired RoleRepository roleRepository,
-                                    @Autowired BathymetryMeasureRepository bathymetryMeasureRepository) {
+    @Autowired
+    public BathymetryDataController(BathymetryDataRepository bathymetryDataRepository,
+                                    UserRepository userRepository,
+                                    RoleRepository roleRepository,
+                                    BathymetryMeasureRepository bathymetryMeasureRepository) {
         this.bathymetryDataRepository = bathymetryDataRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;

@@ -1,10 +1,12 @@
 package com.mdud.bathymetryplatform.utility;
 
+import com.mdud.bathymetryplatform.bathymetry.GDALGrid;
 import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import com.mdud.bathymetryplatform.security.AppRoles;
+import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +29,13 @@ public class DBInitRunner implements CommandLineRunner {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private AppConfiguration appConfiguration;
+
     @Override
     public void run(String... args) throws Exception {
+        GDALGrid gdalGrid = new GDALGrid(appConfiguration);
+        gdalGrid.createGridRasterFromDB(9L);
         try {
             addDefaultUsers();
         }catch (Exception e) {
