@@ -1,5 +1,8 @@
 package com.mdud.bathymetryplatform.bathymetry;
 
+import com.mdud.bathymetryplatform.controller.BathymetryDataController;
+import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
+import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
@@ -8,12 +11,19 @@ import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class BathymetryDataParser {
+    private final Logger logger = LoggerFactory.getLogger(BathymetryDataParser.class);
+
     private int sourceEPSG;
     private CoordinateReferenceSystem sourceCRS;
     private CoordinateReferenceSystem targetCRS;
@@ -64,5 +74,26 @@ public class BathymetryDataParser {
         Double depth = Double.valueOf(elementsList.get(2));
 
         return new BathymetryMeasureDTO(targetPoint, depth);
+    }
+
+    public List<BathymetryMeasure> parseFile(MultipartFile file) throws TransformException, IOException {
+        String lines[] = new String(file.getBytes(), StandardCharsets.UTF_8).split("\n");
+        List<BathymetryMeasure> measures = new ArrayList<>();
+
+        try {
+            BathymetryMeasureDTO headerCheck = parsePoint(lines[0]);
+            measures.add(new BathymetryMeasure(headerCheck));
+        } catch (NumberFormatException e) {
+            logger.info("Cannot parse first line of file - header?");
+        }
+
+        for(int i = 1; i < lines.length; i++) {
+            BathymetryMeasureDTO measureDTO = parsePoint(lines[i]);
+            if(measureDTO == null)
+                continue;
+            measures.add(new BathymetryMeasure(measureDTO));
+        }
+
+        return measures;
     }
 }

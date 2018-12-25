@@ -3,13 +3,18 @@ package com.mdud.bathymetryplatform.controller;
 
 import com.mdud.bathymetryplatform.bathymetry.BathymetryDataParser;
 import com.mdud.bathymetryplatform.bathymetry.BathymetryFileBuilder;
-import com.mdud.bathymetryplatform.datamodel.*;
-import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
+import com.mdud.bathymetryplatform.datamodel.AppUser;
+import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
+import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
+import com.mdud.bathymetryplatform.datamodel.Role;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMetaDTO;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
-import com.mdud.bathymetryplatform.repository.*;
+import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
+import com.mdud.bathymetryplatform.repository.BathymetryMeasureRepository;
+import com.mdud.bathymetryplatform.repository.RoleRepository;
+import com.mdud.bathymetryplatform.repository.UserRepository;
 import com.mdud.bathymetryplatform.security.AppRoles;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
@@ -28,7 +33,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -97,55 +101,21 @@ public class BathymetryDataController {
         try {
             AppUser user = userRepository.findDistinctByUsername(principal.getName());
 
-            logger.info("addNewData by: " + user.getUsername());
-
             String layerName = user.getUsername() + acquisitionName.hashCode();
-
             BathymetryCollection newCollection = new BathymetryCollection(null, user, acquisitionName,
                     acquisitionDate, dataOwner, layerName, null);
-
-            List<BathymetryMeasure> measures = new ArrayList<>();
 
             BathymetryDataParser dataParser = new BathymetryDataParser(crs);
 
             double parsingStart = System.currentTimeMillis();
 
-            String lines[] = new String(data.getBytes(), StandardCharsets.UTF_8).split("\n");
-
-            try {
-                BathymetryMeasureDTO headerCheck = dataParser.parsePoint(lines[0]);
-                measures.add(new BathymetryMeasure(headerCheck));
-            } catch (NumberFormatException e) {
-                logger.info("Cannot parse first line of file - header?");
-            }
-
-            for(int i = 1; i < lines.length; i++) {
-                BathymetryMeasureDTO measureDTO = dataParser.parsePoint(lines[i]);
-                if(measureDTO == null)
-                    continue;
-                measures.add(new BathymetryMeasure(measureDTO));
-
-            }
+            newCollection.setMeasureList(dataParser.parseFile(data));
 
             double parsingEnd = System.currentTimeMillis() - parsingStart;
             double persistenceStart = System.currentTimeMillis();
             logger.info("Parsing time: " + parsingEnd);
 
-            EntityManager entityManager = entityManagerFactory.createEntityManager();
-            entityManager.getTransaction().begin();
-            entityManager.persist(newCollection);
-            entityManager.flush();
-            entityManager.clear();
-            for(int i = 0; i < measures.size(); i++) {
-                measures.get(i).setMetaId(newCollection.getId());
-                entityManager.persist(measures.get(i));
-                if(i % 50 == 0) {
-                    entityManager.flush();
-                    entityManager.clear();
-                }
-            }
-            entityManager.getTransaction().commit();
-            entityManager.close();
+            bathymetryDataRepository.save(newCollection);
 
             double persistenceEnd = System.currentTimeMillis() - persistenceStart;
             logger.info("Persistence time: " + persistenceEnd);
