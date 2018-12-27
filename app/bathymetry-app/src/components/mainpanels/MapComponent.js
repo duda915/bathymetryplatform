@@ -106,18 +106,18 @@ export default class MapComponent extends Component {
     }
 
     loadLayer(layersId) {
-        let selection = 'selection:' + layersId[0];
+        let layers = 'bathymetry:' + layersId[0];
         for (let i = 1; i < layersId.length; i++) {
-            selection += "\\," + layersId[i];
+            layers += ",bathymetry:" + layersId[i];
         }
 
         let wmsParams = {
-            'LAYERS': 'bathymetry:bathymetry',
+            'LAYERS': layers,
             'TILED': true,
-            'viewparams': selection,
-            'width': '200',
-            'height': '200',
-            'format': 'image/png8'
+            // 'viewparams': selection,
+            // 'width': '200',
+            // 'height': '200',
+            // 'format': 'image/png8'
         };
 
         this.prepareLayerChange();
@@ -125,7 +125,8 @@ export default class MapComponent extends Component {
             url: this.serviceMeta.getGeoServerServiceAddress(),
             params: wmsParams,
             serverType: 'geoserver',
-            transition: 0
+            transition: 0,
+            projection: 'EPSG:3857'
         })
 
         this.layer = new TileLayer({
@@ -157,9 +158,10 @@ export default class MapComponent extends Component {
                     return;
                 }
 
-                let info = "lat: " + features[0].geometry.coordinates[0] + " long: " + features[0].geometry.coordinates[1]
-                    + " measurement: " + features[0].properties.measure;
-
+                console.log(features[0]);
+                // let info = "lat: " + features[0].geometry.coordinates[0] + " long: " + features[0].geometry.coordinates[1]
+                //     + " measurement: " + features[0].properties.measure;
+                let info = "measurement: " + features[0].properties.GRAY_INDEX;
                 this.growl.show({severity: 'info', summary: 'Point', detail: info})
             });
         }

@@ -25,7 +25,7 @@ public class GDALGrid {
         String sqlQuery = "-sql \"SELECT * FROM bathymetry WHERE meta_id = " + metaId + "\"";
         String targetFile = appConfiguration.getGDALTargetLocation() + metaId + ".tif";
 
-        String gdal = "gdal_grid" + " " + sqlQuery +  " " + "-a nearest" + " " + "-zfield measure" + " " + src + " " + targetFile;
+        String gdal = "gdal_grid" + " " + sqlQuery +  " " + "-a nearest" + " " + "-a_srs 'EPSG:4326'" + " " + "-zfield measure" + " " + src + " " + targetFile;
 
 
         try {

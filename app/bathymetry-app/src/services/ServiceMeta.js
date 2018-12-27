@@ -7,7 +7,7 @@ export default class ServiceMeta {
     }
 
     getGeoServerServiceAddress() {
-        const geoserver = "http://localhost:8081/geoserver/bathymetry/wms?";
+        const geoserver = "http://localhost:8081/geoserver/bathymetry/wms";
         return geoserver;
     }
 }
