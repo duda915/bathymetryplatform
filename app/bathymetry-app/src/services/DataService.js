@@ -10,10 +10,10 @@ export default class DataService {
 
         this.dataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets";;
         this.userDataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/user";
-        this.addDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/add";
-        this.downloadDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/getdata";
-        this.deleteUserDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/user/delete";
-        this.downloadSelectedDataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/getdata/geometry";
+        this.addDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets";
+        this.downloadDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/download";
+        this.deleteUserDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets";
+        this.downloadSelectedDataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/download/geometry";
 
         this.cookie = new Cookies();
         this.userService = new UserService();

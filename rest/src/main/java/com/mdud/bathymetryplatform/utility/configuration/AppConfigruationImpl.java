@@ -9,19 +9,21 @@ public class AppConfigruationImpl implements AppConfiguration {
     private final String home = System.getProperty("user.home");
     private final String gdalTargetLocation = home + "/bathymetrygdaldump/";
 
-    private final String dbHostName = "localhost";
-    private final String dbName = "bathymetry";
+    @Value("${spring.datasource.url}")
+    private String dbConfigURL;
     @Value("${spring.datasource.username}")
     private String dbUsername;
     @Value("${spring.datasource.password}")
     private String dbPassword;
 
-    private final String geoServerHost = "http://localhost:8081/geoserver/";
-    private final String geoServerUser = "admin";
-    private final String geoServerPassword = "geoserver";
-    private final String geoServerWorkspaceName = "bathymetry";
-    private final String geoServerCoverageStoresPath = geoServerHost + "rest/workspaces/" + geoServerWorkspaceName
-            + "/coveragestores/";
+    @Value("${bathymetry.geoserver.url}")
+    private String geoServerHost;
+    @Value("${bathymetry.geoserver.username}")
+    private String geoServerUser;
+    @Value("${bathymetry.geoserver.password}")
+    private String geoServerPassword;
+    @Value("${bathymetry.geoserver.workspace}")
+    private String geoServerWorkspaceName;
 
     @Override
     public String getGDALTargetLocation() {
@@ -30,12 +32,15 @@ public class AppConfigruationImpl implements AppConfiguration {
 
     @Override
     public String getDBHost() {
-        return dbHostName;
+        int firstIndex = dbConfigURL.indexOf("://") + 3;
+        int secondIndex = dbConfigURL.substring(firstIndex).indexOf("/");
+        return dbConfigURL.substring(firstIndex, firstIndex+secondIndex);
+
     }
 
     @Override
     public String getDBName() {
-        return dbName;
+        return dbConfigURL.substring(dbConfigURL.lastIndexOf('/')+1);
     }
 
     @Override
@@ -70,6 +75,7 @@ public class AppConfigruationImpl implements AppConfiguration {
 
     @Override
     public String getGeoServerCoverageStoresPath() {
-        return geoServerCoverageStoresPath;
+        return geoServerHost + "rest/workspaces/" + geoServerWorkspaceName
+                + "/coveragestores/";
     }
 }

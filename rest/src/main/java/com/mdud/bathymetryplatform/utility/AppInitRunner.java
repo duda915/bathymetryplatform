@@ -1,7 +1,5 @@
 package com.mdud.bathymetryplatform.utility;
 
-import com.mdud.bathymetryplatform.bathymetry.GDALGrid;
-import com.mdud.bathymetryplatform.bathymetry.GeoServerCoverageStoreManager;
 import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
@@ -15,12 +13,13 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.*;
 
 @Component
-public class DBInitRunner implements CommandLineRunner {
+public class AppInitRunner implements CommandLineRunner {
 
-    private Logger logger = LoggerFactory.getLogger(DBInitRunner.class);
+    private Logger logger = LoggerFactory.getLogger(AppInitRunner.class);
 
     @Autowired
     private BathymetryDataRepository bathymetryDataRepository;
@@ -36,10 +35,24 @@ public class DBInitRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
+        createGDALDir();
         try {
             addDefaultUsers();
-        }catch (Exception e) {
-            logger.info("Default users already created.");
+        } catch (Exception e) {
+            logger.info("Default users already created");
+        }
+    }
+
+    private void createGDALDir() throws Exception {
+        File dir = new File(appConfiguration.getGDALTargetLocation());
+        if(!dir.exists()) {
+            if(dir.mkdir()) {
+                logger.info("GDAL dir created");
+            } else {
+                throw new Exception("GDAL dir creation failed");
+            }
+        } else {
+            logger.info("GDAL dir already exist");
         }
     }
 

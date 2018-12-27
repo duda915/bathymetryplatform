@@ -27,9 +27,10 @@ public class GDALGrid {
 
         String gdal = "gdal_grid" + " " + sqlQuery +  " " + "-a nearest" + " " + "-zfield measure" + " " + src + " " + targetFile;
 
+
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", gdal);
-            final Process process = processBuilder.start();
+            Process process = processBuilder.start();
             int result = process.waitFor();
 
             if(result != 0) {
@@ -37,7 +38,7 @@ public class GDALGrid {
 
                 String line;
                 while((line = inputReader.readLine()) != null) {
-                    logger.warn(line);
+                    System.out.println(line);
                 }
 
                 inputReader.close();
@@ -47,7 +48,7 @@ public class GDALGrid {
 
             return new File(targetFile);
         } catch (Exception e) {
-            System.out.println("ex");
+            logger.error("GDAL error, check if gdal is installed and sql connection in AppConfiguration class");
             throw new GDALException();
         }
     }
