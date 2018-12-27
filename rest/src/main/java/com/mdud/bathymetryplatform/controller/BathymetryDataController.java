@@ -91,7 +91,7 @@ public class BathymetryDataController {
         return dataSets;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/datasets")
     @ResponseStatus(HttpStatus.OK)
     private void addNewData(@RequestParam("name") String acquisitionName,
                               @RequestParam("date") Date acquisitionDate,
@@ -156,22 +156,7 @@ public class BathymetryDataController {
 
     }
 
-    @GetMapping(value = "/getdata", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    private ResponseEntity<byte[]> getData(@RequestParam("id") Long[] ids, HttpServletResponse response) {
-        BathymetryFileBuilder fileBuilder = new BathymetryFileBuilder();
-
-        for(Long id : ids) {
-            BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("wrong id"));
-            fileBuilder.append(bathymetryCollection);
-        }
-
-        byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
-
-        return createFileResponseEntity(outFile);
-    }
-
-    @DeleteMapping("/datasets/user/delete")
+    @DeleteMapping("/datasets")
     @ResponseStatus(HttpStatus.OK)
     private void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
         AppUser user = userRepository.findDistinctByUsername(principal.getName());
@@ -191,7 +176,24 @@ public class BathymetryDataController {
         }
     }
 
-    @GetMapping(value = "/getdata/geometry", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/datasets/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    private ResponseEntity<byte[]> getData(@RequestParam("id") Long[] ids, HttpServletResponse response) {
+        BathymetryFileBuilder fileBuilder = new BathymetryFileBuilder();
+
+        for(Long id : ids) {
+            BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("wrong id"));
+            fileBuilder.append(bathymetryCollection);
+        }
+
+        byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
+
+        return createFileResponseEntity(outFile);
+    }
+
+
+
+    @GetMapping(value = "/datasets/download/geometry", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     private ResponseEntity<byte[]> getDataWithinGeometry(@RequestParam("id") Long ids[], @RequestParam("coords") double coords[], HttpServletResponse response) {
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),4326);
         Geometry geometry = geometryFactory.createPolygon(new Coordinate[]{
