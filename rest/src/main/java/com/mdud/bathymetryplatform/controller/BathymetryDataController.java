@@ -1,10 +1,7 @@
 package com.mdud.bathymetryplatform.controller;
 
 
-import com.mdud.bathymetryplatform.bathymetry.BathymetryDataParser;
-import com.mdud.bathymetryplatform.bathymetry.BathymetryFileBuilder;
-import com.mdud.bathymetryplatform.bathymetry.GDALGrid;
-import com.mdud.bathymetryplatform.bathymetry.GeoServerCoverageStoreManager;
+import com.mdud.bathymetryplatform.bathymetry.*;
 import com.mdud.bathymetryplatform.datamodel.AppUser;
 import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
 import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
@@ -17,10 +14,7 @@ import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import com.mdud.bathymetryplatform.security.AppRoles;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import com.vividsolutions.jts.geom.*;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -226,6 +220,20 @@ public class BathymetryDataController {
         byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
 
         return createFileResponseEntity(outFile);
+    }
+
+    @GetMapping("/datasets/center")
+    private PlainPoint getDataSetCenter(@RequestParam("id") Long id) {
+        BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
+
+        double xSum = bathymetryCollection.getMeasureList().stream().mapToDouble(x -> x.getMeasureCoords().getX()).sum();
+        double ySum = bathymetryCollection.getMeasureList().stream().mapToDouble(y -> y.getMeasureCoords().getY()).sum();
+
+        double xCenter = xSum / bathymetryCollection.getMeasureList().size();
+        double yCenter = ySum / bathymetryCollection.getMeasureList().size();
+
+        PlainPoint plainPoint = new PlainPoint(xCenter, yCenter);
+        return plainPoint;
     }
 
     private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {

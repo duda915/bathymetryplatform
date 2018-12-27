@@ -14,6 +14,7 @@ export default class DataService {
         this.downloadDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/download";
         this.deleteUserDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets";
         this.downloadSelectedDataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/download/geometry";
+        this.getLayerCenterEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/center";
 
         this.cookie = new Cookies();
         this.userService = new UserService();
@@ -78,7 +79,18 @@ export default class DataService {
         return axios.delete(url, this.userService.getConfig());
     }
 
+    async getLayerCenter(id) {
+        let params = {
+            id: id
+        };
+        let url = new URL(this.getLayerCenterEndpoint);
+        url.search = new URLSearchParams(params);
+
+        return axios.get(url, this.userService.getConfig());
+    }
+
     async geoserverGetFeatureInfo(url) {
         return axios.get(url);
     }
+
 }

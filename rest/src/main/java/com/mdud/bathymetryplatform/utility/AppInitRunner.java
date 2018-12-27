@@ -1,9 +1,7 @@
 package com.mdud.bathymetryplatform.utility;
 
 import com.mdud.bathymetryplatform.datamodel.*;
-import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
-import com.mdud.bathymetryplatform.repository.RoleRepository;
-import com.mdud.bathymetryplatform.repository.UserRepository;
+import com.mdud.bathymetryplatform.repository.*;
 import com.mdud.bathymetryplatform.security.AppRoles;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import org.slf4j.Logger;
@@ -23,6 +21,9 @@ public class AppInitRunner implements CommandLineRunner {
 
     @Autowired
     private BathymetryDataRepository bathymetryDataRepository;
+
+    @Autowired
+    private BathymetryMeasureRepository bathymetryMeasureRepository;
 
     @Autowired
     private UserRepository userRepository;

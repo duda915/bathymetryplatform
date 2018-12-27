@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component @NoArgsConstructor
-public class AppConfigruationImpl implements AppConfiguration {
+public class AppConfigurationImpl implements AppConfiguration {
     private final String home = System.getProperty("user.home");
     private final String gdalTargetLocation = home + "/bathymetrygdaldump/";
 

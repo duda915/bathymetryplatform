@@ -22,7 +22,7 @@ class MainWindow extends Component {
         this.state = {
             username: '',
             menuVisible: true,
-            selectedLayers: [0],
+            selectedLayers: [],
         };
 
         this.handleLogout = this.handleLogout.bind(this);

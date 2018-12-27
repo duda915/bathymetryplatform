@@ -5,6 +5,7 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS.js';
+import {transform} from 'ol/proj.js'
 import ServiceMeta from '../../services/ServiceMeta';
 import { DragBox, Select } from 'ol/interaction.js';
 import {platformModifierKeyOnly} from 'ol/events/condition.js';
@@ -53,6 +54,7 @@ export default class MapComponent extends Component {
         ];
 
         this.olView = new View({
+            projection: 'EPSG:3857',
             center: [19, 51],
             zoom: 2,
         });
@@ -106,7 +108,14 @@ export default class MapComponent extends Component {
     }
 
     loadLayer(layersId) {
+        if(layersId.length === 0) {
+            return;
+        }
+
+        
+
         let layers = 'bathymetry:' + layersId[0];
+
         for (let i = 1; i < layersId.length; i++) {
             layers += ",bathymetry:" + layersId[i];
         }
@@ -122,7 +131,7 @@ export default class MapComponent extends Component {
 
         this.prepareLayerChange();
         this.wmsSource = new TileWMS({
-            url: this.serviceMeta.getGeoServerServiceAddress(),
+            url: this.serviceMeta.getGeoServerAddress(),
             params: wmsParams,
             serverType: 'geoserver',
             transition: 0,
@@ -134,8 +143,22 @@ export default class MapComponent extends Component {
         });
         this.map.addLayer(this.layer);
 
-        this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
-        this.map.on('singleclick', this.olOnClickFunction);
+        this.dataService.getLayerCenter(layersId[0])
+        .then(response => {
+            let coord = [response.data.x, response.data.y];
+            let reprojected = transform(coord, 'EPSG:4326', 'EPSG:3857');
+
+            this.olView = new View ({
+                projection: 'EPSG:3857',
+                center: reprojected,
+                zoom: 10,
+            });
+            
+            this.map.setView(this.olView);
+            this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
+            this.map.on('singleclick', this.olOnClickFunction);
+        });
+        
     }
 
     prepareLayerChange() {
