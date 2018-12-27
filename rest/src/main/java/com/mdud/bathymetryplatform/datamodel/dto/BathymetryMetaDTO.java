@@ -12,7 +12,6 @@ public class BathymetryMetaDTO {
     private String acquisitionName;
     private Date acquisitionDate;
     private String dataOwner;
-    private String layerName;
 
     public BathymetryMetaDTO(BathymetryCollection bathymetryCollection) {
         this.id = bathymetryCollection.getId();
@@ -20,6 +19,5 @@ public class BathymetryMetaDTO {
         this.acquisitionName = bathymetryCollection.getAcquisitionName();
         this.acquisitionDate = bathymetryCollection.getAcquisitionDate();
         this.dataOwner = bathymetryCollection.getDataOwner();
-        this.layerName = bathymetryCollection.getLayerName();
     }
 }

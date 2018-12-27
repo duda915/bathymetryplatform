@@ -33,9 +33,6 @@ public class BathymetryCollection {
     @Column(name = "author")
     private String dataOwner;
 
-    @Column(name = "layer_name")
-    private String layerName;
-
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "meta_id", referencedColumnName = "id", insertable = false, updatable = false, nullable = false)
     private List<BathymetryMeasure> measureList;

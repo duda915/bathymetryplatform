@@ -1,6 +1,7 @@
 package com.mdud.bathymetryplatform.utility;
 
 import com.mdud.bathymetryplatform.bathymetry.GDALGrid;
+import com.mdud.bathymetryplatform.bathymetry.GeoServerCoverageStoreManager;
 import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.util.*;
 
 @Component
@@ -34,8 +36,6 @@ public class DBInitRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        GDALGrid gdalGrid = new GDALGrid(appConfiguration);
-        gdalGrid.createGridRasterFromDB(9L);
         try {
             addDefaultUsers();
         }catch (Exception e) {

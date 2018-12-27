@@ -3,19 +3,20 @@ package com.mdud.bathymetryplatform.controller;
 
 import com.mdud.bathymetryplatform.bathymetry.BathymetryDataParser;
 import com.mdud.bathymetryplatform.bathymetry.BathymetryFileBuilder;
+import com.mdud.bathymetryplatform.bathymetry.GDALGrid;
+import com.mdud.bathymetryplatform.bathymetry.GeoServerCoverageStoreManager;
 import com.mdud.bathymetryplatform.datamodel.AppUser;
 import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
 import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
 import com.mdud.bathymetryplatform.datamodel.Role;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMetaDTO;
-import com.mdud.bathymetryplatform.exception.AccessDeniedException;
-import com.mdud.bathymetryplatform.exception.ResourceAddException;
-import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
+import com.mdud.bathymetryplatform.exception.*;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
 import com.mdud.bathymetryplatform.repository.BathymetryMeasureRepository;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import com.mdud.bathymetryplatform.security.AppRoles;
+import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
@@ -51,16 +53,19 @@ public class BathymetryDataController {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private BathymetryMeasureRepository bathymetryMeasureRepository;
+    private AppConfiguration appConfiguration;
 
     @Autowired
     public BathymetryDataController(BathymetryDataRepository bathymetryDataRepository,
                                     UserRepository userRepository,
                                     RoleRepository roleRepository,
-                                    BathymetryMeasureRepository bathymetryMeasureRepository) {
+                                    BathymetryMeasureRepository bathymetryMeasureRepository,
+                                    AppConfiguration appConfiguration) {
         this.bathymetryDataRepository = bathymetryDataRepository;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.bathymetryMeasureRepository = bathymetryMeasureRepository;
+        this.appConfiguration = appConfiguration;
     }
 
     @GetMapping("/datasets")
@@ -94,27 +99,34 @@ public class BathymetryDataController {
                               @RequestParam("crs") Integer crs,
                               @RequestParam("file") MultipartFile data,
                               Principal principal) throws ResourceAddException {
+
+        BathymetryCollection newCollection = null;
+        File gdalFile = null;
+
         try {
             AppUser user = userRepository.findDistinctByUsername(principal.getName());
 
-            String layerName = user.getUsername() + acquisitionName.hashCode();
-            BathymetryCollection newCollection = new BathymetryCollection(null, user, acquisitionName,
-                    acquisitionDate, dataOwner, layerName, null);
+            newCollection = new BathymetryCollection(null, user, acquisitionName,
+                    acquisitionDate, dataOwner, null);
 
             BathymetryDataParser dataParser = new BathymetryDataParser(crs);
-
             double parsingStart = System.currentTimeMillis();
-
             newCollection.setMeasureList(dataParser.parseFile(data));
-
             double parsingEnd = System.currentTimeMillis() - parsingStart;
-            double persistenceStart = System.currentTimeMillis();
             logger.info("Parsing time: " + parsingEnd);
 
+            double persistenceStart = System.currentTimeMillis();
             bathymetryDataRepository.save(newCollection);
-
             double persistenceEnd = System.currentTimeMillis() - persistenceStart;
             logger.info("Persistence time: " + persistenceEnd);
+
+            double geoServerTransferStart = System.currentTimeMillis();
+            GDALGrid gdalGrid = new GDALGrid(appConfiguration);
+            gdalFile = gdalGrid.createGridRasterFromDB(newCollection.getId());
+            GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
+            geoServerCoverageStoreManager.addCoverageStore(gdalFile);
+            double geoServerTransferEnd = System.currentTimeMillis() - geoServerTransferStart;
+            logger.info("Transfer time: " + geoServerTransferEnd);
 
         } catch (NumberFormatException e) {
             throw new ResourceAddException("data parsing error");
@@ -126,6 +138,20 @@ public class BathymetryDataController {
             throw new ResourceAddException("data transformation error");
         } catch (IOException e) {
             throw new ResourceAddException("data format unrecognized");
+        } catch (GDALException e) {
+            if(newCollection != null) {
+                bathymetryDataRepository.delete(newCollection);
+            }
+            throw new ResourceAddException("gdal error");
+        } catch (GeoServerException e) {
+            if(newCollection != null) {
+                bathymetryDataRepository.delete(newCollection);
+            }
+            throw new ResourceAddException("geoserver error");
+        } finally {
+            if(gdalFile != null) {
+                gdalFile.delete();
+            }
         }
 
     }
@@ -156,7 +182,13 @@ public class BathymetryDataController {
             throw new AccessDeniedException("insufficient privileges");
         }
 
-        bathymetryDataRepository.delete(bathymetryCollection);
+        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
+        try {
+            geoServerCoverageStoreManager.deleteCoverageStore(id);
+            bathymetryDataRepository.delete(bathymetryCollection);
+        } catch (GeoServerException e) {
+            throw new ResourceNotFoundException("geoserver wrong id");
+        }
     }
 
     @GetMapping(value = "/getdata/geometry", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

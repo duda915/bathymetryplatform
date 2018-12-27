@@ -13,8 +13,7 @@ INSERT INTO roles(role_name) VALUES ('USER'), ('SUPERUSER');
 
 -- check geoserver sqlview after this
 DROP TABLE IF EXISTS bathymetry_meta CASCADE;
-CREATE TABLE bathymetry_meta (id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES app_user(id), name VARCHAR(255), collection_date date, author VARCHAR(255),
-layer_name VARCHAR(255));
+CREATE TABLE bathymetry_meta (id SERIAL PRIMARY KEY, user_id INTEGER REFERENCES app_user(id), name VARCHAR(255), collection_date date, author VARCHAR(255));
 
 DROP TABLE IF EXISTS bathymetry CASCADE;
 CREATE TABLE bathymetry (gid SERIAL PRIMARY KEY, meta_id INTEGER REFERENCES bathymetry_meta(id), coords GEOMETRY(POINT, 4326), measure DECIMAL);
