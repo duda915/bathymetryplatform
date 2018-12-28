@@ -10,6 +10,7 @@ import {Growl} from 'primereact/growl';
 import {ContextMenu} from 'primereact/contextmenu';
 import DataService from '../../services/DataService';
 import LoadingComponent from '../utility/LoadingComponent';
+import UserService from '../../services/UserService';
 
 export default class DataManager extends Component {
     constructor(props) {
@@ -33,10 +34,30 @@ export default class DataManager extends Component {
         this.onSelectAbort = this.onSelectAbort.bind(this);
 
         this.dataService = new DataService();
+        this.userService = new UserService();
     }
 
     componentDidMount() {
         this.fetchUserDataSets();
+        this.getUsername();
+        this.getTodayDate();
+    }
+
+    getTodayDate() {
+        let date = new Date();
+
+        this.setState({
+            date: date
+        })
+    }
+
+    getUsername() {
+        this.userService.getUser()
+        .then(response => {
+            this.setState({
+                dataOwner: response.data.username,
+            });
+        })
     }
 
     fetchUserDataSets() {
@@ -57,7 +78,8 @@ export default class DataManager extends Component {
     onFileSelect(event) {
         console.log(event.files[0]);
         this.setState({
-            file: event.files[0]
+            file: event.files[0],
+            dataName: event.files[0].name,
         })
     }
 
@@ -71,7 +93,7 @@ export default class DataManager extends Component {
 
     handleSubmit(event) {
         let dateObject = new Date(this.state.date);
-        let parseDate = dateObject.getFullYear() + "-" + dateObject.getMonth() + "-" + dateObject.getDate();
+        let parseDate = dateObject.getFullYear() + "-" + (dateObject.getMonth()+1) + "-" + dateObject.getDate();
         console.log(parseDate);
 
         let urlParams = {
@@ -88,7 +110,7 @@ export default class DataManager extends Component {
                 this.growl.show({severity: 'success', summary: 'Success', detail: 'File upload success', closable: false})
             })
             .catch(error => {
-                this.growl.show({severity: 'error', summary: 'Error', detail: 'File upload failed', closable: false})
+                this.growl.show({severity: 'error', summary: 'Error', detail: error.response.data.message, closable: false})
                 console.log(error.response);
             })
             .finally(response => {
@@ -122,6 +144,9 @@ export default class DataManager extends Component {
                             <form onSubmit={this.handleSubmit} autoComplete="off">
                                 <div className="p-grid">
                                     <div className="p-col-12">
+                                        <FileUpload mode="basic" accept="*" maxFileSize={50000000} onSelect={this.onFileSelect} onBeforeSend={this.onSelectAbort} />
+                                    </div>
+                                    <div className="p-col-12">
                                         <div className="p-inputgroup">
                                             <span className="p-inputgroup-addon">
                                                 <i className="pi pi-tag"></i>
@@ -148,9 +173,7 @@ export default class DataManager extends Component {
                                             <InputText placeholder="EPSG" name="crs" value={this.state.crs} onChange={this.handleChange}></InputText>
                                         </div>
                                     </div>
-                                    <div className="p-col-12">
-                                        <FileUpload mode="basic" accept="*" maxFileSize={50000000} onSelect={this.onFileSelect} onBeforeSend={this.onSelectAbort} />
-                                    </div>
+                                    
                                     <div className="p-col-12">
                                         <Button label="Upload" type="submit" />
                                     </div>
