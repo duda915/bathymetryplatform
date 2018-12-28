@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.utility;
 
+import com.mdud.bathymetryplatform.bathymetry.GeoServerCoverageStoreManager;
 import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.repository.*;
 import com.mdud.bathymetryplatform.security.AppRoles;
@@ -60,6 +61,7 @@ public class AppInitRunner implements CommandLineRunner {
     private void addDefaultUsers() {
         Role userRole = roleRepository.findDistinctByRoleName(AppRoles.USER);
         Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
+        Role guestRole = roleRepository.findDistinctByRoleName(AppRoles.GUEST);
 
         Set<UserRole> superUserRoles = new HashSet<>();
         superUserRoles.add(new UserRole(null, userRole));
@@ -68,11 +70,16 @@ public class AppInitRunner implements CommandLineRunner {
         Set<UserRole> defaultRoles = new HashSet<>();
         defaultRoles.add(new UserRole(null, userRole));
 
+        Set<UserRole> guestUserRole = new HashSet<>();
+        guestUserRole.add(new UserRole(null, guestRole));
+
         AppUser superUser = new AppUser("superuser", "test", superUserRoles);
         AppUser newUser = new AppUser("newuser", "password", defaultRoles);
+        AppUser guestUser = new AppUser("guest", "guest", guestUserRole);
 
         userRepository.save(superUser);
         userRepository.save(newUser);
+        userRepository.save(guestUser);
 
     }
 }

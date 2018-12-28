@@ -92,13 +92,18 @@ public class BathymetryDataController {
                               @RequestParam("owner") String dataOwner,
                               @RequestParam("crs") Integer crs,
                               @RequestParam("file") MultipartFile data,
-                              Principal principal) throws ResourceAddException {
+                              Principal principal) {
 
         BathymetryCollection newCollection = null;
         File gdalFile = null;
+        AppUser user = userRepository.findDistinctByUsername(principal.getName());
+        Role userRole = roleRepository.findDistinctByRoleName(AppRoles.USER);
+
+        if(!user.checkRole(userRole)) {
+            throw new AccessDeniedException("insufficient privileges");
+        }
 
         try {
-            AppUser user = userRepository.findDistinctByUsername(principal.getName());
 
             newCollection = new BathymetryCollection(null, user, acquisitionName,
                     acquisitionDate, dataOwner, null);
@@ -224,16 +229,12 @@ public class BathymetryDataController {
 
     @GetMapping("/datasets/center")
     private PlainPoint getDataSetCenter(@RequestParam("id") Long id) {
-        BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
-
-        double xSum = bathymetryCollection.getMeasureList().stream().mapToDouble(x -> x.getMeasureCoords().getX()).sum();
-        double ySum = bathymetryCollection.getMeasureList().stream().mapToDouble(y -> y.getMeasureCoords().getY()).sum();
-
-        double xCenter = xSum / bathymetryCollection.getMeasureList().size();
-        double yCenter = ySum / bathymetryCollection.getMeasureList().size();
-
-        PlainPoint plainPoint = new PlainPoint(xCenter, yCenter);
-        return plainPoint;
+        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
+        try {
+            return geoServerCoverageStoreManager.getCoverageStoreCenter(id);
+        } catch (GeoServerException e) {
+            throw new ResourceNotFoundException("cannot get center point of this layer");
+        }
     }
 
     private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {

@@ -1,7 +1,10 @@
 package com.mdud.bathymetryplatform.bathymetry;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
+import org.codehaus.jackson.node.ArrayNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -87,6 +90,37 @@ public class GeoServerCoverageStoreManager {
         } catch (HttpClientErrorException e) {
             logger.warn("coverage delete error");
             throw new GeoServerException("wrong delete id");
+        }
+    }
+
+    public PlainPoint getCoverageStoreCenter(Long id) throws GeoServerException{
+        StringBuilder urlBuilder = new StringBuilder()
+                .append(appConfiguration.getGeoServerCoverageStoresPath())
+                .append(id.toString())
+                .append("/coverages/")
+                .append(id.toString())
+                .append(".json");
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add("Authorization", "Basic " + base64Credentials);
+
+        HttpEntity<?> request = new HttpEntity<>(httpHeaders);
+
+        RestTemplate restTemplate = new RestTemplate();
+
+
+        try {
+            ResponseEntity<JsonNode> responseEntity = restTemplate.exchange(urlBuilder.toString(),
+                    HttpMethod.GET, request, JsonNode.class);
+
+            JsonNode boundingBoxNode = responseEntity.getBody().get("coverage").get("nativeBoundingBox");
+            double x = (boundingBoxNode.get("minx").asDouble() + boundingBoxNode.get("maxx").asDouble())/2;
+            double y = (boundingBoxNode.get("miny").asDouble() + boundingBoxNode.get("maxy").asDouble())/2;
+
+            return new PlainPoint(x, y);
+        } catch (HttpClientErrorException e) {
+            e.printStackTrace();
+            throw new GeoServerException("wrong id");
         }
     }
 
