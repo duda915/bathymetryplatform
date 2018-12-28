@@ -16,7 +16,11 @@ export default class TopBar extends Component {
     }
     componentDidMount() {
         this.userService.getUser()
-        .then(response => this.setState({user: response.data}));
+        .then(response => {
+            this.setState({user: response.data.username});
+            console.log(response.data);
+            }
+        );
     }
 
     render() {

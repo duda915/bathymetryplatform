@@ -48,8 +48,8 @@ public class UserController {
     }
 
     @GetMapping("/logged")
-    public String loggedUser(Principal principal) {
-        return principal.getName();
+    public AppUser loggedUser(Principal principal) {
+        return userRepository.findDistinctByUsername(principal.getName());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/logout")
