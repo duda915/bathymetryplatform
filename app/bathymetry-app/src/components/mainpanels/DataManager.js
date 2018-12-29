@@ -111,7 +111,7 @@ export default class DataManager extends Component {
             })
             .catch(error => {
                 this.growl.show({severity: 'error', summary: 'Error', detail: error.response.data.message, closable: false})
-                console.log(error.response);
+                console.log(error.response.data);
             })
             .finally(response => {
                 this.progress.showProgress(false);

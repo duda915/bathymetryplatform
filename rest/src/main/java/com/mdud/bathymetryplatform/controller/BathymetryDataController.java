@@ -14,7 +14,10 @@ import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import com.mdud.bathymetryplatform.security.AppRoles;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.PrecisionModel;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.operation.TransformException;
@@ -25,10 +28,15 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -40,6 +48,7 @@ import java.util.List;
 @CrossOrigin
 @RestController
 @RequestMapping("/api/data")
+@Validated
 public class BathymetryDataController {
     private final Logger logger = LoggerFactory.getLogger(BathymetryDataController.class);
 
@@ -63,14 +72,15 @@ public class BathymetryDataController {
     }
 
     @GetMapping("/datasets")
-    private List<BathymetryMetaDTO> getDataSetsMeta() {
+    public List<BathymetryMetaDTO> getDataSetsMeta() {
         List<BathymetryMetaDTO> dataSets = new ArrayList<>();
         bathymetryDataRepository.findAll().forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
         return dataSets;
     }
 
     @GetMapping("/datasets/user")
-    private List<BathymetryMetaDTO> getUserDataSets(Principal principal) {
+    public List<BathymetryMetaDTO> getUserDataSets(Principal principal) {
+
         AppUser appUser = userRepository.findDistinctByUsername(principal.getName());
         Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
 
@@ -85,14 +95,15 @@ public class BathymetryDataController {
         return dataSets;
     }
 
+    @PreAuthorize("hasAnyAuthority('USER', 'SUPERUSER')")
     @PostMapping("/datasets")
     @ResponseStatus(HttpStatus.OK)
-    private void addNewData(@RequestParam("name") String acquisitionName,
+    public void addNewData(@NotEmpty @RequestParam("name") String acquisitionName,
                               @RequestParam("date") Date acquisitionDate,
-                              @RequestParam("owner") String dataOwner,
-                              @RequestParam("crs") Integer crs,
+                              @NotEmpty @RequestParam("owner") String dataOwner,
+                              @NotNull @RequestParam("crs") Integer crs,
                               @RequestParam("file") MultipartFile data,
-                              Principal principal) {
+                           Principal principal) {
 
         BathymetryCollection newCollection = null;
         File gdalFile = null;
@@ -157,7 +168,7 @@ public class BathymetryDataController {
 
     @DeleteMapping("/datasets")
     @ResponseStatus(HttpStatus.OK)
-    private void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
+    public void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
         AppUser user = userRepository.findDistinctByUsername(principal.getName());
         BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
         Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
@@ -176,7 +187,7 @@ public class BathymetryDataController {
     }
 
     @GetMapping(value = "/datasets/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    private ResponseEntity<byte[]> getData(@RequestParam("id") Long[] ids, HttpServletResponse response) {
+    public ResponseEntity<byte[]> getData(@RequestParam("id") Long[] ids, HttpServletResponse response) {
         BathymetryFileBuilder fileBuilder = new BathymetryFileBuilder();
 
         for(Long id : ids) {
@@ -193,7 +204,7 @@ public class BathymetryDataController {
 
 
     @GetMapping(value = "/datasets/download/geometry", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    private ResponseEntity<byte[]> getDataWithinGeometry(@RequestParam("id") Long ids[], @RequestParam("coords") double coords[], HttpServletResponse response) {
+    public ResponseEntity<byte[]> getDataWithinGeometry(@RequestParam("id") Long ids[], @RequestParam("coords") double coords[], HttpServletResponse response) {
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(),4326);
         Geometry geometry = geometryFactory.createPolygon(new Coordinate[]{
                 new Coordinate(coords[0], coords[1]),
@@ -228,7 +239,7 @@ public class BathymetryDataController {
     }
 
     @GetMapping("/datasets/center")
-    private PlainPoint getDataSetCenter(@RequestParam("id") Long id) {
+    public PlainPoint getDataSetCenter(@RequestParam("id") Long id) {
         GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
         try {
             return geoServerCoverageStoreManager.getCoverageStoreCenter(id);
