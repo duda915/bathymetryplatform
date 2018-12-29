@@ -172,8 +172,8 @@ public class BathymetryDataController {
 
         GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
         try {
-            geoServerCoverageStoreManager.deleteCoverageStore(id);
             bathymetryDataRepository.delete(bathymetryCollection);
+            geoServerCoverageStoreManager.deleteCoverageStore(id);
         } catch (GeoServerException e) {
             throw new ResourceNotFoundException("geoserver wrong id");
         }
