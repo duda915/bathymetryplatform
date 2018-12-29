@@ -22,7 +22,7 @@ services:
       - /app/node_modules/
     depends_on:
       - restcontainer
-    command: npm start --prefix /app
+    command: serve -l 3000 -s /app/build
 networks:
   appnetwork:
     driver: bridge
