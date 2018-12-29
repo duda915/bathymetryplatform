@@ -108,11 +108,6 @@ public class BathymetryDataController {
         BathymetryCollection newCollection = null;
         File gdalFile = null;
         AppUser user = userRepository.findDistinctByUsername(principal.getName());
-        Role userRole = roleRepository.findDistinctByRoleName(AppRoles.USER);
-
-        if(!user.checkRole(userRole)) {
-            throw new AccessDeniedException("insufficient privileges");
-        }
 
         try {
 
@@ -154,9 +149,7 @@ public class BathymetryDataController {
             }
             throw new ResourceAddException("gdal error");
         } catch (GeoServerException e) {
-            if(newCollection != null) {
-                bathymetryDataRepository.delete(newCollection);
-            }
+            bathymetryDataRepository.delete(newCollection);
             throw new ResourceAddException("geoserver error");
         } finally {
             if(gdalFile != null) {
