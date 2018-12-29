@@ -16,7 +16,7 @@ public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> i
     private final Logger logger = LoggerFactory.getLogger(BathymetryCollectionPersisterImpl.class);
 
     private EntityManagerFactory entityManagerFactory;
-    private final int BATCH_SIZE = 50;
+    private final int BATCH_SIZE = 100;
 
     public BathymetryCollectionPersisterImpl(@Autowired EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
@@ -37,14 +37,29 @@ public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> i
         entityManager.clear();
 
 
+        String nativeQuery = null;
+
         for(int i = 0; i < bathymetryMeasures.size(); i++) {
             bathymetryMeasures.get(i).setMetaId(entity.getId());
-            entityManager.persist(bathymetryMeasures.get(i));
+//            entityManager.persist(bathymetryMeasures.get(i));
 
             if(i % BATCH_SIZE == 0) {
-                entityManager.flush();
-                entityManager.clear();
+                if(nativeQuery != null) {
+                    entityManager.createNativeQuery(nativeQuery).executeUpdate();
+                    nativeQuery = null;
+                }
+
+                nativeQuery = "INSERT INTO bathymetry(meta_id, coords, measure) VALUES ";
+                nativeQuery += appendMeasure(bathymetryMeasures.get(i));
+//                entityManager.flush();
+//                entityManager.clear();
+            } else {
+                nativeQuery += (", " + appendMeasure(bathymetryMeasures.get(i)));
             }
+        }
+
+        if(nativeQuery != null) {
+            entityManager.createNativeQuery(nativeQuery).executeUpdate();
         }
 
         entityManager.getTransaction().commit();
@@ -53,5 +68,10 @@ public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> i
         entity.setMeasureList(bathymetryMeasures);
 
         return entity;
+    }
+
+    private String appendMeasure(BathymetryMeasure measure) {
+        return "(" + measure.getMetaId() + ", ST_SetSRID(ST_MakePoint(" + measure.getMeasureCoords().getX() +
+                ", " + measure.getMeasureCoords().getY() + "), 4326), " + measure.getMeasure() + ")";
     }
 }
