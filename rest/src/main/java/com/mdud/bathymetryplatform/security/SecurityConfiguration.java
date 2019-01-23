@@ -1,6 +1,6 @@
 package com.mdud.bathymetryplatform.security;
 
-import com.mdud.bathymetryplatform.datamodel.AppUser;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,7 +23,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(this.userDetailsConfiguration)
-                .passwordEncoder(AppUser.PASSWORD_ENCODER);
+                .passwordEncoder(ApplicationUser.PASSWORD_ENCODER);
     }
 
     @Override

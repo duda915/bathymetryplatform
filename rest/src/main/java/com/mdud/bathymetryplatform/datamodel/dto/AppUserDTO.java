@@ -1,6 +1,6 @@
 package com.mdud.bathymetryplatform.datamodel.dto;
 
-import com.mdud.bathymetryplatform.datamodel.AppUser;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -10,8 +10,8 @@ public class AppUserDTO {
     private String username;
     private String password;
 
-    public AppUserDTO(AppUser appUser) {
-        this.username = appUser.getUsername();
-        this.password = appUser.getPassword();
+    public AppUserDTO(ApplicationUser applicationUser) {
+        this.username = applicationUser.getUsername();
+        this.password = applicationUser.getPassword();
     }
 }

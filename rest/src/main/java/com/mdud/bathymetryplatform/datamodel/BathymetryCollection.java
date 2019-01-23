@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.datamodel;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public class BathymetryCollection {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @JsonIgnore
-    private AppUser appUser;
+    private ApplicationUser applicationUser;
 
     @Column(name = "name")
     private String acquisitionName;

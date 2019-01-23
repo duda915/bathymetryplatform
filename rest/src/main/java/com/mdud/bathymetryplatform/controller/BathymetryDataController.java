@@ -2,10 +2,10 @@ package com.mdud.bathymetryplatform.controller;
 
 
 import com.mdud.bathymetryplatform.bathymetry.*;
-import com.mdud.bathymetryplatform.datamodel.AppUser;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
 import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
-import com.mdud.bathymetryplatform.datamodel.Role;
+import com.mdud.bathymetryplatform.user.authority.Authority;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMetaDTO;
 import com.mdud.bathymetryplatform.exception.*;
 import com.mdud.bathymetryplatform.repository.BathymetryDataRepository;
@@ -36,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -81,13 +80,13 @@ public class BathymetryDataController {
     @GetMapping("/datasets/user")
     public List<BathymetryMetaDTO> getUserDataSets(Principal principal) {
 
-        AppUser appUser = userRepository.findDistinctByUsername(principal.getName());
-        Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
+        ApplicationUser applicationUser = userRepository.findDistinctByUsername(principal.getName());
+        Authority superUserAuthority = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
 
         List<BathymetryMetaDTO> dataSets = new ArrayList<>();
 
-        if(!appUser.checkRole(superUserRole)) {
-            bathymetryDataRepository.findAllByAppUser(appUser).forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
+        if(!applicationUser.checkRole(superUserAuthority)) {
+            bathymetryDataRepository.findAllByAppUser(applicationUser).forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
         } else {
             bathymetryDataRepository.findAll().forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
         }
@@ -107,7 +106,7 @@ public class BathymetryDataController {
 
         BathymetryCollection newCollection = null;
         File gdalFile = null;
-        AppUser user = userRepository.findDistinctByUsername(principal.getName());
+        ApplicationUser user = userRepository.findDistinctByUsername(principal.getName());
 
         try {
 
@@ -162,11 +161,11 @@ public class BathymetryDataController {
     @DeleteMapping("/datasets")
     @ResponseStatus(HttpStatus.OK)
     public void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
-        AppUser user = userRepository.findDistinctByUsername(principal.getName());
+        ApplicationUser user = userRepository.findDistinctByUsername(principal.getName());
         BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
-        Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
+        Authority superUserAuthority = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
 
-        if(bathymetryCollection.getAppUser() != user && !user.checkRole(superUserRole)) {
+        if(bathymetryCollection.getAppUser() != user && !user.checkRole(superUserAuthority)) {
             throw new AccessDeniedException("insufficient privileges");
         }
 

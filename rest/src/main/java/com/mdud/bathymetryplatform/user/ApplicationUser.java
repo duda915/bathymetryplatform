@@ -1,6 +1,7 @@
-package com.mdud.bathymetryplatform.datamodel;
+package com.mdud.bathymetryplatform.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mdud.bathymetryplatform.user.authority.Authority;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -13,38 +14,38 @@ import java.util.Set;
 @Data
 @ToString(exclude = "password")
 @Entity @NoArgsConstructor
-@Table(name = "app_user")
-public class AppUser {
+@Table(name = "application_user")
+public class ApplicationUser {
     public static final PasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "user_name")
     private String username;
 
     @Column(name = "pass_hash")
     @JsonIgnore
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
-    private Set<UserRole> userRoles;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id", nullable = false)
+    private Set<UserAuthority> userAuthorities;
 
-    public AppUser(String username, String password, Set<UserRole> userRoles) {
+    public ApplicationUser(String username, String password, Set<UserAuthority> userAuthorities) {
         this.username = username;
         this.setPassword(password);
-        this.userRoles = userRoles;
+        this.userAuthorities = userAuthorities;
     }
 
     public void setPassword(String password) {
         this.password = PASSWORD_ENCODER.encode(password);
     }
 
-    public boolean checkRole(Role role) {
-        for(UserRole userRole : userRoles) {
-            if(userRole.getRole().getRoleName() == role.getRoleName()) {
+    public boolean checkRole(Authority authority) {
+        for(UserAuthority userAuthority : userAuthorities) {
+            if(userAuthority.getAuthority().getAuthorityName() == authority.getAuthorityName()) {
                 return true;
             }
         }

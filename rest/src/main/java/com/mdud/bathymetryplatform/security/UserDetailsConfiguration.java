@@ -1,6 +1,6 @@
 package com.mdud.bathymetryplatform.security;
 
-import com.mdud.bathymetryplatform.datamodel.AppUser;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -21,13 +21,13 @@ public class UserDetailsConfiguration implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        AppUser appUser = userRepository.findDistinctByUsername(name);
+        ApplicationUser applicationUser = userRepository.findDistinctByUsername(name);
 
         //parse roles
-        String[] userDetailsRoles = appUser.getUserRoles().stream().map(x -> x.getRole().getRoleName())
+        String[] userDetailsRoles = applicationUser.getUserAuthorities().stream().map(x -> x.getAuthority().getAuthorityName())
                 .toArray(String[]::new);
 
-        return new User(appUser.getUsername(), appUser.getPassword(),
+        return new User(applicationUser.getUsername(), applicationUser.getPassword(),
                 AuthorityUtils.createAuthorityList(userDetailsRoles));
     }
 }

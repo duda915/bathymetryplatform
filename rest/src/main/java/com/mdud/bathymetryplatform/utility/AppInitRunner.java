@@ -1,9 +1,10 @@
 package com.mdud.bathymetryplatform.utility;
 
-import com.mdud.bathymetryplatform.bathymetry.GeoServerCoverageStoreManager;
-import com.mdud.bathymetryplatform.datamodel.*;
 import com.mdud.bathymetryplatform.repository.*;
 import com.mdud.bathymetryplatform.security.AppRoles;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
+import com.mdud.bathymetryplatform.user.authority.Authority;
+import com.mdud.bathymetryplatform.user.UserAuthority;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.*;
 
 @Component
@@ -59,23 +59,23 @@ public class AppInitRunner implements CommandLineRunner {
     }
 
     private void addDefaultUsers() {
-        Role userRole = roleRepository.findDistinctByRoleName(AppRoles.USER);
-        Role superUserRole = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
-        Role guestRole = roleRepository.findDistinctByRoleName(AppRoles.GUEST);
+        Authority userAuthority = roleRepository.findDistinctByRoleName(AppRoles.USER);
+        Authority superUserAuthority = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
+        Authority guestAuthority = roleRepository.findDistinctByRoleName(AppRoles.GUEST);
 
-        Set<UserRole> superUserRoles = new HashSet<>();
-        superUserRoles.add(new UserRole(null, userRole));
-        superUserRoles.add(new UserRole(null, superUserRole));
+        Set<UserAuthority> superUserAuthorities = new HashSet<>();
+        superUserAuthorities.add(new UserAuthority(null, userAuthority));
+        superUserAuthorities.add(new UserAuthority(null, superUserAuthority));
 
-        Set<UserRole> defaultRoles = new HashSet<>();
-        defaultRoles.add(new UserRole(null, userRole));
+        Set<UserAuthority> defaultRoles = new HashSet<>();
+        defaultRoles.add(new UserAuthority(null, userAuthority));
 
-        Set<UserRole> guestUserRole = new HashSet<>();
-        guestUserRole.add(new UserRole(null, guestRole));
+        Set<UserAuthority> guestUserAuthority = new HashSet<>();
+        guestUserAuthority.add(new UserAuthority(null, guestAuthority));
 
-        AppUser superUser = new AppUser("superuser", "test", superUserRoles);
-        AppUser newUser = new AppUser("newuser", "password", defaultRoles);
-        AppUser guestUser = new AppUser("guest", "guest", guestUserRole);
+        ApplicationUser superUser = new ApplicationUser("superuser", "test", superUserAuthorities);
+        ApplicationUser newUser = new ApplicationUser("newuser", "password", defaultRoles);
+        ApplicationUser guestUser = new ApplicationUser("guest", "guest", guestUserAuthority);
 
         userRepository.save(superUser);
         userRepository.save(newUser);

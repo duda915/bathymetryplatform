@@ -25,7 +25,7 @@ public class TestController {
     @GetMapping("/authrole")
     @PostAuthorize("hasAuthority('DELETE')")
     public String roleTest() {
-        return "with role";
+        return "with authority";
     }
 
 

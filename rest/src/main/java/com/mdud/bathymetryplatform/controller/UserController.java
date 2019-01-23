@@ -1,9 +1,9 @@
 package com.mdud.bathymetryplatform.controller;
 
-import com.mdud.bathymetryplatform.datamodel.AppUser;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.datamodel.dto.AppUserDTO;
-import com.mdud.bathymetryplatform.datamodel.Role;
-import com.mdud.bathymetryplatform.datamodel.UserRole;
+import com.mdud.bathymetryplatform.user.authority.Authority;
+import com.mdud.bathymetryplatform.user.UserAuthority;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,21 +34,22 @@ public class UserController {
     }
 
     @PostMapping(value = "/register", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public AppUser registerUser(@RequestBody AppUserDTO user) {
-        Role defaultRole = roleRepository.findDistinctByRoleName("ADD");
-        UserRole defaultUserRole = new UserRole(null, defaultRole);
-        Set<UserRole> roleSet = new HashSet<>();
-        roleSet.add(defaultUserRole);
-
-        AppUser newUser = new AppUser(user.getUsername(), user.getPassword(),
-                roleSet);
-        userRepository.save(newUser);
-
-        return newUser;
+    public ApplicationUser registerUser(@RequestBody AppUserDTO user) {
+//        Authority defaultAuthority = roleRepository.findDistinctByRoleName("ADD");
+//        UserAuthority defaultUserAuthority = new UserAuthority(null, defaultAuthority);
+//        Set<UserAuthority> roleSet = new HashSet<>();
+//        roleSet.add(defaultUserAuthority);
+//
+//        ApplicationUser newUser = new ApplicationUser(user.getUsername(), user.getPassword(),
+//                roleSet);
+//        userRepository.save(newUser);
+//
+//        return newUser;
+        return null;
     }
 
     @GetMapping("/logged")
-    public AppUser loggedUser(Principal principal) {
+    public ApplicationUser loggedUser(Principal principal) {
         return userRepository.findDistinctByUsername(principal.getName());
     }
 

@@ -1,8 +1,8 @@
 package com.mdud.bathymetryplatform.repository;
 
-import com.mdud.bathymetryplatform.datamodel.Role;
+import com.mdud.bathymetryplatform.user.authority.Authority;
 import org.springframework.data.repository.CrudRepository;
 
-public interface RoleRepository extends CrudRepository<Role, Long> {
-    Role findDistinctByRoleName(String roleName);
+public interface RoleRepository extends CrudRepository<Authority, Long> {
+    Authority findDistinctByRoleName(String roleName);
 }
