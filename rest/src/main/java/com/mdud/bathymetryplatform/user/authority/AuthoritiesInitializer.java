@@ -1,17 +1,15 @@
 package com.mdud.bathymetryplatform.user.authority;
 
 
+import com.mdud.bathymetryplatform.initializer.AbstractInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-@Component
-class AuthoritiesInitializer implements CommandLineRunner {
+public class AuthoritiesInitializer extends AbstractInitializer {
     private Logger logger = LoggerFactory.getLogger(AuthoritiesInitializer.class);
     private AuthorityRepository authorityRepository;
 
@@ -21,7 +19,7 @@ class AuthoritiesInitializer implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) {
+    public void init() {
         try {
             Arrays.asList(Authorities.values()).forEach(authorityName -> {
                 authorityRepository.save(new Authority(authorityName));
@@ -31,3 +29,4 @@ class AuthoritiesInitializer implements CommandLineRunner {
         }
     }
 }
+
