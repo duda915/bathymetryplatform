@@ -29,7 +29,7 @@ public class AuthoritiesInitializer extends AbstractInitializer {
     }
 
     private boolean areAuthoritiesInitialized() {
-        return StreamSupport.stream(authorityRepository.findAll().spliterator(), false).count() != 0;
+        return StreamSupport.stream(authorityRepository.findAll().spliterator(), false).count() == 3;
     }
 }
 
