@@ -1,6 +1,5 @@
 package com.mdud.bathymetryplatform.user;
 
-import com.mdud.bathymetryplatform.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

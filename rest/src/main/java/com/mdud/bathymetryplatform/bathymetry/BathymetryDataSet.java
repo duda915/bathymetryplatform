@@ -15,7 +15,6 @@ import java.util.List;
 @Table(name = "bathymetry")
 @Data @NoArgsConstructor @AllArgsConstructor
 public class BathymetryDataSet {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,4 +36,12 @@ public class BathymetryDataSet {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "bathymetry_id", nullable = false)
     private List<BathymetryPoint> measurements;
+
+    public BathymetryDataSet(ApplicationUser applicationUser, String name, Date measurementDate, String dataOwner, List<BathymetryPoint> measurements) {
+        this.applicationUser = applicationUser;
+        this.name = name;
+        this.measurementDate = measurementDate;
+        this.dataOwner = dataOwner;
+        this.measurements = measurements;
+    }
 }
