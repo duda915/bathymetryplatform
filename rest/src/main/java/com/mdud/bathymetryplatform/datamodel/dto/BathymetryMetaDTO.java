@@ -15,7 +15,7 @@ public class BathymetryMetaDTO {
 
     public BathymetryMetaDTO(BathymetryCollection bathymetryCollection) {
         this.id = bathymetryCollection.getId();
-        this.appUserDTO = new AppUserDTO(bathymetryCollection.getAppUser());
+        this.appUserDTO = new AppUserDTO(bathymetryCollection.getApplicationUser());
         this.acquisitionName = bathymetryCollection.getAcquisitionName();
         this.acquisitionDate = bathymetryCollection.getAcquisitionDate();
         this.dataOwner = bathymetryCollection.getDataOwner();

@@ -6,5 +6,5 @@ import com.mdud.bathymetryplatform.repository.custom.BathymetryCollectionPersist
 import org.springframework.data.repository.CrudRepository;
 
 public interface BathymetryDataRepository extends CrudRepository<BathymetryCollection, Long>, BathymetryCollectionPersister<BathymetryCollection> {
-    Iterable<BathymetryCollection> findAllByAppUser(ApplicationUser applicationUser);
+    Iterable<BathymetryCollection> findAllByApplicationUser(ApplicationUser applicationUser);
 }

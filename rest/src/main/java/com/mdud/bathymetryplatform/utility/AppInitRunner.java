@@ -59,27 +59,27 @@ public class AppInitRunner implements CommandLineRunner {
     }
 
     private void addDefaultUsers() {
-        Authority userAuthority = roleRepository.findDistinctByRoleName(AppRoles.USER);
-        Authority superUserAuthority = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
-        Authority guestAuthority = roleRepository.findDistinctByRoleName(AppRoles.GUEST);
-
-        Set<UserAuthority> superUserAuthorities = new HashSet<>();
-        superUserAuthorities.add(new UserAuthority(null, userAuthority));
-        superUserAuthorities.add(new UserAuthority(null, superUserAuthority));
-
-        Set<UserAuthority> defaultRoles = new HashSet<>();
-        defaultRoles.add(new UserAuthority(null, userAuthority));
-
-        Set<UserAuthority> guestUserAuthority = new HashSet<>();
-        guestUserAuthority.add(new UserAuthority(null, guestAuthority));
-
-        ApplicationUser superUser = new ApplicationUser("superuser", "test", superUserAuthorities);
-        ApplicationUser newUser = new ApplicationUser("newuser", "password", defaultRoles);
-        ApplicationUser guestUser = new ApplicationUser("guest", "guest", guestUserAuthority);
-
-        userRepository.save(superUser);
-        userRepository.save(newUser);
-        userRepository.save(guestUser);
+//        Authority userAuthority = roleRepository.findDistinctByRoleName(AppRoles.USER);
+//        Authority superUserAuthority = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
+//        Authority guestAuthority = roleRepository.findDistinctByRoleName(AppRoles.GUEST);
+//
+//        Set<UserAuthority> superUserAuthorities = new HashSet<>();
+//        superUserAuthorities.add(new UserAuthority(null, userAuthority));
+//        superUserAuthorities.add(new UserAuthority(null, superUserAuthority));
+//
+//        Set<UserAuthority> defaultRoles = new HashSet<>();
+//        defaultRoles.add(new UserAuthority(null, userAuthority));
+//
+//        Set<UserAuthority> guestUserAuthority = new HashSet<>();
+//        guestUserAuthority.add(new UserAuthority(null, guestAuthority));
+//
+//        ApplicationUser superUser = new ApplicationUser("superuser", "test", superUserAuthorities);
+//        ApplicationUser newUser = new ApplicationUser("newuser", "password", defaultRoles);
+//        ApplicationUser guestUser = new ApplicationUser("guest", "guest", guestUserAuthority);
+//
+//        userRepository.save(superUser);
+//        userRepository.save(newUser);
+//        userRepository.save(guestUser);
 
     }
 }

@@ -4,5 +4,5 @@ import com.mdud.bathymetryplatform.user.authority.Authority;
 import org.springframework.data.repository.CrudRepository;
 
 public interface RoleRepository extends CrudRepository<Authority, Long> {
-    Authority findDistinctByRoleName(String roleName);
+    Authority findDistinctByAuthorityName(String roleName);
 }

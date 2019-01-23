@@ -81,12 +81,12 @@ public class BathymetryDataController {
     public List<BathymetryMetaDTO> getUserDataSets(Principal principal) {
 
         ApplicationUser applicationUser = userRepository.findDistinctByUsername(principal.getName());
-        Authority superUserAuthority = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
+        Authority superUserAuthority = roleRepository.findDistinctByAuthorityName(AppRoles.SUPER_USER);
 
         List<BathymetryMetaDTO> dataSets = new ArrayList<>();
 
         if(!applicationUser.checkRole(superUserAuthority)) {
-            bathymetryDataRepository.findAllByAppUser(applicationUser).forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
+            bathymetryDataRepository.findAllByApplicationUser(applicationUser).forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
         } else {
             bathymetryDataRepository.findAll().forEach(data -> dataSets.add(new BathymetryMetaDTO(data)));
         }
@@ -163,9 +163,9 @@ public class BathymetryDataController {
     public void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
         ApplicationUser user = userRepository.findDistinctByUsername(principal.getName());
         BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
-        Authority superUserAuthority = roleRepository.findDistinctByRoleName(AppRoles.SUPER_USER);
+        Authority superUserAuthority = roleRepository.findDistinctByAuthorityName(AppRoles.SUPER_USER);
 
-        if(bathymetryCollection.getAppUser() != user && !user.checkRole(superUserAuthority)) {
+        if(bathymetryCollection.getApplicationUser() != user && !user.checkRole(superUserAuthority)) {
             throw new AccessDeniedException("insufficient privileges");
         }
 
