@@ -1,0 +1,66 @@
+package com.mdud.bathymetryplatform.user;
+
+import com.mdud.bathymetryplatform.initializer.AbstractInitializer;
+import com.mdud.bathymetryplatform.user.authority.Authorities;
+import com.mdud.bathymetryplatform.user.authority.AuthoritiesInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class ApplicationUserInitializer extends AbstractInitializer {
+    private Logger logger = LoggerFactory.getLogger(ApplicationUserInitializer.class);
+
+    private ApplicationUserRepository applicationUserRepository;
+    private UserAuthorityProvider userAuthorityProvider;
+
+    public ApplicationUserInitializer(ApplicationUserRepository applicationUserRepository, UserAuthorityProvider userAuthorityProvider) {
+
+        this.applicationUserRepository = applicationUserRepository;
+        this.userAuthorityProvider = userAuthorityProvider;
+    }
+
+    @Override
+    public void init() {
+        try {
+            saveNoAuthorityUser();
+            saveReadAuthorityUser();
+            saveWriteAuthorityUser();
+            saveAdminUser();
+        } catch (DataIntegrityViolationException e) {
+            logger.info("default users initialized already");
+        }
+
+    }
+
+    private void saveAdminUser() {
+        Set<UserAuthority> authoritySet = new HashSet<>();
+        authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.READ));
+        authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.WRITE));
+        authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.ADMIN));
+        ApplicationUser admin = new ApplicationUser("admin", "admin", authoritySet);
+        applicationUserRepository.save(admin);
+    }
+
+    private void saveWriteAuthorityUser() {
+        Set<UserAuthority> authoritySet = new HashSet<>();
+        authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.READ));
+        authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.WRITE));
+        ApplicationUser writeAuthorityUser = new ApplicationUser("write", "write", authoritySet);
+        applicationUserRepository.save(writeAuthorityUser);
+    }
+
+    private void saveReadAuthorityUser() {
+        Set<UserAuthority> authoritySet = new HashSet<>();
+        authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.READ));
+        ApplicationUser readAuthorityUser = new ApplicationUser("read", "read", authoritySet);
+        applicationUserRepository.save(readAuthorityUser);
+    }
+
+    private void saveNoAuthorityUser() {
+        ApplicationUser noAuthorityUser = new ApplicationUser("noauthority", "noauthority", new HashSet<>());
+        applicationUserRepository.save(noAuthorityUser);
+    }
+}

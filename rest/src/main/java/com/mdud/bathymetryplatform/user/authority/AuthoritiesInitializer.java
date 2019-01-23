@@ -21,9 +21,8 @@ public class AuthoritiesInitializer extends AbstractInitializer {
     @Override
     public void init() {
         try {
-            Arrays.asList(Authorities.values()).forEach(authorityName -> {
-                authorityRepository.save(new Authority(authorityName));
-            });
+            Arrays.asList(Authorities.values()).forEach(authorityName ->
+                    authorityRepository.save(new Authority(authorityName)));
         } catch (DataIntegrityViolationException e) {
             logger.info("authorities initialized already");
         }
