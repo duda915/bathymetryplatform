@@ -9,6 +9,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.StreamSupport;
 
 public class ApplicationUserInitializer extends AbstractInitializer {
     private Logger logger = LoggerFactory.getLogger(ApplicationUserInitializer.class);
@@ -24,15 +25,15 @@ public class ApplicationUserInitializer extends AbstractInitializer {
 
     @Override
     public void init() {
-        try {
-            saveNoAuthorityUser();
-            saveReadAuthorityUser();
-            saveWriteAuthorityUser();
-            saveAdminUser();
-        } catch (DataIntegrityViolationException e) {
+        if(applicationUserRepository.findByUsername("admin").orElse(null) != null) {
             logger.info("default users initialized already");
+            return;
         }
 
+        saveNoAuthorityUser();
+        saveReadAuthorityUser();
+        saveWriteAuthorityUser();
+        saveAdminUser();
     }
 
     private void saveAdminUser() {

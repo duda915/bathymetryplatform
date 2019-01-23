@@ -5,9 +5,9 @@ import com.mdud.bathymetryplatform.initializer.AbstractInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.Arrays;
+import java.util.stream.StreamSupport;
 
 public class AuthoritiesInitializer extends AbstractInitializer {
     private Logger logger = LoggerFactory.getLogger(AuthoritiesInitializer.class);
@@ -20,12 +20,16 @@ public class AuthoritiesInitializer extends AbstractInitializer {
 
     @Override
     public void init() {
-        try {
-            Arrays.asList(Authorities.values()).forEach(authorityName ->
-                    authorityRepository.save(new Authority(authorityName)));
-        } catch (DataIntegrityViolationException e) {
+        if(areAuthoritiesInitialized()) {
             logger.info("authorities initialized already");
+            return;
         }
+
+        Arrays.asList(Authorities.values()).forEach(authorityName -> authorityRepository.save(new Authority(authorityName)));
+    }
+
+    private boolean areAuthoritiesInitialized() {
+        return StreamSupport.stream(authorityRepository.findAll().spliterator(), false).count() != 0;
     }
 }
 
