@@ -1,18 +1,16 @@
 package com.mdud.bathymetryplatform.repository.custom;
 
-import com.mdud.bathymetryplatform.controller.BathymetryDataController;
-import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
-import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
-public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> implements BathymetryCollectionPersister<T> {
+public class BathymetryCollectionPersisterImpl<T extends BathymetryDataSet> implements BathymetryCollectionPersister<T> {
     private final Logger logger = LoggerFactory.getLogger(BathymetryCollectionPersisterImpl.class);
 
     private EntityManagerFactory entityManagerFactory;
@@ -26,9 +24,9 @@ public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> i
     public <S extends T> S save(S entity) {
         logger.info("Saving");
 
-        List<BathymetryMeasure> bathymetryMeasures = entity.getMeasureList();
+        List<BathymetryPoint> bathymetryPoints = entity.getMeasurements();
 
-        entity.setMeasureList(null);
+        entity.setMeasurements(null);
 
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
@@ -39,9 +37,8 @@ public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> i
 
         String nativeQuery = null;
 
-        for(int i = 0; i < bathymetryMeasures.size(); i++) {
-            bathymetryMeasures.get(i).setMetaId(entity.getId());
-//            entityManager.persist(bathymetryMeasures.get(i));
+        for(int i = 0; i < bathymetryPoints.size(); i++) {
+//            entityManager.persist(bathymetryPoints.get(i));
 
             if(i % BATCH_SIZE == 0) {
                 if(nativeQuery != null) {
@@ -50,11 +47,11 @@ public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> i
                 }
 
                 nativeQuery = "INSERT INTO bathymetry(meta_id, coords, measure) VALUES ";
-                nativeQuery += appendMeasure(bathymetryMeasures.get(i));
+                nativeQuery += appendMeasure(bathymetryPoints.get(i), entity);
 //                entityManager.flush();
 //                entityManager.clear();
             } else {
-                nativeQuery += (", " + appendMeasure(bathymetryMeasures.get(i)));
+                nativeQuery += (", " + appendMeasure(bathymetryPoints.get(i), entity));
             }
         }
 
@@ -65,13 +62,13 @@ public class BathymetryCollectionPersisterImpl<T extends BathymetryCollection> i
         entityManager.getTransaction().commit();
         entityManager.close();
 
-        entity.setMeasureList(bathymetryMeasures);
+        entity.setMeasurements(bathymetryPoints);
 
         return entity;
     }
 
-    private String appendMeasure(BathymetryMeasure measure) {
-        return "(" + measure.getMetaId() + ", ST_SetSRID(ST_MakePoint(" + measure.getMeasureCoords().getX() +
-                ", " + measure.getMeasureCoords().getY() + "), 4326), " + measure.getMeasure() + ")";
+    private String appendMeasure(BathymetryPoint measure, BathymetryDataSet bathymetryDataSet) {
+        return "(" + bathymetryDataSet.getId() + ", ST_SetSRID(ST_MakePoint(" + measure.getMeasurementCoordinates().getX() +
+                ", " + measure.getMeasurementCoordinates().getY() + "), 4326), " + measure.getDepth() + ")";
     }
 }

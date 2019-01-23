@@ -17,13 +17,13 @@ CREATE TABLE IF NOT EXISTS user_authorities (
 
 CREATE TABLE IF NOT EXISTS bathymetry (
   id SERIAL PRIMARY KEY,
-  user_id INTEGER REFERENCES application_user(id),
+  user_id INTEGER NOT NULL REFERENCES application_user(id),
   name VARCHAR(255),
   measurement_date DATE,
-  author VARCHAR(255)
+  owner VARCHAR(255)
 );
 
-CREATE TABLE IF NOT EXISTS bathymetry_points (
+CREATE TABLE IF NOT EXISTS bathymetry_point (
   gid SERIAL PRIMARY KEY,
   bathymetry_id INTEGER REFERENCES bathymetry(id),
   coordinates GEOMETRY(POINT, 4326),

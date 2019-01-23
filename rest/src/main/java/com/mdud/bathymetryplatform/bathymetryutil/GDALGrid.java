@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.bathymetry;
+package com.mdud.bathymetryplatform.bathymetryutil;
 
 import com.mdud.bathymetryplatform.exception.GDALException;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
@@ -22,10 +22,10 @@ public class GDALGrid {
         String src = "PG:\"host=" + appConfiguration.getDBHost() + " " +
                 "dbname=" + appConfiguration.getDBName() + " " + "user=" + appConfiguration.getDBUsername() + " " +
                 "password=" + appConfiguration.getDBPassword() + "\"";
-        String sqlQuery = "-sql \"SELECT * FROM bathymetry WHERE meta_id = " + metaId + "\"";
+        String sqlQuery = "-sql \"SELECT * FROM bathymetryutil WHERE meta_id = " + metaId + "\"";
         String targetFile = appConfiguration.getGDALTargetLocation() + metaId + ".tif";
 
-        String gdal = "gdal_grid" + " " + sqlQuery +  " " + "-a nearest" + " " + "-a_srs 'EPSG:4326'" + " " + "-zfield measure" + " " + src + " " + targetFile;
+        String gdal = "gdal_grid" + " " + sqlQuery +  " " + "-a nearest" + " " + "-a_srs 'EPSG:4326'" + " " + "-zfield depth" + " " + src + " " + targetFile;
 
 
         try {

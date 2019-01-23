@@ -1,10 +1,10 @@
 package com.mdud.bathymetryplatform.controller;
 
 
-import com.mdud.bathymetryplatform.bathymetry.*;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
+import com.mdud.bathymetryplatform.bathymetryutil.*;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryPoint;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
-import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
-import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
 import com.mdud.bathymetryplatform.user.authority.Authority;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMetaDTO;
 import com.mdud.bathymetryplatform.exception.*;
@@ -104,18 +104,18 @@ public class BathymetryDataController {
                               @RequestParam("file") MultipartFile data,
                            Principal principal) {
 
-        BathymetryCollection newCollection = null;
+        BathymetryDataSet newCollection = null;
         File gdalFile = null;
         ApplicationUser user = userRepository.findDistinctByUsername(principal.getName());
 
         try {
 
-            newCollection = new BathymetryCollection(null, user, acquisitionName,
+            newCollection = new BathymetryDataSet(null, user, acquisitionName,
                     acquisitionDate, dataOwner, null);
 
             BathymetryDataParser dataParser = new BathymetryDataParser(crs);
             double parsingStart = System.currentTimeMillis();
-            newCollection.setMeasureList(dataParser.parseFile(data));
+            newCollection.setMeasurements(dataParser.parseFile(data));
             double parsingEnd = System.currentTimeMillis() - parsingStart;
             logger.info("Parsing time: " + parsingEnd);
 
@@ -162,16 +162,16 @@ public class BathymetryDataController {
     @ResponseStatus(HttpStatus.OK)
     public void deleteDataSet(@RequestParam("id") Long id, Principal principal) {
         ApplicationUser user = userRepository.findDistinctByUsername(principal.getName());
-        BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
+        BathymetryDataSet bathymetryDataSet = bathymetryDataRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("wrong id"));
         Authority superUserAuthority = roleRepository.findDistinctByAuthorityName(AppRoles.SUPER_USER);
 
-        if(bathymetryCollection.getApplicationUser() != user && !user.checkRole(superUserAuthority)) {
+        if(bathymetryDataSet.getApplicationUser() != user && !user.checkRole(superUserAuthority)) {
             throw new AccessDeniedException("insufficient privileges");
         }
 
         GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
         try {
-            bathymetryDataRepository.delete(bathymetryCollection);
+            bathymetryDataRepository.delete(bathymetryDataSet);
             geoServerCoverageStoreManager.deleteCoverageStore(id);
         } catch (GeoServerException e) {
             throw new ResourceNotFoundException("geoserver wrong id");
@@ -183,9 +183,9 @@ public class BathymetryDataController {
         BathymetryFileBuilder fileBuilder = new BathymetryFileBuilder();
 
         for(Long id : ids) {
-            BathymetryCollection bathymetryCollection = bathymetryDataRepository.findById(id)
+            BathymetryDataSet bathymetryDataSet = bathymetryDataRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundException("wrong id"));
-            fileBuilder.append(bathymetryCollection);
+            fileBuilder.append(bathymetryDataSet);
         }
 
         byte[] outFile = fileBuilder.buildFile().getBytes(StandardCharsets.UTF_8);
@@ -208,9 +208,9 @@ public class BathymetryDataController {
 
         BathymetryFileBuilder fileBuilder = new BathymetryFileBuilder();
 
-        List<BathymetryMeasure> measures = new ArrayList<>();
+        List<BathymetryPoint> measures = new ArrayList<>();
         for(Long id : ids) {
-            Iterable<BathymetryMeasure> bathymetryMeasures = bathymetryMeasureRepository.findAllWithinGeometry(id, geometry)
+            Iterable<BathymetryPoint> bathymetryMeasures = bathymetryMeasureRepository.findAllWithinGeometry(id, geometry)
                     .orElse(null);
             if(bathymetryMeasures == null) {
                 continue;

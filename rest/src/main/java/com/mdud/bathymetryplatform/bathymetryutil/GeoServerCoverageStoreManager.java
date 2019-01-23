@@ -1,14 +1,11 @@
-package com.mdud.bathymetryplatform.bathymetry;
+package com.mdud.bathymetryplatform.bathymetryutil;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
-import org.codehaus.jackson.node.ArrayNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 

@@ -1,8 +1,6 @@
-package com.mdud.bathymetryplatform.bathymetry;
+package com.mdud.bathymetryplatform.bathymetryutil;
 
-import com.mdud.bathymetryplatform.controller.BathymetryDataController;
-import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
-import com.mdud.bathymetryplatform.datamodel.BathymetryMeasure;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryPoint;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
@@ -76,13 +74,13 @@ public class BathymetryDataParser {
         return new BathymetryMeasureDTO(targetPoint, depth);
     }
 
-    public List<BathymetryMeasure> parseFile(MultipartFile file) throws TransformException, IOException {
+    public List<BathymetryPoint> parseFile(MultipartFile file) throws TransformException, IOException {
         String lines[] = new String(file.getBytes(), StandardCharsets.UTF_8).split("\n");
-        List<BathymetryMeasure> measures = new ArrayList<>();
+        List<BathymetryPoint> measures = new ArrayList<>();
 
         try {
             BathymetryMeasureDTO headerCheck = parsePoint(lines[0]);
-            measures.add(new BathymetryMeasure(headerCheck));
+            measures.add(new BathymetryPoint(headerCheck));
         } catch (NumberFormatException e) {
             logger.info("Cannot parse first line of file - header?");
         }
@@ -91,7 +89,7 @@ public class BathymetryDataParser {
             BathymetryMeasureDTO measureDTO = parsePoint(lines[i]);
             if(measureDTO == null)
                 continue;
-            measures.add(new BathymetryMeasure(measureDTO));
+            measures.add(new BathymetryPoint(measureDTO));
         }
 
         return measures;

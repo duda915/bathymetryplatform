@@ -45,8 +45,8 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient("bathymetry")
-                .secret("{noop}bathymetry")
+                .withClient("bathymetryutil")
+                .secret("{noop}bathymetryutil")
                 .authorizedGrantTypes("password","authorization_code", "refresh_token")
                 .accessTokenValiditySeconds(3600)
                 .refreshTokenValiditySeconds(10*24*3600)

@@ -1,6 +1,6 @@
 package com.mdud.bathymetryplatform.datamodel.dto;
 
-import com.mdud.bathymetryplatform.datamodel.BathymetryCollection;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
 import lombok.Getter;
 
 import java.sql.Date;
@@ -13,11 +13,11 @@ public class BathymetryMetaDTO {
     private Date acquisitionDate;
     private String dataOwner;
 
-    public BathymetryMetaDTO(BathymetryCollection bathymetryCollection) {
-        this.id = bathymetryCollection.getId();
-        this.appUserDTO = new AppUserDTO(bathymetryCollection.getApplicationUser());
-        this.acquisitionName = bathymetryCollection.getAcquisitionName();
-        this.acquisitionDate = bathymetryCollection.getAcquisitionDate();
-        this.dataOwner = bathymetryCollection.getDataOwner();
+    public BathymetryMetaDTO(BathymetryDataSet bathymetryDataSet) {
+        this.id = bathymetryDataSet.getId();
+        this.appUserDTO = new AppUserDTO(bathymetryDataSet.getApplicationUser());
+        this.acquisitionName = bathymetryDataSet.getName();
+        this.acquisitionDate = bathymetryDataSet.getMeasurementDate();
+        this.dataOwner = bathymetryDataSet.getDataOwner();
     }
 }

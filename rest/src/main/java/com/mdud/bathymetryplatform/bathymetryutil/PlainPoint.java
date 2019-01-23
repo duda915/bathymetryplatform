@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.bathymetry;
+package com.mdud.bathymetryplatform.bathymetryutil;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
