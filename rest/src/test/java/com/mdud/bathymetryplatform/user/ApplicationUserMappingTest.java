@@ -20,8 +20,9 @@ import java.util.Set;
 @SpringBootTest
 @Transactional
 public class ApplicationUserMappingTest {
+
     @Autowired
-    private AuthorityRepository authorityRepository;
+    private UserAuthorityProvider userAuthorityProvider;
 
     @Autowired
     private UserRepository userRepository;
@@ -41,8 +42,7 @@ public class ApplicationUserMappingTest {
     public void save_SaveUserWithThreeAuthorities_ShouldSaveUserAndAuthorities() {
         HashSet<UserAuthority> userAuthoritySet = new HashSet<>();
         Arrays.asList(Authorities.values()).forEach(authorityName -> {
-            Authority authority = authorityRepository.findAuthorityByAuthorityName(authorityName);
-            userAuthoritySet.add(new UserAuthority(authority));
+            userAuthoritySet.add(userAuthorityProvider.getUserAuthority(authorityName));
         });
 
         ApplicationUser applicationUser = new ApplicationUser("test", "test", userAuthoritySet);
@@ -55,4 +55,5 @@ public class ApplicationUserMappingTest {
         Assert.assertTrue(act);
 
     }
+
 }
