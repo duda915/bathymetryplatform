@@ -5,15 +5,11 @@ import com.mdud.bathymetryplatform.repository.NativePersister;
 import com.mdud.bathymetryplatform.repository.custom.BathymetryCollectionPersisterImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.Column;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext;
-import java.util.Arrays;
 import java.util.List;
 
 public class BathymetryDataSetRepositoryImpl implements NativePersister<BathymetryDataSet> {
@@ -64,7 +60,6 @@ public class BathymetryDataSetRepositoryImpl implements NativePersister<Bathymet
         }
 
         entity.setMeasurements(points);
-
         return entity;
     }
 

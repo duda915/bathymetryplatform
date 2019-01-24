@@ -2,19 +2,25 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
+import com.mdud.bathymetryplatform.exception.AccessDeniedException;
+import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.StreamSupport;
 
 import static org.junit.Assert.*;
 
@@ -26,6 +32,9 @@ public class BathymetryDataSetServiceTest {
 
     @Autowired
     private BathymetryDataSetService bathymetryDataSetService;
+
+    @Autowired
+    private BathymetryPointRepository bathymetryPointRepository;
 
     @Autowired
     private ApplicationUserService applicationUserService;
@@ -50,7 +59,53 @@ public class BathymetryDataSetServiceTest {
     @Test
     public void getDataSetsByUser_GetEmptyUserDataSets_ShouldReturnZeroSizeList() {
         List<BathymetryDataSet> bathymetryDataSets = bathymetryDataSetService.getDataSetsByUser("write");
-
         assertEquals(0, bathymetryDataSets.size());
     }
+
+    @Test
+    public void getDataSetsByUser_GetUserDataSets_ShouldReturnDataSetsList() {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+
+        assertEquals(5, bathymetryDataSet.getMeasurements().size());
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void addDataSet_TryToAddDataWithReadOnlyAuthorityUser_ShouldThrowAccessDeniedException() {
+        ApplicationUser readUser = applicationUserService.getApplicationUser("read");
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(readUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSetService.addDataSet(readUser.getUsername(), bathymetryDataSet);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void getDataSet_GetNonExistentDataSet_ShouldThrowResourceNotFoundException() {
+        bathymetryDataSetService.getDataSet(-1L);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void removeDataSet_RemoveNonExistentDataSet_ShouldThrowResourceNotFoundException() {
+        bathymetryDataSetService.removeDataSet("read", -1L);
+    }
+
+    @Test
+    public void removeDataSet_RemoveExistentDataSet_ShouldRemoveAllData() {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+
+        bathymetryDataSetService.removeDataSet("write", bathymetryDataSet.getId());
+
+        long act = StreamSupport.stream(bathymetryPointRepository.findAll().spliterator(), false).count();
+
+        assertEquals(0L, act);
+    }
+
+    @Test(expected = AccessDeniedException.class)
+    public void removeDataSet_RemoveOtherUserDataSet_ShouldThrowAccessDeniedException() {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSetService.removeDataSet("read", bathymetryDataSet.getId());
+    }
+
+
+
 }

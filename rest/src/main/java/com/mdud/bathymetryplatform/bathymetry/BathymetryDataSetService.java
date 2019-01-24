@@ -2,8 +2,12 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
+import com.mdud.bathymetryplatform.exception.AccessDeniedException;
+import com.mdud.bathymetryplatform.exception.ResourceAlreadyExistsException;
+import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.vividsolutions.jts.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +33,7 @@ public class BathymetryDataSetService {
     }
 
     public BathymetryDataSet getDataSet(Long id) {
-        return bathymetryDataSetRepository.findById(id).orElseThrow(() -> new BathymetryDataSetServiceException("dataset not found"));
+        return bathymetryDataSetRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("dataset not found"));
     }
 
     public List<BathymetryDataSet> getDataSetsByUser(String username) {
@@ -47,17 +51,31 @@ public class BathymetryDataSetService {
 
     private void throwIfExists(Long id) {
         if(bathymetryDataSetRepository.findById(id).orElse(null) != null) {
-            throw new BathymetryDataSetServiceException("dataset already exist");
+            throw new ResourceAlreadyExistsException("dataset already exist");
         }
     }
 
-    public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet) {
-        return bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
+    public BathymetryDataSet addDataSet(String username, BathymetryDataSet bathymetryDataSet) {
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
+        if(applicationUser.getUserAuthorities().stream().anyMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName().equals(Authorities.WRITE))) {
+            bathymetryDataSet = bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
+        } else {
+            throw new AccessDeniedException("adding resource require write authority");
+        }
+
+        return getDataSet(bathymetryDataSet.getId());
     }
 
-    public void removeDataSet(Long id) {
+    public void removeDataSet(String username, Long id) {
         throwIfNotExists(id);
-        bathymetryDataSetRepository.deleteById(id);
+        BathymetryDataSet bathymetryDataSet = getDataSet(id);
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
+        if(bathymetryDataSet.getApplicationUser().equals(applicationUser) || applicationUser.getUserAuthorities().stream().anyMatch(userAuthority ->
+                userAuthority.getAuthority().getAuthorityName() == Authorities.ADMIN)) {
+            bathymetryDataSetRepository.deleteById(id);
+        } else {
+            throw new AccessDeniedException("this resource belongs to other user");
+        }
     }
 }
 
