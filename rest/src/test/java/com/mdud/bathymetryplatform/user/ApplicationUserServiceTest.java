@@ -1,5 +1,8 @@
 package com.mdud.bathymetryplatform.user;
 
+import com.mdud.bathymetryplatform.exception.UserAlreadyExistsException;
+import com.mdud.bathymetryplatform.exception.UserException;
+import com.mdud.bathymetryplatform.exception.UserNotFoundException;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +27,7 @@ public class ApplicationUserServiceTest {
         assertNotNull(applicationUser);
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserNotFoundException.class)
     public void getApplicationUser_GetNonExistingUser_ShouldThrowServiceException() {
         applicationUserService.getApplicationUser("test");
     }
@@ -39,7 +42,7 @@ public class ApplicationUserServiceTest {
         assertTrue(act);
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserAlreadyExistsException.class)
     public void addNewUser_AddUserWithExistingUsername_ShouldThrowServiceException() {
         applicationUserService.addNewUser("read", "test");
     }
@@ -54,12 +57,12 @@ public class ApplicationUserServiceTest {
         assertTrue(act);
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserException.class)
     public void changeUserPassword_ChangePasswordToTheSamePassword_ShouldThrowServiceException() {
         applicationUserService.changeUserPassword("read", "read");
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserNotFoundException.class)
     public void changeUserPassword_ChangeNonExistentUserPassword_ShouldThrowServiceException() {
         applicationUserService.changeUserPassword("test", "test");
     }
@@ -72,12 +75,12 @@ public class ApplicationUserServiceTest {
         assertEquals(2, applicationUser.getUserAuthorities().size());
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserException.class)
     public void addNewAuthority_AddExistingAuthority_ShouldThrowServiceException() {
         applicationUserService.addNewAuthority("read", Authorities.READ);
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserNotFoundException.class)
     public void addNewAuthority_AddAuthorityToNonExistentUser_ShouldThrowServiceException() {
         applicationUserService.addNewAuthority("test", Authorities.READ);
     }
@@ -90,23 +93,23 @@ public class ApplicationUserServiceTest {
         assertEquals(0, applicationUser.getUserAuthorities().size());
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserNotFoundException.class)
     public void removeAuthority_RemoveNonExistingUserAuthority_ShouldThrowServiceException(){
         applicationUserService.removeUserAuthority("test", Authorities.READ);
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserNotFoundException.class)
     public void removeAuthority_RemoveAuthorityFromUserWhichDoNotHaveThisAuthority_ShouldThrowServiceException() {
         applicationUserService.removeUserAuthority("rest", Authorities.ADMIN);
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserNotFoundException.class)
     public void removeUser_RemoveExistingUser_ShouldRemoveUser() {
         applicationUserService.removeUser("read");
         applicationUserService.getApplicationUser("read");
     }
 
-    @Test(expected = ApplicationUserServiceException.class)
+    @Test(expected = UserNotFoundException.class)
     public void removeUser_RemoveNonExistingUser_ShouldThrowServiceException() {
         applicationUserService.removeUser("test");
     }

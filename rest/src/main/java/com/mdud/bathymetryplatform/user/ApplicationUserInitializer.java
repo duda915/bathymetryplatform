@@ -24,7 +24,8 @@ public class ApplicationUserInitializer extends AbstractInitializer {
 
     @Override
     public void init() {
-        if(applicationUserRepository.findByUsername("admin").orElse(null) != null) {
+        if(applicationUserRepository.findByUsername("admin").orElse(null) != null
+                && applicationUserRepository.findByUsername("noauthority").orElse(null) != null) {
             logger.info("default users initialized already");
             return;
         }

@@ -1,5 +1,8 @@
 package com.mdud.bathymetryplatform.user;
 
+import com.mdud.bathymetryplatform.exception.UserAlreadyExistsException;
+import com.mdud.bathymetryplatform.exception.UserException;
+import com.mdud.bathymetryplatform.exception.UserNotFoundException;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
 import com.mdud.bathymetryplatform.user.userauthority.UserAuthorityProvider;
@@ -26,7 +29,7 @@ public class ApplicationUserService {
     }
 
     public ApplicationUser getApplicationUser(String username) {
-        return tryGetApplicationUser(username).orElseThrow(() -> new ApplicationUserServiceException("user " + username + " not exists"));
+        return tryGetApplicationUser(username).orElseThrow(() -> new UserNotFoundException("user " + username + " not exists"));
     }
 
     private Optional<ApplicationUser> tryGetApplicationUser(String username) {
@@ -35,7 +38,7 @@ public class ApplicationUserService {
 
     private void throwIfUserExists(String username) {
         if(tryGetApplicationUser(username).orElse(null) != null) {
-            throw new ApplicationUserServiceException("user " + username + " already exists");
+            throw new UserAlreadyExistsException("user " + username + " already exists");
         }
     }
 
@@ -62,7 +65,7 @@ public class ApplicationUserService {
         ApplicationUser applicationUser = getApplicationUser(username);
 
         if(ApplicationUser.PASSWORD_ENCODER.matches(newPassword, applicationUser.getPassword())) {
-            throw new ApplicationUserServiceException("passwords are the same");
+            throw new UserException("passwords are the same");
         }
 
         applicationUser.setPassword(newPassword);
@@ -77,7 +80,7 @@ public class ApplicationUserService {
         UserAuthority newAuthority = userAuthorityProvider.getUserAuthority(authority);
 
         if(applicationUser.getUserAuthorities().stream().anyMatch(userAuthority -> userAuthority.getAuthority() == newAuthority.getAuthority())) {
-            throw new ApplicationUserServiceException("user own this authority already");
+            throw new UserException("user own this authority already");
         }
 
         applicationUser.getUserAuthorities().add(newAuthority);
@@ -91,7 +94,7 @@ public class ApplicationUserService {
         UserAuthority removeAuthority = userAuthorityProvider.getUserAuthority(authority);
 
         if(!applicationUser.getUserAuthorities().stream().anyMatch(userAuthority -> userAuthority.getAuthority() == removeAuthority.getAuthority())) {
-            throw new ApplicationUserServiceException("user do not have this authority");
+            throw new UserException("user do not have this authority");
         }
 
         applicationUser.getUserAuthorities().removeIf(userAuthority -> userAuthority.getAuthority() == removeAuthority.getAuthority());
