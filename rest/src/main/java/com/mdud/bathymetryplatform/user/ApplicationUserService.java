@@ -60,6 +60,11 @@ public class ApplicationUserService {
         throwIfUserNotExists(username);
 
         ApplicationUser applicationUser = getApplicationUser(username);
+
+        if(ApplicationUser.PASSWORD_ENCODER.matches(newPassword, applicationUser.getPassword())) {
+            throw new ApplicationUserServiceException("passwords are the same");
+        }
+
         applicationUser.setPassword(newPassword);
 
         return applicationUserRepository.save(applicationUser);
