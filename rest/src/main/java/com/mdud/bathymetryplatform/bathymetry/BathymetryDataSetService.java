@@ -3,17 +3,20 @@ package com.mdud.bathymetryplatform.bathymetry;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
-import com.mdud.bathymetryplatform.exception.AccessDeniedException;
-import com.mdud.bathymetryplatform.exception.ResourceAlreadyExistsException;
-import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
+import com.mdud.bathymetryplatform.bathymetryutil.BathymetryDataParser;
+import com.mdud.bathymetryplatform.exception.*;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.vividsolutions.jts.geom.Geometry;
+import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.operation.TransformException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,6 +80,33 @@ public class BathymetryDataSetService {
         }
 
         return getDataSet(bathymetryDataSet.getId());
+    }
+
+    public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet, int epsg, MultipartFile file) {
+        BathymetryDataParser bathymetryDataParser = null;
+        try {
+            bathymetryDataParser = new BathymetryDataParser(epsg);
+        } catch (FactoryException e) {
+            e.printStackTrace();
+            throw new RuntimeException("factory exception");
+        }
+
+        List<BathymetryPoint> bathymetryPoints = null;
+        try {
+            bathymetryPoints = bathymetryDataParser.parseFile(file);
+        } catch (TransformException e) {
+            throw new EPSGException("unknown epsg code");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if(bathymetryPoints == null) {
+            throw new DataParsingException("data format not recognized");
+        }
+
+        bathymetryDataSet.setMeasurements(bathymetryPoints);
+        return addDataSet(bathymetryDataSet.getApplicationUser().getUsername(), bathymetryDataSet);
+
     }
 
     public void removeDataSet(String username, Long id) {
