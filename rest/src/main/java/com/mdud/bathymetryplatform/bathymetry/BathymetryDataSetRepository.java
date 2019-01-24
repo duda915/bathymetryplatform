@@ -12,5 +12,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BathymetryDataSetRepository extends CrudRepository<BathymetryDataSet, Long>, NativePersister<BathymetryDataSet> {
-    Optional<BathymetryDataSet> findAllByApplicationUser(ApplicationUser applicationUser);
+    Optional<List<BathymetryDataSet>> findAllByApplicationUser(ApplicationUser applicationUser);
 }
