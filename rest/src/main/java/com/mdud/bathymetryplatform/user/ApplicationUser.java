@@ -3,11 +3,15 @@ package com.mdud.bathymetryplatform.user;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mdud.bathymetryplatform.user.authority.Authority;
 import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
+import com.mdud.bathymetryplatform.user.userauthority.UserAuthorityProvider;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -44,7 +48,7 @@ public class ApplicationUser {
         this.password = PASSWORD_ENCODER.encode(password);
     }
 
-    public boolean checkRole(Authority authority) {
+    public boolean checkAuthority(Authority authority) {
         for(UserAuthority userAuthority : userAuthorities) {
             if(userAuthority.getAuthority().getAuthorityName() == authority.getAuthorityName()) {
                 return true;
@@ -52,6 +56,5 @@ public class ApplicationUser {
         }
         return false;
     }
-
 }
 

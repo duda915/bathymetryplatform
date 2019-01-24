@@ -9,11 +9,15 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ApplicationUserConfiguration {
 
-    @Autowired
-    private ApplicationUserRepository applicationUserRepository;
+    private final ApplicationUserRepository applicationUserRepository;
+
+    private final UserAuthorityProvider userAuthorityProvider;
 
     @Autowired
-    private UserAuthorityProvider userAuthorityProvider;
+    public ApplicationUserConfiguration(ApplicationUserRepository applicationUserRepository, UserAuthorityProvider userAuthorityProvider) {
+        this.applicationUserRepository = applicationUserRepository;
+        this.userAuthorityProvider = userAuthorityProvider;
+    }
 
     @Bean
     public ApplicationUserInitializer applicationUserInitializer() {
