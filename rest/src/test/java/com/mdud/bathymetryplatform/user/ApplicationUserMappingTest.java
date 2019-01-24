@@ -2,8 +2,8 @@ package com.mdud.bathymetryplatform.user;
 
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
-import com.mdud.bathymetryplatform.user.authority.Authority;
-import com.mdud.bathymetryplatform.user.authority.AuthorityRepository;
+import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
+import com.mdud.bathymetryplatform.user.userauthority.UserAuthorityProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

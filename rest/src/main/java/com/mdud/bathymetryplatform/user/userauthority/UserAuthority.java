@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.user;
+package com.mdud.bathymetryplatform.user.userauthority;
 
 import com.mdud.bathymetryplatform.user.authority.Authority;
 import lombok.Data;

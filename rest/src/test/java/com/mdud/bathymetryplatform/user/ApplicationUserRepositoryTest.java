@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.user;
 
+import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

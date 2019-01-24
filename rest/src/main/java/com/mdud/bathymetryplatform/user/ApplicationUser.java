@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mdud.bathymetryplatform.user.authority.Authority;
+import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;

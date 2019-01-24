@@ -2,8 +2,6 @@ package com.mdud.bathymetryplatform.controller;
 
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.datamodel.dto.AppUserDTO;
-import com.mdud.bathymetryplatform.user.authority.Authority;
-import com.mdud.bathymetryplatform.user.UserAuthority;
 import com.mdud.bathymetryplatform.repository.RoleRepository;
 import com.mdud.bathymetryplatform.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.Set;
 
 @CrossOrigin
 @RestController

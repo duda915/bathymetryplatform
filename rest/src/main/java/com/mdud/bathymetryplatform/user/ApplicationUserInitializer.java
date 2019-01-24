@@ -2,14 +2,13 @@ package com.mdud.bathymetryplatform.user;
 
 import com.mdud.bathymetryplatform.initializer.AbstractInitializer;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
-import com.mdud.bathymetryplatform.user.authority.AuthoritiesInitializer;
+import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
+import com.mdud.bathymetryplatform.user.userauthority.UserAuthorityProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.StreamSupport;
 
 public class ApplicationUserInitializer extends AbstractInitializer {
     private Logger logger = LoggerFactory.getLogger(ApplicationUserInitializer.class);

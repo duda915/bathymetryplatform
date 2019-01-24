@@ -1,10 +1,6 @@
 package com.mdud.bathymetryplatform.utility;
 
 import com.mdud.bathymetryplatform.repository.*;
-import com.mdud.bathymetryplatform.security.AppRoles;
-import com.mdud.bathymetryplatform.user.ApplicationUser;
-import com.mdud.bathymetryplatform.user.authority.Authority;
-import com.mdud.bathymetryplatform.user.UserAuthority;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-import java.util.*;
 
 @Component
 public class AppInitRunner implements CommandLineRunner {

@@ -1,11 +1,8 @@
-package com.mdud.bathymetryplatform.user;
+package com.mdud.bathymetryplatform.user.userauthority;
 
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.mdud.bathymetryplatform.user.authority.Authority;
 import com.mdud.bathymetryplatform.user.authority.AuthorityRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 public class UserAuthorityProvider {
     private AuthorityRepository authorityRepository;
