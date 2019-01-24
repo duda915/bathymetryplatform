@@ -7,17 +7,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import java.util.Arrays;
 import java.util.List;
 
 public class BathymetryDataSetRepositoryImpl implements NativePersister<BathymetryDataSet> {
     private final Logger logger = LoggerFactory.getLogger(BathymetryCollectionPersisterImpl.class);
 
-    private EntityManagerFactory entityManagerFactory;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     //bathymetry point column names
     private String bathymetryPointsTableName = "bathymetry_point";
@@ -30,19 +33,11 @@ public class BathymetryDataSetRepositoryImpl implements NativePersister<Bathymet
 
     private StringBuilder nativeQueryBuilder;
 
-
-    @Autowired
-    public BathymetryDataSetRepositoryImpl(EntityManagerFactory entityManagerFactory) {
-        this.entityManagerFactory = entityManagerFactory;
-    }
-
-
-
     @Override
+    @Transactional
     public BathymetryDataSet nativeSave(BathymetryDataSet entity) {
         List<BathymetryPoint> points = entity.getMeasurements();
 
-        EntityManager entityManager = entityManagerFactory.createEntityManager();
         persistParent(entity, entityManager);
 
         nativeQueryBuilder = null;
@@ -67,9 +62,6 @@ public class BathymetryDataSetRepositoryImpl implements NativePersister<Bathymet
         if (nativeQueryBuilder != null) {
             entityManager.createNativeQuery(nativeQueryBuilder.toString()).executeUpdate();
         }
-
-        entityManager.getTransaction().commit();
-        entityManager.close();
 
         entity.setMeasurements(points);
 
@@ -104,7 +96,6 @@ public class BathymetryDataSetRepositoryImpl implements NativePersister<Bathymet
 
     private void persistParent(BathymetryDataSet entity, EntityManager entityManager) {
         entity.setMeasurements(null);
-        entityManager.getTransaction().begin();
         entityManager.persist(entity);
         entityManager.flush();
         entityManager.clear();

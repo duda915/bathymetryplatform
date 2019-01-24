@@ -2,8 +2,10 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,6 +28,9 @@ public class BathymetryDataSetRepositoryImplTest {
 
     @Autowired
     private BathymetryDataSetRepository bathymetryDataSetRepository;
+
+    @Autowired
+    private BathymetryPointRepository bathymetryPointRepository;
 
     @Autowired
     private ApplicationUserService applicationUserService;
