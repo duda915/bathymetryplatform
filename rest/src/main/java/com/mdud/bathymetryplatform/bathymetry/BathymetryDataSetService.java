@@ -97,6 +97,8 @@ public class BathymetryDataSetService {
             bathymetryPoints = bathymetryDataParser.parseFile(file);
         } catch (TransformException e) {
             throw new EPSGException("unknown epsg code");
+        } catch (NumberFormatException e) {
+            throw new DataParsingException("invalid file");
         }
 
         if(bathymetryPoints == null) {

@@ -5,6 +5,7 @@ import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
+import com.mdud.bathymetryplatform.exception.DataParsingException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
@@ -155,6 +156,16 @@ public class BathymetryDataSetServiceTest {
         BathymetryDataSet newDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet, 32634, file);
 
         assertEquals(3036, newDataSet.getMeasurements().size());
+    }
+
+    @Test(expected = DataParsingException.class)
+    public void addDataSetFromFile_AddInvalidFileDataSet_ShouldThrowException() throws IOException {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", null);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream("testdata/invalidtestdata.xyz");
+        byte[] file = IOUtils.toByteArray(inputStream);
+
+        BathymetryDataSet newDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet, 32634, file);
     }
 
 
