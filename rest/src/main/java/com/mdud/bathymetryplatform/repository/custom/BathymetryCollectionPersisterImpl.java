@@ -1,7 +1,7 @@
 package com.mdud.bathymetryplatform.repository.custom;
 
 import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
-import com.mdud.bathymetryplatform.bathymetry.BathymetryPoint;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

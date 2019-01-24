@@ -1,6 +1,6 @@
 package com.mdud.bathymetryplatform.repository;
 
-import com.mdud.bathymetryplatform.bathymetry.BathymetryPoint;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.vividsolutions.jts.geom.Geometry;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;

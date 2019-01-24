@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.bathymetry;
+package com.mdud.bathymetryplatform.bathymetry.point;
 
 
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;

@@ -3,7 +3,7 @@ package com.mdud.bathymetryplatform.controller;
 
 import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
 import com.mdud.bathymetryplatform.bathymetryutil.*;
-import com.mdud.bathymetryplatform.bathymetry.BathymetryPoint;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.authority.Authority;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMetaDTO;

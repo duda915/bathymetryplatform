@@ -1,6 +1,6 @@
 package com.mdud.bathymetryplatform.bathymetryutil;
 
-import com.mdud.bathymetryplatform.bathymetry.BathymetryPoint;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
