@@ -74,8 +74,13 @@ public class BathymetryDataParser {
         return new BathymetryMeasureDTO(targetPoint, depth);
     }
 
-    public List<BathymetryPoint> parseFile(MultipartFile file) throws TransformException, IOException {
-        String lines[] = new String(file.getBytes(), StandardCharsets.UTF_8).split("\n");
+    public List<BathymetryPoint> parseFile(MultipartFile file) throws IOException, TransformException {
+        return parseFile(file.getBytes());
+
+    }
+
+    public List<BathymetryPoint> parseFile(byte[] bytes) throws TransformException{
+        String lines[] = new String(bytes, StandardCharsets.UTF_8).split("\n");
         List<BathymetryPoint> measures = new ArrayList<>();
 
         try {

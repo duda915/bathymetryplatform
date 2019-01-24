@@ -10,6 +10,7 @@ import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,9 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -139,6 +143,18 @@ public class BathymetryDataSetServiceTest {
         int act = bathymetryDataSetService.countAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), simpleRectangle);
 
         assertEquals(2, act);
+    }
+
+    @Test
+    public void addDataSetFromFile_AddValidFileDataSet_ShouldPersistDataSet() throws IOException {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", null);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        InputStream inputStream = classLoader.getResourceAsStream("testdata/testdata.xyz");
+        byte[] file = IOUtils.toByteArray(inputStream);
+
+        BathymetryDataSet newDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet, 32634, file);
+
+        assertEquals(3036, newDataSet.getMeasurements().size());
     }
 
 

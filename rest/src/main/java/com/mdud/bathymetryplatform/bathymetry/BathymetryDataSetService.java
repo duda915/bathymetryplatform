@@ -82,7 +82,8 @@ public class BathymetryDataSetService {
         return getDataSet(bathymetryDataSet.getId());
     }
 
-    public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet, int epsg, MultipartFile file) {
+    // TODO implement parser using proj.4!
+    public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet, int epsg, byte[] file) {
         BathymetryDataParser bathymetryDataParser = null;
         try {
             bathymetryDataParser = new BathymetryDataParser(epsg);
@@ -96,8 +97,6 @@ public class BathymetryDataSetService {
             bathymetryPoints = bathymetryDataParser.parseFile(file);
         } catch (TransformException e) {
             throw new EPSGException("unknown epsg code");
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
         if(bathymetryPoints == null) {
