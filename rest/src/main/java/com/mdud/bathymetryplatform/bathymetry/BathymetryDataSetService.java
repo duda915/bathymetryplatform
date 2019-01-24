@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
+import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.ResourceAlreadyExistsException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @Transactional
@@ -36,13 +39,23 @@ public class BathymetryDataSetService {
         return bathymetryDataSetRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("dataset not found"));
     }
 
+    public List<BathymetryDataSet> getAllDataSets() {
+        return StreamSupport.stream(bathymetryDataSetRepository.findAll().spliterator(), false).collect(Collectors.toList());
+    }
+
     public List<BathymetryDataSet> getDataSetsByUser(String username) {
         ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
         return bathymetryDataSetRepository.findAllByApplicationUser(applicationUser).orElse(new ArrayList<>());
     }
 
-    public List<BathymetryPoint> getAllBathymetryPointsWithinGeometry(Long id, Geometry geometry) {
+    public List<BathymetryPoint> getAllBathymetryPointsWithinGeometry(Long id, SimpleRectangle simpleRectangle) {
+        Geometry geometry = simpleRectangle.buildGeometry(simpleRectangle);
         return bathymetryPointRepository.findAllWithinGeometry(id, geometry).orElse(new ArrayList<>());
+    }
+
+    public Integer countAllBathymetryPointsWithinGeometry(Long id, SimpleRectangle simpleRectangle) {
+        Geometry geometry = simpleRectangle.buildGeometry(simpleRectangle);
+        return bathymetryPointRepository.findAllWithinGeometry(id, geometry).orElse(new ArrayList<>()).size();
     }
 
     private void throwIfNotExists(Long id) {

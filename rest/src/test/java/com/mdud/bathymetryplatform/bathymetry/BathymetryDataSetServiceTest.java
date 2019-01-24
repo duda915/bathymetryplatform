@@ -3,11 +3,13 @@ package com.mdud.bathymetryplatform.bathymetry;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
+import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
+import com.vividsolutions.jts.geom.Coordinate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -106,6 +108,38 @@ public class BathymetryDataSetServiceTest {
         bathymetryDataSetService.removeDataSet("read", bathymetryDataSet.getId());
     }
 
+    @Test
+    public void getAllDataSets_AddTwoDataSets_ShouldReturnAllDataSets() {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+
+        int count = bathymetryDataSetService.getAllDataSets().size();
+        assertEquals(2, count);
+    }
+
+    @Test
+    public void getAllBathymetryPointsWithinGeometry_AddDataSet_ShouldReturnPointsInsideRectangle() {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        SimpleRectangle simpleRectangle = new SimpleRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
+
+        List<BathymetryPoint> bathymetryPoints = bathymetryDataSetService.getAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), simpleRectangle);
+
+        assertEquals(2, bathymetryPoints.size());
+    }
+
+    @Test
+    public void countAllBathymetryPointsWithinGeometry_AddDataSet_ShouldReturnPointsCountInsideRectangle() {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        SimpleRectangle simpleRectangle = new SimpleRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
+
+        int act = bathymetryDataSetService.countAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), simpleRectangle);
+
+        assertEquals(2, act);
+    }
 
 
 }
