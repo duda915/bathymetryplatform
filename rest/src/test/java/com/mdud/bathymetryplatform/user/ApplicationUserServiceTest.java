@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.user;
 
+import com.mdud.bathymetryplatform.user.authority.Authorities;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +64,51 @@ public class ApplicationUserServiceTest {
         applicationUserService.changeUserPassword("test", "test");
     }
 
+    @Test
+    public void addNewAuthority_AddNewAuthorityToUser_ShouldAddNewAuthority() {
+        applicationUserService.addNewAuthority("read", Authorities.ADMIN);
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
 
+        assertEquals(2, applicationUser.getUserAuthorities().size());
+    }
+
+    @Test(expected = ApplicationUserServiceException.class)
+    public void addNewAuthority_AddExistingAuthority_ShouldThrowServiceException() {
+        applicationUserService.addNewAuthority("read", Authorities.READ);
+    }
+
+    @Test(expected = ApplicationUserServiceException.class)
+    public void addNewAuthority_AddAuthorityToNonExistentUser_ShouldThrowServiceException() {
+        applicationUserService.addNewAuthority("test", Authorities.READ);
+    }
+
+    @Test
+    public void removeAuthority_RemoveUserAuthority_ShouldRemoveUserAuthority() {
+        applicationUserService.removeUserAuthority("read", Authorities.READ);
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+
+        assertEquals(0, applicationUser.getUserAuthorities().size());
+    }
+
+    @Test(expected = ApplicationUserServiceException.class)
+    public void removeAuthority_RemoveNonExistingUserAuthority_ShouldThrowServiceException(){
+        applicationUserService.removeUserAuthority("test", Authorities.READ);
+    }
+
+    @Test(expected = ApplicationUserServiceException.class)
+    public void removeAuthority_RemoveAuthorityFromUserWhichDoNotHaveThisAuthority_ShouldThrowServiceException() {
+        applicationUserService.removeUserAuthority("rest", Authorities.ADMIN);
+    }
+
+    @Test(expected = ApplicationUserServiceException.class)
+    public void removeUser_RemoveExistingUser_ShouldRemoveUser() {
+        applicationUserService.removeUser("read");
+        applicationUserService.getApplicationUser("read");
+    }
+
+    @Test(expected = ApplicationUserServiceException.class)
+    public void removeUser_RemoveNonExistingUser_ShouldThrowServiceException() {
+        applicationUserService.removeUser("test");
+    }
 
 }

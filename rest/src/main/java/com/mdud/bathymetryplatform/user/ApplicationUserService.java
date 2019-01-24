@@ -99,5 +99,11 @@ public class ApplicationUserService {
         return applicationUserRepository.save(applicationUser);
     }
 
+    public void removeUser(String username) {
+        throwIfUserNotExists(username);
+        ApplicationUser applicationUser = getApplicationUser(username);
+        applicationUserRepository.delete(applicationUser);
+    }
+
 
 }
