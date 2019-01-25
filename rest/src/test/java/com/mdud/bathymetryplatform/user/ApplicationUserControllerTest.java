@@ -67,14 +67,17 @@ public class ApplicationUserControllerTest {
         String token = tokenTestHelper.obtainAccessTokenHeader("notvaliduser", "notvalidpass");
     }
 
-
-
     @Test
     public void getLoggedUser_LogAsAdmin_ShouldReturnUser() throws Exception {
         String header = tokenTestHelper.obtainAccessTokenHeader("admin", "admin");
         ApplicationUser applicationUser = applicationUserService.getApplicationUser("admin");
-        mockMvc.perform(get(userAPI).header("Authorization", header)).andDo(print()).andExpect(status().isOk());
+        mockMvc.perform(get(userAPI).header("Authorization", header)).andExpect(status().isOk())
+                .andExpect(content().json(JSONUtil.convertObjectToJsonString(applicationUser)));
     }
+
+    
+
+
 
 
 }
