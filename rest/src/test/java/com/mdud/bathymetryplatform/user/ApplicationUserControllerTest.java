@@ -53,6 +53,23 @@ public class ApplicationUserControllerTest {
     }
 
     @Test
+    public void testAuthentication_LogAsValidUser_ShouldBeOK() throws Exception {
+        String token = tokenTestHelper.obtainAccessTokenHeader("admin", "admin");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testAuthentication_LogWithInvalidPassword_ShouldThrowException() throws Exception {
+        String token = tokenTestHelper.obtainAccessTokenHeader("admin", "notvalidpass");
+    }
+
+    @Test(expected = AssertionError.class)
+    public void testAuthentication_LogWithInvalidUsername_ShouldThrowException() throws Exception {
+        String token = tokenTestHelper.obtainAccessTokenHeader("notvaliduser", "notvalidpass");
+    }
+
+
+
+    @Test
     public void getLoggedUser_LogAsAdmin_ShouldReturnUser() throws Exception {
         String header = tokenTestHelper.obtainAccessTokenHeader("admin", "admin");
         ApplicationUser applicationUser = applicationUserService.getApplicationUser("admin");
