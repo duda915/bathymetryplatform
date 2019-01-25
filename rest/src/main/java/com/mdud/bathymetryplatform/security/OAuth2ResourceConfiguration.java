@@ -16,7 +16,6 @@ public class OAuth2ResourceConfiguration extends ResourceServerConfigurerAdapter
         http
                 .authorizeRequests()
                 .antMatchers("/api/unauth", "/api/user/register").permitAll()
-                .antMatchers("/api/data/*").hasAnyAuthority(AppRoles.GUEST, AppRoles.USER)
                 .anyRequest().authenticated();
     }
 }

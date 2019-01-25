@@ -25,14 +25,18 @@ import javax.sql.DataSource;
 @EnableAuthorizationServer
 public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
 
-    @Autowired
-    DataSource dataSource;
+    private final DataSource dataSource;
+
+    private final AuthenticationManager authenticationManager;
+
+    private final UserDetailsConfiguration userDetailsConfiguration;
 
     @Autowired
-    AuthenticationManager authenticationManager;
-
-    @Autowired
-    UserDetailsConfiguration userDetailsConfiguration;
+    public OAuth2Configuration(DataSource dataSource, AuthenticationManager authenticationManager, UserDetailsConfiguration userDetailsConfiguration) {
+        this.dataSource = dataSource;
+        this.authenticationManager = authenticationManager;
+        this.userDetailsConfiguration = userDetailsConfiguration;
+    }
 
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
@@ -45,8 +49,8 @@ public class OAuth2Configuration extends AuthorizationServerConfigurerAdapter {
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients
                 .inMemory()
-                .withClient("bathymetryutil")
-                .secret("{noop}bathymetryutil")
+                .withClient("bathymetry")
+                .secret("{noop}bathymetry")
                 .authorizedGrantTypes("password","authorization_code", "refresh_token")
                 .accessTokenValiditySeconds(3600)
                 .refreshTokenValiditySeconds(10*24*3600)

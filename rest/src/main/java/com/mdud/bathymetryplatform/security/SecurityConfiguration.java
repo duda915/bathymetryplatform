@@ -33,16 +33,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .anyRequest().denyAll()
                 .and()
                 .formLogin().disable();
-//                    .and()
-//                .formLogin()
-//                    .defaultSuccessUrl("/", true)
-//                    .permitAll()
-//                    .and()
-//                .httpBasic()
-//                    .and()
-//                .csrf().disable()
-//                .logout()
-//                    .logoutSuccessUrl("/");
     }
 
     @Bean
