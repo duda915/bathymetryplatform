@@ -108,5 +108,10 @@ public class ApplicationUserService {
         applicationUserRepository.delete(applicationUser);
     }
 
+    public boolean checkUserAuthority(String username, Authorities authority) {
+        return getApplicationUser(username).getUserAuthorities()
+                .stream().anyMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName() == authority);
+    }
+
 
 }

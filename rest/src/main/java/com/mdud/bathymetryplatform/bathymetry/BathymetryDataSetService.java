@@ -121,5 +121,16 @@ public class BathymetryDataSetService {
             throw new AccessDeniedException("this resource belongs to other user");
         }
     }
+
+    public BathymetryDataSet addDataSetFromDTO(BathymetryDataSetDTO bathymetryDataSetDTO) throws IOException {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(bathymetryDataSetDTO.getApplicationUser(),
+                bathymetryDataSetDTO.getName(),
+                bathymetryDataSetDTO.getMeasurementDate(),
+                bathymetryDataSetDTO.getDataOwner(), new ArrayList<>());
+        int epsg = bathymetryDataSetDTO.getEpsgCode();
+        byte[] file = bathymetryDataSetDTO.getMultipartFile().getBytes();
+
+        return addDataSet(bathymetryDataSet, epsg, file);
+    }
 }
 
