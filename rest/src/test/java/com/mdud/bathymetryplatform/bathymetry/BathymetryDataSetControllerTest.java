@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
+import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.token.TokenTestHelper;
@@ -20,9 +21,9 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +44,9 @@ public class BathymetryDataSetControllerTest {
 
     @Autowired
     private BathymetryDataSetService bathymetryDataSetService;
+
+    @Autowired
+    private BathymetryDataSetRepository bathymetryDataSetRepository;
 
     @Autowired
     private MockMvc mockMvc;
@@ -84,6 +88,7 @@ public class BathymetryDataSetControllerTest {
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     public void addDataSet_AddDataSet_ShouldReturnOKStatus() throws Exception {
         byte[] file = IOUtils.toByteArray(resource.getURI());
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file);
@@ -93,10 +98,20 @@ public class BathymetryDataSetControllerTest {
 
         String json = JSONUtil.convertObjectToJsonString(bathymetryDataSetDTO);
 
-        mockMvc.perform(multipart(dataAPI)
+        String response = mockMvc.perform(multipart(dataAPI)
                 .file(mockMultipartFile)
                 .header("Authorization", adminHeader)
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+
+        ResourceIdResponse resourceIdResponse = JSONUtil.convertJSONStringToObject(response, ResourceIdResponse.class);
+        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
+    }
+
+    private void clearDataSetAfterNonTransactionalTest(Long id) throws Exception {
+        mockMvc.perform(delete(dataAPI)
+                .header("Authorization", adminHeader)
+                .param("id", id.toString()))
+                .andExpect(status().isOk());
     }
 
 

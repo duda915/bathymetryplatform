@@ -6,6 +6,7 @@ import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
 import com.mdud.bathymetryplatform.bathymetryutil.BathymetryFileBuilder;
 import com.mdud.bathymetryplatform.bathymetryutil.GDALGrid;
 import com.mdud.bathymetryplatform.bathymetryutil.GeoServerCoverageStoreManager;
+import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.controller.StringResponse;
 import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
@@ -59,7 +60,7 @@ public class BathymetryDataSetController {
     }
 
     @PostMapping
-    public StringResponse addDataSet(Principal principal, @RequestParam(value = "file") MultipartFile file) {
+    public ResourceIdResponse addDataSet(Principal principal, @RequestParam(value = "file") MultipartFile file) {
         BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(null, 32634, "name", SQLDateBuilder.now(), "ownner");
         bathymetryDataSetDTO.setApplicationUser(applicationUserService.getApplicationUser(principal.getName()));
         BathymetryDataSet bathymetryDataSet;
@@ -78,9 +79,12 @@ public class BathymetryDataSetController {
         } catch (GeoServerException e) {
             bathymetryDataSetService.removeDataSet(principal.getName(), bathymetryDataSet.getId());
             throw new ResourceAddException("failed to add data");
+        } finally {
+            rasterFile.delete();
         }
 
-        return new StringResponse("data successfully uploaded");
+
+        return new ResourceIdResponse(bathymetryDataSet.getId(), "data successfully uploaded");
     }
 
     @DeleteMapping
