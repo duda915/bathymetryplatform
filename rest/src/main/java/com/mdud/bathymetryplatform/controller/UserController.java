@@ -11,10 +11,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
-
-@CrossOrigin
-@RestController
-@RequestMapping("/api/user")
+//
+//@CrossOrigin
+//@RestController
+//@RequestMapping("/api/user")
 public class UserController {
 
     private RoleRepository roleRepository;
