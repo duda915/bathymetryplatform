@@ -3,6 +3,7 @@ package com.mdud.bathymetryplatform.user;
 import com.mdud.bathymetryplatform.controller.StringResponse;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,8 +35,8 @@ public class ApplicationUserController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
-    public ApplicationUser addUserWithoutRegistration(@RequestBody ApplicationUser applicationUser) {
-        return applicationUserService.addNewUser(applicationUser.getUsername(), applicationUser.getPassword());
+    public ApplicationUser addUserWithoutRegistration(@RequestBody ApplicationUserDTO applicationUserDTO) {
+        return applicationUserService.addNewUser(applicationUserDTO.getUsername(), applicationUserDTO.getPassword());
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
