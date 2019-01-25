@@ -1,6 +1,9 @@
 package com.mdud.bathymetryplatform.user;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mdud.bathymetryplatform.exception.AccessDeniedException;
+import com.mdud.bathymetryplatform.exception.UserNotFoundException;
+import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.mdud.bathymetryplatform.user.token.TokenTestHelper;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
 import org.junit.Before;
@@ -11,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -93,12 +97,100 @@ public class ApplicationUserControllerTest {
                 .andExpect(status().isOk());
 
         applicationUserService.getApplicationUser(applicationUserDTO.getUsername());
-
     }
 
+    @Test
+    public void addUserWithoutRegistration_AddWithNormalUserAccount_ShouldReturnForbiddenStatus() throws Exception {
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "Test");
+        String writeUserHeader = tokenTestHelper.obtainAccessTokenHeader("write", "write");
+        mockMvc.perform(post(userAPI).header("Authorization", writeUserHeader)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JSONUtil.convertObjectToJsonString(applicationUserDTO)))
+                .andExpect(status().isForbidden());
+    }
 
+    @Test(expected = UserNotFoundException.class)
+    public void deleteUser_DeleteUserFromAdminAccount_ShouldDeleteUser() throws Exception {
+        String deleteUser = "read";
+        mockMvc.perform(delete(userAPI)
+                .header("Authorization", adminHeader)
+                .content(deleteUser)
+        ).andExpect(status().isOk());
 
+        applicationUserService.getApplicationUser(deleteUser);
+    }
 
+    @Test
+    public void deleteUser_DeleteUserFromNonAdminAccoutn_ShouldDeleteUser() throws Exception {
+        String deleteUser = "read";
+        String writeUserHeader = tokenTestHelper.obtainAccessTokenHeader("write", "write");
+        mockMvc.perform(delete(userAPI)
+                .header("Authorization", writeUserHeader)
+                .content(deleteUser)
+        ).andExpect(status().isForbidden());
+    }
 
+    @Test
+    public void addAuthorityToUser_AddAuthorityFromAdminAccount_ShouldAddAuthority() throws Exception {
+        String targetUser = "read";
+        String adminAuthority = JSONUtil.convertObjectToJsonString(Authorities.ADMIN);
+        mockMvc.perform(put(userAPI + "/authority")
+                .header("Authorization", adminHeader)
+                .content(adminAuthority)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("username", targetUser)
+        ).andExpect(status().isOk());
 
+        ApplicationUser readAdminUser = applicationUserService.getApplicationUser("read");
+
+        boolean act = readAdminUser.getUserAuthorities().stream().
+                anyMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName() == Authorities.ADMIN);
+
+        assertTrue(act);
+    }
+
+    @Test
+    public void addAuthorityToUser_AddAuthorityFromNonAdminAccount_ShouldReturnForbidden() throws Exception {
+        String writeUserTokenHeader = tokenTestHelper.obtainAccessTokenHeader("write", "write");
+        String targetUser = "read";
+        String adminAuthority = JSONUtil.convertObjectToJsonString(Authorities.ADMIN);
+        mockMvc.perform(put(userAPI + "/authority")
+                .header("Authorization", writeUserTokenHeader)
+                .content(adminAuthority)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("username", targetUser)
+        ).andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void removeUserAuthority_RemoveUserAuthorityFromAdminAccount_ShouldRemoveAuthority() throws Exception {
+        String targetUser = "read";
+        String targetAuthority = JSONUtil.convertObjectToJsonString(Authorities.READ);
+        mockMvc.perform(delete(userAPI + "/authority")
+                .header("Authorization", adminHeader)
+                .content(targetAuthority)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("username", targetUser)
+        ).andExpect(status().isOk());
+
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+        boolean act = applicationUser.getUserAuthorities()
+                .stream().noneMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName() == Authorities.READ);
+
+        assertTrue(act);
+    }
+
+    @Test
+    public void removeUserAuthority_RemoveUserAuthorityFromNonAdminAccount_ShouldReturnForbidden() throws Exception {
+        String writeUserToken = tokenTestHelper.obtainAccessTokenHeader("write", "write");
+        String targetUser = "read";
+        String targetAuthority = JSONUtil.convertObjectToJsonString(Authorities.READ);
+        mockMvc.perform(delete(userAPI + "/authority")
+                .header("Authorization", writeUserToken)
+                .content(targetAuthority)
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("username", targetUser)
+        ).andExpect(status().isForbidden());
+
+    }
 }

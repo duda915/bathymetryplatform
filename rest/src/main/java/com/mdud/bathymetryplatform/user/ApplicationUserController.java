@@ -41,7 +41,7 @@ public class ApplicationUserController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping
-    public StringResponse deleteUser(Principal principal, String username) {
+    public StringResponse deleteUser(Principal principal, @RequestBody String username) {
         if(principal.getName().equals(username)) {
             throw new AccessDeniedException("Removing yourself is not allowed");
         }
@@ -51,8 +51,8 @@ public class ApplicationUserController {
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
-    @PostMapping("/authority")
-    public StringResponse addAuthorityToUser(String username, Authorities authority) {
+    @PutMapping("/authority")
+    public StringResponse addAuthorityToUser(@RequestParam(name = "username") String username, @RequestBody Authorities authority) {
         applicationUserService.addNewAuthority(username, authority);
 
         return new StringResponse("Authority added");
@@ -60,8 +60,8 @@ public class ApplicationUserController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/authority")
-    public StringResponse removeUserAuthority(String username, Authorities authority) {
-        applicationUserService.removeUser(username);
+    public StringResponse removeUserAuthority(@RequestParam String username, @RequestBody Authorities authority) {
+        applicationUserService.removeUserAuthority(username, authority);
 
         return new StringResponse("Authority removed");
     }
