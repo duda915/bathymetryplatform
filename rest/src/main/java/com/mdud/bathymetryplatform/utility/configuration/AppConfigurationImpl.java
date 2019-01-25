@@ -34,8 +34,26 @@ public class AppConfigurationImpl implements AppConfiguration {
     public String getDBHost() {
         int firstIndex = dbConfigURL.indexOf("://") + 3;
         int secondIndex = dbConfigURL.substring(firstIndex).indexOf("/");
+        int secondIndexPort = dbConfigURL.substring(firstIndex).indexOf(":");
+        if(secondIndexPort != -1) {
+            secondIndex = secondIndexPort;
+        }
+
         return dbConfigURL.substring(firstIndex, firstIndex+secondIndex);
 
+    }
+
+    @Override
+    public String getDBPort() {
+        int firstIndex = dbConfigURL.indexOf("://") + 3;
+        int portIndex = dbConfigURL.substring(firstIndex).indexOf(":") + 1;
+        if(portIndex == 0) {
+            return "5432";
+        }
+        int endIndex = dbConfigURL.substring(portIndex).indexOf("/");
+        int startPortIndex = firstIndex + portIndex;
+        int endPortIndex = startPortIndex + endIndex;
+        return dbConfigURL.substring(startPortIndex, endPortIndex);
     }
 
     @Override

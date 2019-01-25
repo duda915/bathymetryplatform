@@ -122,15 +122,15 @@ public class BathymetryDataSetService {
         }
     }
 
-    public BathymetryDataSet addDataSetFromDTO(BathymetryDataSetDTO bathymetryDataSetDTO) throws IOException {
+    public BathymetryDataSet addDataSetFromDTO(BathymetryDataSetDTO bathymetryDataSetDTO, MultipartFile file) throws IOException {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(bathymetryDataSetDTO.getApplicationUser(),
                 bathymetryDataSetDTO.getName(),
                 bathymetryDataSetDTO.getMeasurementDate(),
                 bathymetryDataSetDTO.getDataOwner(), new ArrayList<>());
         int epsg = bathymetryDataSetDTO.getEpsgCode();
-        byte[] file = bathymetryDataSetDTO.getMultipartFile().getBytes();
+        byte[] fileBytes = file.getBytes();
 
-        return addDataSet(bathymetryDataSet, epsg, file);
+        return addDataSet(bathymetryDataSet, epsg, fileBytes);
     }
 }
 

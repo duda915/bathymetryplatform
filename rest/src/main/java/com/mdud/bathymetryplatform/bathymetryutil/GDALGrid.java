@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.bathymetryutil;
 
 import com.mdud.bathymetryplatform.exception.GDALException;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +20,7 @@ public class GDALGrid {
     }
 
     public File createGridRasterFromDB(Long metaId) throws GDALException {
-        String src = "PG:\"host=" + appConfiguration.getDBHost() + " " +
+        String src = "PG:\"host=" + appConfiguration.getDBHost() + " " + "port=" + appConfiguration.getDBPort() + " " +
                 "dbname=" + appConfiguration.getDBName() + " " + "user=" + appConfiguration.getDBUsername() + " " +
                 "password=" + appConfiguration.getDBPassword() + "\"";
         String sqlQuery = "-sql \"SELECT * FROM bathymetry_point WHERE bathymetry_id = " + metaId + "\"";
@@ -30,19 +31,12 @@ public class GDALGrid {
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", gdal);
+            processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
             int result = process.waitFor();
 
             if(result != 0) {
-                BufferedReader inputReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-                String line;
-                while((line = inputReader.readLine()) != null) {
-                    System.out.println(line);
-                }
-
-                inputReader.close();
-
+                logger.info(new String(IOUtils.toByteArray(process.getInputStream())));
                 throw new GDALException();
             }
 

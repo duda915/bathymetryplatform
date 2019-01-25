@@ -30,7 +30,7 @@ public class ApplicationUser {
     @JsonIgnore
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private Set<UserAuthority> userAuthorities;
 

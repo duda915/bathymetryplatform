@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.controller;
 
 
 import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSetService;
 import com.mdud.bathymetryplatform.bathymetryutil.*;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
@@ -58,6 +59,9 @@ public class BathymetryDataController {
     private AppConfiguration appConfiguration;
 
     @Autowired
+    private BathymetryDataSetService bathymetryDataSetService;
+
+    @Autowired
     public BathymetryDataController(BathymetryDataRepository bathymetryDataRepository,
                                     UserRepository userRepository,
                                     RoleRepository roleRepository,
@@ -94,7 +98,7 @@ public class BathymetryDataController {
         return dataSets;
     }
 
-    @PreAuthorize("hasAnyAuthority('USER', 'SUPERUSER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'SUPERUSER')")
     @PostMapping("/datasets")
     @ResponseStatus(HttpStatus.OK)
     public void addNewData(@NotEmpty @RequestParam("name") String acquisitionName,
@@ -120,7 +124,8 @@ public class BathymetryDataController {
             logger.info("Parsing time: " + parsingEnd);
 
             double persistenceStart = System.currentTimeMillis();
-            bathymetryDataRepository.save(newCollection);
+//            bathymetryDataRepository.save(newCollection);
+            bathymetryDataSetService.addDataSet(principal.getName(), newCollection);
             double persistenceEnd = System.currentTimeMillis() - persistenceStart;
             logger.info("Persistence time: " + persistenceEnd);
 

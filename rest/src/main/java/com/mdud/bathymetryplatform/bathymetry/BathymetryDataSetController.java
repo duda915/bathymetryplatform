@@ -11,6 +11,7 @@ import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
+import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import com.vividsolutions.jts.geom.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,11 +59,12 @@ public class BathymetryDataSetController {
     }
 
     @PostMapping
-    public StringResponse addDataSet(Principal principal, @RequestBody BathymetryDataSetDTO bathymetryDataSetDTO) {
+    public StringResponse addDataSet(Principal principal, @RequestParam(value = "file") MultipartFile file) {
+        BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(null, 32634, "name", SQLDateBuilder.now(), "ownner");
         bathymetryDataSetDTO.setApplicationUser(applicationUserService.getApplicationUser(principal.getName()));
         BathymetryDataSet bathymetryDataSet;
         try {
-            bathymetryDataSet = bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO);
+            bathymetryDataSet = bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO, file);
         } catch (IOException e) {
             throw new ResourceAddException("data file is required");
         }
