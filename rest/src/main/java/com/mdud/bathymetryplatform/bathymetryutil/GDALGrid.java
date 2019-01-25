@@ -22,7 +22,7 @@ public class GDALGrid {
         String src = "PG:\"host=" + appConfiguration.getDBHost() + " " +
                 "dbname=" + appConfiguration.getDBName() + " " + "user=" + appConfiguration.getDBUsername() + " " +
                 "password=" + appConfiguration.getDBPassword() + "\"";
-        String sqlQuery = "-sql \"SELECT * FROM bathymetryutil WHERE meta_id = " + metaId + "\"";
+        String sqlQuery = "-sql \"SELECT * FROM bathymetry_point WHERE bathymetry_id = " + metaId + "\"";
         String targetFile = appConfiguration.getGDALTargetLocation() + metaId + ".tif";
 
         String gdal = "gdal_grid" + " " + sqlQuery +  " " + "-a nearest" + " " + "-a_srs 'EPSG:4326'" + " " + "-zfield depth" + " " + src + " " + targetFile;

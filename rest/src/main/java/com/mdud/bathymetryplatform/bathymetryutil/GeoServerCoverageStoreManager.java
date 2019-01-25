@@ -3,6 +3,7 @@ package com.mdud.bathymetryplatform.bathymetryutil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
+import com.vividsolutions.jts.geom.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.*;
@@ -88,6 +89,11 @@ public class GeoServerCoverageStoreManager {
             logger.warn("coverage delete error");
             throw new GeoServerException("wrong delete id");
         }
+    }
+
+    public Coordinate getCoverageStoreCenterCoordinate(Long id) {
+        PlainPoint plainPoint = getCoverageStoreCenter(id);
+        return new Coordinate(plainPoint.x, plainPoint.y);
     }
 
     public PlainPoint getCoverageStoreCenter(Long id) throws GeoServerException{

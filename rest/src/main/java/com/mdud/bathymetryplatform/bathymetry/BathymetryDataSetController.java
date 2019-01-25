@@ -4,11 +4,15 @@ package com.mdud.bathymetryplatform.bathymetry;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
 import com.mdud.bathymetryplatform.bathymetryutil.BathymetryFileBuilder;
+import com.mdud.bathymetryplatform.bathymetryutil.GDALGrid;
+import com.mdud.bathymetryplatform.bathymetryutil.GeoServerCoverageStoreManager;
 import com.mdud.bathymetryplatform.controller.StringResponse;
+import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
-import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
+import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
+import com.vividsolutions.jts.geom.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,7 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
@@ -29,11 +33,13 @@ public class BathymetryDataSetController {
 
     private final BathymetryDataSetService bathymetryDataSetService;
     private final ApplicationUserService applicationUserService;
+    private final AppConfiguration appConfiguration;
 
     @Autowired
-    public BathymetryDataSetController(BathymetryDataSetService bathymetryDataSetService, ApplicationUserService applicationUserService) {
+    public BathymetryDataSetController(BathymetryDataSetService bathymetryDataSetService, ApplicationUserService applicationUserService, AppConfiguration appConfiguration) {
         this.bathymetryDataSetService = bathymetryDataSetService;
         this.applicationUserService = applicationUserService;
+        this.appConfiguration = appConfiguration;
     }
 
     @GetMapping
@@ -53,10 +59,22 @@ public class BathymetryDataSetController {
     @PostMapping
     public StringResponse addDataSet(Principal principal, @RequestBody BathymetryDataSetDTO bathymetryDataSetDTO) {
         bathymetryDataSetDTO.setApplicationUser(applicationUserService.getApplicationUser(principal.getName()));
+        BathymetryDataSet bathymetryDataSet;
         try {
-            bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO);
+            bathymetryDataSet = bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO);
         } catch (IOException e) {
             throw new ResourceAddException("data file is required");
+        }
+
+        GDALGrid gdalGrid = new GDALGrid(appConfiguration);
+        File rasterFile = gdalGrid.createGridRasterFromDB(bathymetryDataSet.getId());
+        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
+
+        try {
+            geoServerCoverageStoreManager.addCoverageStore(rasterFile);
+        } catch (GeoServerException e) {
+            bathymetryDataSetService.removeDataSet(principal.getName(), bathymetryDataSet.getId());
+            throw new ResourceAddException("failed to add data");
         }
 
         return new StringResponse("data successfully uploaded");
@@ -65,6 +83,8 @@ public class BathymetryDataSetController {
     @DeleteMapping
     public StringResponse deleteDataSet(Principal principal, @RequestParam(name = "id") Long id) {
         bathymetryDataSetService.removeDataSet(principal.getName(), id);
+        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
+        geoServerCoverageStoreManager.deleteCoverageStore(id);
         return new StringResponse("data successfully removed");
     }
 
@@ -92,6 +112,12 @@ public class BathymetryDataSetController {
 
         byte file[] = bathymetryFileBuilder.buildFile().getBytes();
         return createFileResponseEntity(file);
+    }
+
+    @GetMapping("/center")
+    public Coordinate getDataSetCenter(@RequestParam("id") Long id) {
+        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
+        return geoServerCoverageStoreManager.getCoverageStoreCenterCoordinate(id);
     }
 
     private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {
