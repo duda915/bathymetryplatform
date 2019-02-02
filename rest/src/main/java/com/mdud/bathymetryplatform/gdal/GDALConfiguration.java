@@ -6,17 +6,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class GdalConfiguration {
+public class GDALConfiguration {
 
     private AppConfiguration appConfiguration;
 
     @Autowired
-    public GdalConfiguration(AppConfiguration appConfiguration) {
+    public GDALConfiguration(AppConfiguration appConfiguration) {
         this.appConfiguration = appConfiguration;
     }
 
     @Bean
-    public GdalInitializer gdalInitializer() {
-        return new GdalInitializer(appConfiguration);
+    public GDALInitializer gdalInitializer() {
+        return new GDALInitializer(appConfiguration);
     }
 }

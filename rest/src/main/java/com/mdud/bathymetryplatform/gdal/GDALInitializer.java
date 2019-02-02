@@ -11,11 +11,11 @@ import org.springframework.context.annotation.Configuration;
 import java.io.File;
 
 @Log4j2
-public class GdalInitializer extends AbstractInitializer {
+public class GDALInitializer extends AbstractInitializer {
 
     private AppConfiguration appConfiguration;
 
-    public GdalInitializer(AppConfiguration appConfiguration) {
+    public GDALInitializer(AppConfiguration appConfiguration) {
         this.appConfiguration = appConfiguration;
     }
 
