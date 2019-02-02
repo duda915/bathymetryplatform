@@ -9,12 +9,18 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private UserDetailsConfiguration userDetailsConfiguration;
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return (BCryptPasswordEncoder) ApplicationUser.PASSWORD_ENCODER;
+    }
 
     public SecurityConfiguration(@Autowired UserDetailsConfiguration userDetailsConfiguration) {
         this.userDetailsConfiguration = userDetailsConfiguration;
@@ -35,8 +41,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .formLogin().disable();
     }
 
+
+    @Override
     @Bean
-    public AuthenticationManager authManager() throws Exception{
-        return authenticationManager();
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }
