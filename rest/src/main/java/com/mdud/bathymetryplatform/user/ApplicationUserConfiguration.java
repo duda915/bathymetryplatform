@@ -5,6 +5,7 @@ import com.mdud.bathymetryplatform.user.userauthority.UserAuthorityProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 @Configuration
 public class ApplicationUserConfiguration {
@@ -20,6 +21,7 @@ public class ApplicationUserConfiguration {
     }
 
     @Bean
+    @DependsOn("authoritiesInitializer")
     public ApplicationUserInitializer applicationUserInitializer() {
         return new ApplicationUserInitializer(applicationUserRepository, userAuthorityProvider);
     }

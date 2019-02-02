@@ -1,15 +1,15 @@
 version: '3.5'
 services:
   testdbcontainer:
-  container_name: testdb
-  build: ./postgiscontainer
-  ports:
-    - "5433:5432"
-  environment:
-    - POSTGRES_USER=bathymetry
-    - POSTGRES_PASSWORD=bathymetry
-    - POSTGRES_DBNAME=bathymetry
-    - ALLOW_IP_RANGE=<*>
+    container_name: testdb
+    build: ./postgiscontainer
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_USER=bathymetry
+      - POSTGRES_PASSWORD=bathymetry
+      - POSTGRES_DBNAME=bathymetry
+      - ALLOW_IP_RANGE=<*>
   postgiscontainer:
     container_name: postgis
     build: ./postgiscontainer

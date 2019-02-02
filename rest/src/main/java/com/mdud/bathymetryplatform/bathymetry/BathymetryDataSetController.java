@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,9 +60,9 @@ public class BathymetryDataSetController {
         }
     }
 
-    @PostMapping
-    public ResourceIdResponse addDataSet(Principal principal, @RequestParam(value = "file") MultipartFile file) {
-        BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(null, 32634, "name", SQLDateBuilder.now(), "ownner");
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResourceIdResponse addDataSet(Principal principal, @RequestParam(value = "file") MultipartFile file,
+                                         @RequestBody BathymetryDataSetDTO bathymetryDataSetDTO) {
         bathymetryDataSetDTO.setApplicationUser(applicationUserService.getApplicationUser(principal.getName()));
         BathymetryDataSet bathymetryDataSet;
         try {
@@ -96,6 +97,7 @@ public class BathymetryDataSetController {
     }
 
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @Transactional
     public ResponseEntity<byte[]> downloadDataSetsByIds(@RequestParam("id") Long[] ids) {
         BathymetryFileBuilder bathymetryFileBuilder = new BathymetryFileBuilder();
 
@@ -108,7 +110,8 @@ public class BathymetryDataSetController {
         return createFileResponseEntity(file);
     }
 
-    @GetMapping(value = "/download/selection",  produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/download/selection",  produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
     public ResponseEntity<byte[]> downloadDataSetsBySelection(@RequestParam("id") Long[] ids, @RequestBody SimpleRectangle simpleRectangle) {
         BathymetryFileBuilder bathymetryFileBuilder = new BathymetryFileBuilder();
 

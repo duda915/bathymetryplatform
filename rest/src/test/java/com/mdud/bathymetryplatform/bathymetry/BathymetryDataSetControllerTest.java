@@ -2,12 +2,14 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
+import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.token.TokenTestHelper;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
 import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
+import com.vividsolutions.jts.geom.Coordinate;
 import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -90,6 +92,48 @@ public class BathymetryDataSetControllerTest {
     @Test
     @Transactional(propagation = Propagation.NEVER)
     public void addDataSet_AddDataSet_ShouldReturnOKStatus() throws Exception {
+        ResourceIdResponse resourceIdResponse = addTestDataSet();
+        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void downloadDataSetsById_DownloadDataSet_ShouldReturnDataSet() throws Exception {
+        ResourceIdResponse resourceIdResponse = addTestDataSet();
+
+        mockMvc.perform(get(dataAPI + "/download")
+                        .param("id", String.valueOf(resourceIdResponse.getId()))
+                .header("Authorization", adminHeader))
+                .andExpect(status().isOk())
+                .andDo(print());
+        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
+
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void downloadDataSetsBySelection_ShouldDownloadDataSetsBySelection_ShouldReturnSelectedDataSets() throws Exception {
+        ResourceIdResponse resourceIdResponse = addTestDataSet();
+
+        SimpleRectangle simpleRectangle = new SimpleRectangle(new Coordinate(17.8, 54.82),
+                new Coordinate(17.9, 54.81));
+
+        String jsonRectangle = JSONUtil.convertObjectToJsonString(simpleRectangle);
+
+        mockMvc.perform(get(dataAPI + "/download/selection")
+                .param("id", String.valueOf(resourceIdResponse.getId()))
+                .header("Authorization", adminHeader)
+                .content(jsonRectangle)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
+
+    }
+
+    private ResourceIdResponse addTestDataSet() throws Exception {
+        //add
         byte[] file = IOUtils.toByteArray(resource.getURI());
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file);
         ApplicationUser applicationUser = applicationUserService.getApplicationUser("admin");
@@ -97,15 +141,27 @@ public class BathymetryDataSetControllerTest {
                 32634, "test", SQLDateBuilder.now(), "owner");
 
         String json = JSONUtil.convertObjectToJsonString(bathymetryDataSetDTO);
-
         String response = mockMvc.perform(multipart(dataAPI)
                 .file(mockMultipartFile)
                 .header("Authorization", adminHeader)
+                .content(json)
                 .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
-        ResourceIdResponse resourceIdResponse = JSONUtil.convertJSONStringToObject(response, ResourceIdResponse.class);
+        return JSONUtil.convertJSONStringToObject(response, ResourceIdResponse.class);
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void getDataSetCenter_GetCenterOfDataSetFromGeoServer_ShouldReturnDataSetCenter() throws Exception {
+        ResourceIdResponse resourceIdResponse = addTestDataSet();
+
+        mockMvc.perform(get(dataAPI + "/center")
+                .param("id", resourceIdResponse.getId().toString())
+                .header("Authorization", adminHeader))
+                .andExpect(status().isOk()).andDo(print());
         clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
     }
+
 
     private void clearDataSetAfterNonTransactionalTest(Long id) throws Exception {
         mockMvc.perform(delete(dataAPI)
