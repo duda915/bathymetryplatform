@@ -73,12 +73,11 @@ public class BathymetryDataSetService {
 
     public BathymetryDataSet addDataSet(String username, BathymetryDataSet bathymetryDataSet) {
         ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
-        if(applicationUser.getUserAuthorities().stream().anyMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName().equals(Authorities.WRITE))) {
-            bathymetryDataSet = bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
-        } else {
+        if(applicationUser.getUserAuthorities().stream().noneMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName().equals(Authorities.WRITE))) {
             throw new AccessDeniedException("adding resource require write authority");
         }
 
+        bathymetryDataSet = bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
         return getDataSet(bathymetryDataSet.getId());
     }
 
@@ -115,13 +114,19 @@ public class BathymetryDataSetService {
         }
     }
 
-    public BathymetryDataSet addDataSetFromDTO(BathymetryDataSetDTO bathymetryDataSetDTO, MultipartFile file) throws IOException {
+    public BathymetryDataSet addDataSetFromDTO(BathymetryDataSetDTO bathymetryDataSetDTO, MultipartFile file) {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(bathymetryDataSetDTO.getApplicationUser(),
                 bathymetryDataSetDTO.getName(),
                 bathymetryDataSetDTO.getMeasurementDate(),
                 bathymetryDataSetDTO.getDataOwner(), new ArrayList<>());
         int epsg = bathymetryDataSetDTO.getEpsgCode();
-        byte[] fileBytes = file.getBytes();
+
+        byte[] fileBytes;
+        try {
+            fileBytes = file.getBytes();
+        } catch (IOException e) {
+            throw new ResourceAddException("failed to read file");
+        }
 
         return addDataSet(bathymetryDataSet, epsg, fileBytes);
     }

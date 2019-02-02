@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
@@ -37,13 +36,16 @@ public class BathymetryDataSetController {
     private final BathymetryDataSetService bathymetryDataSetService;
     private final ApplicationUserService applicationUserService;
     private final AppConfiguration appConfiguration;
-
+    private final GDALService gdalService;
+    private final GeoServerService geoServerService;
     @Autowired
     public BathymetryDataSetController(BathymetryDataSetService bathymetryDataSetService, ApplicationUserService applicationUserService,
-                                       AppConfiguration appConfiguration) {
+                                       AppConfiguration appConfiguration, GDALService gdalService, GeoServerService geoServerService) {
         this.bathymetryDataSetService = bathymetryDataSetService;
         this.applicationUserService = applicationUserService;
         this.appConfiguration = appConfiguration;
+        this.gdalService = gdalService;
+        this.geoServerService = geoServerService;
     }
 
     @GetMapping
@@ -65,16 +67,10 @@ public class BathymetryDataSetController {
                                          @RequestBody BathymetryDataSetDTO bathymetryDataSetDTO) {
         bathymetryDataSetDTO.setApplicationUser(applicationUserService.getApplicationUser(principal.getName()));
         BathymetryDataSet bathymetryDataSet;
-        try {
-            bathymetryDataSet = bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO, file);
-        } catch (IOException e) {
-            throw new ResourceAddException("data file is required");
-        }
 
-        GDALService gdalService = new GDALService(appConfiguration);
+        bathymetryDataSet = bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO, file);
+
         File rasterFile = gdalService.createRaster(bathymetryDataSet.getId());
-        GeoServerService geoServerService = new GeoServerService(appConfiguration);
-
         try {
             geoServerService.addCoverageStore(rasterFile);
         } catch (GeoServerException e) {

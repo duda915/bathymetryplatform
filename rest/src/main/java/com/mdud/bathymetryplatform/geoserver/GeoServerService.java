@@ -55,7 +55,7 @@ public class GeoServerService {
         restTemplate.exchange(urlBuilder.toString(), HttpMethod.PUT, request, String.class);
     }
 
-    public void deleteCoverageStore(Long id) throws GeoServerException {
+    public void deleteCoverageStore(Long id) {
         StringBuilder urlBuilder = new StringBuilder()
                 .append(appConfiguration.getGeoServerCoverageStoresPath())
                 .append(id.toString())
