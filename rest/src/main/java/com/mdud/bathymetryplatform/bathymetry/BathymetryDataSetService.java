@@ -85,18 +85,11 @@ public class BathymetryDataSetService {
     // TODO implement parser using proj.4!
     public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet, int epsg, byte[] file) {
         BathymetryDataParser bathymetryDataParser = null;
-        try {
-            bathymetryDataParser = new BathymetryDataParser(epsg);
-        } catch (FactoryException e) {
-            e.printStackTrace();
-            throw new RuntimeException("factory exception");
-        }
+        bathymetryDataParser = new BathymetryDataParser(epsg);
 
         List<BathymetryPoint> bathymetryPoints = null;
         try {
             bathymetryPoints = bathymetryDataParser.parseFile(file);
-        } catch (TransformException e) {
-            throw new EPSGException("unknown epsg code");
         } catch (NumberFormatException e) {
             throw new DataParsingException("invalid file");
         }

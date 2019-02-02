@@ -2,10 +2,12 @@ package com.mdud.bathymetryplatform.bathymetry.parser;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointDTO;
+import com.mdud.bathymetryplatform.exception.DataParsingException;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.*;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -29,22 +31,26 @@ public class BathymetryDataParser {
     private GeometryFactory geometryFactory;
     private com.vividsolutions.jts.geom.GeometryFactory targetGeometryFactory;
 
-    public BathymetryDataParser(int sourceEPSG) throws FactoryException {
+    public BathymetryDataParser(int sourceEPSG)  {
         this.sourceEPSG = sourceEPSG;
         initParser();
     }
 
-    private void initParser() throws FactoryException
+    private void initParser()
     {
-        sourceCRS = CRS.decode("EPSG:" + sourceEPSG);
-        targetCRS = CRS.decode("EPSG:4326");
-        transform = CRS.findMathTransform(sourceCRS, targetCRS);
-        geometryFactory = new GeometryFactory(new PrecisionModel(), sourceEPSG);
-        targetGeometryFactory =
-                new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
+        try {
+            sourceCRS = CRS.decode("EPSG:" + sourceEPSG);
+            targetCRS = CRS.decode("EPSG:4326");
+            transform = CRS.findMathTransform(sourceCRS, targetCRS);
+            geometryFactory = new GeometryFactory(new PrecisionModel(), sourceEPSG);
+            targetGeometryFactory =
+                    new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
+        } catch (FactoryException e) {
+            throw new DataParsingException("wrong epsg code");
+        }
     }
 
-    private BathymetryPointDTO parsePoint(String lineData) throws TransformException, NumberFormatException {
+    private BathymetryPointDTO parsePoint(String lineData) {
         String elements[] = lineData.replaceAll("\\s+", " ").split(" ");
 
         List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
@@ -59,7 +65,12 @@ public class BathymetryDataParser {
         Double y = Double.valueOf(elementsList.get(1));
 
         Geometry geometry = geometryFactory.createPoint(new Coordinate(x, y));
-        Point point = (Point) JTS.transform(geometry, transform);
+        Point point = null;
+        try {
+            point = (Point) JTS.transform(geometry, transform);
+        } catch (TransformException e) {
+            e.printStackTrace();
+        }
 
         com.vividsolutions.jts.geom.Coordinate pointCoords;
         if(sourceEPSG == 4326) {
@@ -74,21 +85,23 @@ public class BathymetryDataParser {
         return new BathymetryPointDTO(targetPoint, depth);
     }
 
-    public List<BathymetryPoint> parseFile(MultipartFile file) throws IOException, TransformException {
-        return parseFile(file.getBytes());
-
+    public List<BathymetryPoint> parseFile(MultipartFile file) {
+        try {
+            return parseFile(file.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new DataParsingException("cannot read file");
+        }
     }
 
-    public List<BathymetryPoint> parseFile(byte[] bytes) throws TransformException{
-        String lines[] = new String(bytes, StandardCharsets.UTF_8).split("\n");
+    public List<BathymetryPoint> parseFile(byte[] bytes) {
+        String[] lines = new String(bytes, StandardCharsets.UTF_8).split("\n");
         List<BathymetryPoint> measures = new ArrayList<>();
 
         try {
             BathymetryPointDTO headerCheck = parsePoint(lines[0]);
             measures.add(new BathymetryPoint(headerCheck));
-        } catch (NumberFormatException e) {
-            logger.info("Cannot parse first line of file - header?");
-        }
+        } catch (NumberFormatException ignored) {}
 
         for(int i = 1; i < lines.length; i++) {
             BathymetryPointDTO measureDTO = parsePoint(lines[i]);
@@ -96,7 +109,6 @@ public class BathymetryDataParser {
                 continue;
             measures.add(new BathymetryPoint(measureDTO));
         }
-
         return measures;
     }
 }
