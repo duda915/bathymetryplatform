@@ -4,7 +4,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
 import com.mdud.bathymetryplatform.bathymetryutil.BathymetryFileBuilder;
-import com.mdud.bathymetryplatform.bathymetryutil.GDALGrid;
+import com.mdud.bathymetryplatform.gdal.GDALService;
 import com.mdud.bathymetryplatform.bathymetryutil.GeoServerCoverageStoreManager;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.controller.StringResponse;
@@ -12,7 +12,6 @@ import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
-import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import com.vividsolutions.jts.geom.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +70,8 @@ public class BathymetryDataSetController {
             throw new ResourceAddException("data file is required");
         }
 
-        GDALGrid gdalGrid = new GDALGrid(appConfiguration);
-        File rasterFile = gdalGrid.createGridRasterFromDB(bathymetryDataSet.getId());
+        GDALService gdalService = new GDALService(appConfiguration);
+        File rasterFile = gdalService.createRaster(bathymetryDataSet.getId());
         GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
 
         try {

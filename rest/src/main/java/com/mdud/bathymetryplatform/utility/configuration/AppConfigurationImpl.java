@@ -25,9 +25,25 @@ public class AppConfigurationImpl implements AppConfiguration {
     @Value("${bathymetry.geoserver.workspace}")
     private String geoServerWorkspaceName;
 
+    @Value("${bathymetry.gdal.pointtable.metacolumn}")
+    private String gdalMetaColumn;
+
+    @Value("${bathymetry.gdal.pointtable}")
+    private String gdalPointTable;
+
     @Override
     public String getGDALTargetLocation() {
         return gdalTargetLocation;
+    }
+
+    @Override
+    public String getGDALMetaColumn() {
+        return gdalMetaColumn;
+    }
+
+    @Override
+    public String getGDALPointTable() {
+        return gdalPointTable;
     }
 
     @Override

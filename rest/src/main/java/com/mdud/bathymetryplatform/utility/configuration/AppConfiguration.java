@@ -2,6 +2,8 @@ package com.mdud.bathymetryplatform.utility.configuration;
 
 public interface AppConfiguration {
     String getGDALTargetLocation();
+    String getGDALMetaColumn();
+    String getGDALPointTable();
 
     String getDBHost();
     String getDBPort();
