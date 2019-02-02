@@ -1,7 +1,7 @@
 package com.mdud.bathymetryplatform.bathymetryutil;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
-import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointDTO;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
 import org.locationtech.jts.geom.*;
@@ -44,7 +44,7 @@ public class BathymetryDataParser {
                 new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
     }
 
-    private BathymetryMeasureDTO parsePoint(String lineData) throws TransformException, NumberFormatException {
+    private BathymetryPointDTO parsePoint(String lineData) throws TransformException, NumberFormatException {
         String elements[] = lineData.replaceAll("\\s+", " ").split(" ");
 
         List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
@@ -71,7 +71,7 @@ public class BathymetryDataParser {
                 targetGeometryFactory.createPoint(pointCoords);
         Double depth = Double.valueOf(elementsList.get(2));
 
-        return new BathymetryMeasureDTO(targetPoint, depth);
+        return new BathymetryPointDTO(targetPoint, depth);
     }
 
     public List<BathymetryPoint> parseFile(MultipartFile file) throws IOException, TransformException {
@@ -84,14 +84,14 @@ public class BathymetryDataParser {
         List<BathymetryPoint> measures = new ArrayList<>();
 
         try {
-            BathymetryMeasureDTO headerCheck = parsePoint(lines[0]);
+            BathymetryPointDTO headerCheck = parsePoint(lines[0]);
             measures.add(new BathymetryPoint(headerCheck));
         } catch (NumberFormatException e) {
             logger.info("Cannot parse first line of file - header?");
         }
 
         for(int i = 1; i < lines.length; i++) {
-            BathymetryMeasureDTO measureDTO = parsePoint(lines[i]);
+            BathymetryPointDTO measureDTO = parsePoint(lines[i]);
             if(measureDTO == null)
                 continue;
             measures.add(new BathymetryPoint(measureDTO));

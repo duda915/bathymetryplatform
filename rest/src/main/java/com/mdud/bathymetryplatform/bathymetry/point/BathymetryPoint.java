@@ -1,7 +1,6 @@
 package com.mdud.bathymetryplatform.bathymetry.point;
 
 
-import com.mdud.bathymetryplatform.datamodel.dto.BathymetryMeasureDTO;
 import com.vividsolutions.jts.geom.Point;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -35,8 +34,8 @@ public class BathymetryPoint {
         this.measurementCoordinates = measurementCoordinates;
     }
 
-    public BathymetryPoint(BathymetryMeasureDTO bathymetryMeasureDTO) {
-        this.measurementCoordinates = bathymetryMeasureDTO.getMeasureCoords();
-        this.depth = bathymetryMeasureDTO.getMeasure();
+    public BathymetryPoint(BathymetryPointDTO bathymetryPointDTO) {
+        this.measurementCoordinates = bathymetryPointDTO.getMeasureCoords();
+        this.depth = bathymetryPointDTO.getMeasure();
     }
 }
