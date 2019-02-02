@@ -3,7 +3,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
-import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
+import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.DataParsingException;
 import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
@@ -17,13 +17,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -128,9 +126,9 @@ public class BathymetryDataSetServiceTest {
     public void getAllBathymetryPointsWithinGeometry_AddDataSet_ShouldReturnPointsInsideRectangle() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
         bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
-        SimpleRectangle simpleRectangle = new SimpleRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
+        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
 
-        List<BathymetryPoint> bathymetryPoints = bathymetryDataSetService.getAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), simpleRectangle);
+        List<BathymetryPoint> bathymetryPoints = bathymetryDataSetService.getAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), boxRectangle);
 
         assertEquals(2, bathymetryPoints.size());
     }
@@ -139,9 +137,9 @@ public class BathymetryDataSetServiceTest {
     public void countAllBathymetryPointsWithinGeometry_AddDataSet_ShouldReturnPointsCountInsideRectangle() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
         bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
-        SimpleRectangle simpleRectangle = new SimpleRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
+        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
 
-        int act = bathymetryDataSetService.countAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), simpleRectangle);
+        int act = bathymetryDataSetService.countAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), boxRectangle);
 
         assertEquals(2, act);
     }

@@ -2,7 +2,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
-import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
+import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.bathymetryutil.BathymetryDataParser;
 import com.mdud.bathymetryplatform.exception.*;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
@@ -51,13 +51,13 @@ public class BathymetryDataSetService {
         return bathymetryDataSetRepository.findAllByApplicationUser(applicationUser).orElse(new ArrayList<>());
     }
 
-    public List<BathymetryPoint> getAllBathymetryPointsWithinGeometry(Long id, SimpleRectangle simpleRectangle) {
-        Geometry geometry = simpleRectangle.buildGeometry(simpleRectangle);
+    public List<BathymetryPoint> getAllBathymetryPointsWithinGeometry(Long id, BoxRectangle boxRectangle) {
+        Geometry geometry = boxRectangle.buildGeometry(boxRectangle);
         return bathymetryPointRepository.findAllWithinGeometry(id, geometry).orElse(new ArrayList<>());
     }
 
-    public Integer countAllBathymetryPointsWithinGeometry(Long id, SimpleRectangle simpleRectangle) {
-        Geometry geometry = simpleRectangle.buildGeometry(simpleRectangle);
+    public Integer countAllBathymetryPointsWithinGeometry(Long id, BoxRectangle boxRectangle) {
+        Geometry geometry = boxRectangle.buildGeometry(boxRectangle);
         return bathymetryPointRepository.findAllWithinGeometry(id, geometry).orElse(new ArrayList<>()).size();
     }
 

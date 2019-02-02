@@ -8,6 +8,6 @@ import lombok.Setter;
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
 public class PlainPoint {
-    double x;
-    double y;
+    private double x;
+    private double y;
 }

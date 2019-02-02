@@ -2,10 +2,10 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
-import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
+import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.bathymetryutil.BathymetryFileBuilder;
 import com.mdud.bathymetryplatform.gdal.GDALService;
-import com.mdud.bathymetryplatform.bathymetryutil.GeoServerCoverageStoreManager;
+import com.mdud.bathymetryplatform.geoserver.GeoServerService;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.controller.StringResponse;
 import com.mdud.bathymetryplatform.exception.GeoServerException;
@@ -72,10 +72,10 @@ public class BathymetryDataSetController {
 
         GDALService gdalService = new GDALService(appConfiguration);
         File rasterFile = gdalService.createRaster(bathymetryDataSet.getId());
-        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
+        GeoServerService geoServerService = new GeoServerService(appConfiguration);
 
         try {
-            geoServerCoverageStoreManager.addCoverageStore(rasterFile);
+            geoServerService.addCoverageStore(rasterFile);
         } catch (GeoServerException e) {
             bathymetryDataSetService.removeDataSet(principal.getName(), bathymetryDataSet.getId());
             throw new ResourceAddException("failed to add data");
@@ -90,8 +90,8 @@ public class BathymetryDataSetController {
     @DeleteMapping
     public StringResponse deleteDataSet(Principal principal, @RequestParam(name = "id") Long id) {
         bathymetryDataSetService.removeDataSet(principal.getName(), id);
-        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
-        geoServerCoverageStoreManager.deleteCoverageStore(id);
+        GeoServerService geoServerService = new GeoServerService(appConfiguration);
+        geoServerService.deleteCoverageStore(id);
         return new StringResponse("data successfully removed");
     }
 
@@ -111,11 +111,11 @@ public class BathymetryDataSetController {
 
     @GetMapping(value = "/download/selection",  produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
-    public ResponseEntity<byte[]> downloadDataSetsBySelection(@RequestParam("id") Long[] ids, @RequestBody SimpleRectangle simpleRectangle) {
+    public ResponseEntity<byte[]> downloadDataSetsBySelection(@RequestParam("id") Long[] ids, @RequestBody BoxRectangle boxRectangle) {
         BathymetryFileBuilder bathymetryFileBuilder = new BathymetryFileBuilder();
 
         Arrays.asList(ids).forEach(id -> {
-            List<BathymetryPoint> bathymetryPoints = bathymetryDataSetService.getAllBathymetryPointsWithinGeometry(id, simpleRectangle);
+            List<BathymetryPoint> bathymetryPoints = bathymetryDataSetService.getAllBathymetryPointsWithinGeometry(id, boxRectangle);
             bathymetryPoints.forEach(bathymetryFileBuilder::append);
         });
 
@@ -125,8 +125,8 @@ public class BathymetryDataSetController {
 
     @GetMapping("/center")
     public Coordinate getDataSetCenter(@RequestParam("id") Long id) {
-        GeoServerCoverageStoreManager geoServerCoverageStoreManager = new GeoServerCoverageStoreManager(appConfiguration);
-        return geoServerCoverageStoreManager.getCoverageStoreCenterCoordinate(id);
+        GeoServerService geoServerService = new GeoServerService(appConfiguration);
+        return geoServerService.getCoverageStoreCenter(id);
     }
 
     private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {

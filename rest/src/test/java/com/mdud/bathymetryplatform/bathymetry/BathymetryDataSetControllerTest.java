@@ -2,7 +2,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
-import com.mdud.bathymetryplatform.bathymetry.polygonselector.SimpleRectangle;
+import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
@@ -115,10 +115,10 @@ public class BathymetryDataSetControllerTest {
     public void downloadDataSetsBySelection_ShouldDownloadDataSetsBySelection_ShouldReturnSelectedDataSets() throws Exception {
         ResourceIdResponse resourceIdResponse = addTestDataSet();
 
-        SimpleRectangle simpleRectangle = new SimpleRectangle(new Coordinate(17.8, 54.82),
+        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(17.8, 54.82),
                 new Coordinate(17.9, 54.81));
 
-        String jsonRectangle = JSONUtil.convertObjectToJsonString(simpleRectangle);
+        String jsonRectangle = JSONUtil.convertObjectToJsonString(boxRectangle);
 
         mockMvc.perform(get(dataAPI + "/download/selection")
                 .param("id", String.valueOf(resourceIdResponse.getId()))

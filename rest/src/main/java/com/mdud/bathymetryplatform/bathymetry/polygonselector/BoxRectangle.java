@@ -5,11 +5,11 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.PrecisionModel;
 
-public class SimpleRectangle implements GeometryAdapter<SimpleRectangle>{
+public class BoxRectangle implements GeometryAdapter<BoxRectangle>{
     private Coordinate upperLeftVertex;
     private Coordinate lowerRightVertex;
 
-    public SimpleRectangle(Coordinate upperLeftVertex, Coordinate lowerRightVertex) {
+    public BoxRectangle(Coordinate upperLeftVertex, Coordinate lowerRightVertex) {
         this.upperLeftVertex = upperLeftVertex;
         this.lowerRightVertex = lowerRightVertex;
     }
@@ -23,7 +23,7 @@ public class SimpleRectangle implements GeometryAdapter<SimpleRectangle>{
     }
 
     @Override
-    public Geometry buildGeometry(SimpleRectangle object) {
+    public Geometry buildGeometry(BoxRectangle object) {
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         return geometryFactory.createPolygon(new Coordinate[]{
                 new Coordinate(upperLeftVertex.x, upperLeftVertex.y),
