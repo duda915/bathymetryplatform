@@ -1,6 +1,5 @@
 package com.mdud.bathymetryplatform.user;
 
-import com.mdud.bathymetryplatform.repository.UserRepository;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
 import com.mdud.bathymetryplatform.user.userauthority.UserAuthorityProvider;
@@ -25,7 +24,7 @@ public class ApplicationUserMappingTest {
     private UserAuthorityProvider userAuthorityProvider;
 
     @Autowired
-    private UserRepository userRepository;
+    private ApplicationUserRepository userRepository;
 
     @Test
     public void save_SaveUserWithoutAuthorities_ShouldSaveUserWithoutAuthorities() {

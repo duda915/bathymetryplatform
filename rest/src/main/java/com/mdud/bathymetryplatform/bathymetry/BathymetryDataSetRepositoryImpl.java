@@ -2,7 +2,6 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.repository.NativePersister;
-import com.mdud.bathymetryplatform.repository.custom.BathymetryCollectionPersisterImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +12,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 
 public class BathymetryDataSetRepositoryImpl implements NativePersister<BathymetryDataSet> {
-    private final Logger logger = LoggerFactory.getLogger(BathymetryCollectionPersisterImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(BathymetryDataSetRepositoryImpl.class);
 
     @PersistenceContext
     private EntityManager entityManager;
