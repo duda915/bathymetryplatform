@@ -1,12 +1,14 @@
 package com.mdud.bathymetryplatform.geoserver;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSetService;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import com.vividsolutions.jts.geom.Coordinate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,9 +24,12 @@ public class GeoServerService {
 
     private AppConfiguration appConfiguration;
     private String base64Credentials;
+    private final BathymetryDataSetService bathymetryDataSetService;
 
-    public GeoServerService(AppConfiguration appConfiguration) {
+    @Autowired
+    public GeoServerService(AppConfiguration appConfiguration, BathymetryDataSetService bathymetryDataSetService) {
         this.appConfiguration = appConfiguration;
+        this.bathymetryDataSetService = bathymetryDataSetService;
         base64Credentials = initCredentials();
     }
 
@@ -46,6 +51,7 @@ public class GeoServerService {
         try {
             body = Files.readAllBytes(tiff.toPath());
         } catch (IOException e) {
+            bathymetryDataSetService.removeDataSet("admin", Long.valueOf(storeName));
             throw new GeoServerException("reading file error");
         }
 

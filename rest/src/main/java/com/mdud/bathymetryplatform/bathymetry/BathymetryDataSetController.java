@@ -8,8 +8,6 @@ import com.mdud.bathymetryplatform.gdal.GDALService;
 import com.mdud.bathymetryplatform.geoserver.GeoServerService;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.controller.StringResponse;
-import com.mdud.bathymetryplatform.exception.GeoServerException;
-import com.mdud.bathymetryplatform.exception.ResourceAddException;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
@@ -71,14 +69,7 @@ public class BathymetryDataSetController {
         bathymetryDataSet = bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO, file);
 
         File rasterFile = gdalService.createRaster(bathymetryDataSet.getId());
-        try {
-            geoServerService.addCoverageStore(rasterFile);
-        } catch (GeoServerException e) {
-            bathymetryDataSetService.removeDataSet(principal.getName(), bathymetryDataSet.getId());
-            throw new ResourceAddException("failed to add data");
-        } finally {
-            rasterFile.delete();
-        }
+        geoServerService.addCoverageStore(rasterFile);
 
 
         return new ResourceIdResponse(bathymetryDataSet.getId(), "data successfully uploaded");
@@ -87,7 +78,6 @@ public class BathymetryDataSetController {
     @DeleteMapping
     public StringResponse deleteDataSet(Principal principal, @RequestParam(name = "id") Long id) {
         bathymetryDataSetService.removeDataSet(principal.getName(), id);
-        GeoServerService geoServerService = new GeoServerService(appConfiguration);
         geoServerService.deleteCoverageStore(id);
         return new StringResponse("data successfully removed");
     }
@@ -122,7 +112,6 @@ public class BathymetryDataSetController {
 
     @GetMapping("/center")
     public Coordinate getDataSetCenter(@RequestParam("id") Long id) {
-        GeoServerService geoServerService = new GeoServerService(appConfiguration);
         return geoServerService.getCoverageStoreCenter(id);
     }
 
