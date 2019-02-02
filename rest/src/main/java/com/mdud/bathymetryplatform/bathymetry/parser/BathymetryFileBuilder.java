@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.bathymetryutil;
+package com.mdud.bathymetryplatform.bathymetry.parser;
 
 import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;

@@ -3,7 +3,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
-import com.mdud.bathymetryplatform.bathymetryutil.BathymetryFileBuilder;
+import com.mdud.bathymetryplatform.bathymetry.parser.BathymetryFileBuilder;
 import com.mdud.bathymetryplatform.gdal.GDALService;
 import com.mdud.bathymetryplatform.geoserver.GeoServerService;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
@@ -39,7 +39,8 @@ public class BathymetryDataSetController {
     private final AppConfiguration appConfiguration;
 
     @Autowired
-    public BathymetryDataSetController(BathymetryDataSetService bathymetryDataSetService, ApplicationUserService applicationUserService, AppConfiguration appConfiguration) {
+    public BathymetryDataSetController(BathymetryDataSetService bathymetryDataSetService, ApplicationUserService applicationUserService,
+                                       AppConfiguration appConfiguration) {
         this.bathymetryDataSetService = bathymetryDataSetService;
         this.applicationUserService = applicationUserService;
         this.appConfiguration = appConfiguration;

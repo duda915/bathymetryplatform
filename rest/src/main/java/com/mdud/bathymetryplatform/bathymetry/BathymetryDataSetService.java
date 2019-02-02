@@ -3,7 +3,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
-import com.mdud.bathymetryplatform.bathymetryutil.BathymetryDataParser;
+import com.mdud.bathymetryplatform.bathymetry.parser.BathymetryDataParser;
 import com.mdud.bathymetryplatform.exception.*;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
