@@ -49,7 +49,7 @@ public class RegistrationControllerTest {
 
     @Test
     public void registerAccount_SendValidAccountEmailAccount_ShouldRegisterAccount() throws Exception {
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "email@email.com");
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "email2@email.com");
 
         String json = JSONUtil.convertObjectToJsonString(applicationUserDTO);
 
@@ -64,7 +64,7 @@ public class RegistrationControllerTest {
 
     @Test
     public void activateAccount_RegisterAndActivateAccount_ShouldActivateNewAccount() throws Exception {
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "email@email.com");
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "email2@email.com");
 
         String json = JSONUtil.convertObjectToJsonString(applicationUserDTO);
 

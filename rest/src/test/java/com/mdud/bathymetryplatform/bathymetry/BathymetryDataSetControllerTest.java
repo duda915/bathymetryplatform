@@ -25,7 +25,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Propagation;
@@ -135,11 +137,14 @@ public class BathymetryDataSetControllerTest {
 
         String json = JSONUtil.convertObjectToJsonString(bathymetryDataSetDTO);
 
+        MockMultipartFile jsonFile =
+                new MockMultipartFile("data", "data", "application/json", json.getBytes());
+
         mockMvc.perform(multipart(dataAPI)
+                .file(jsonFile)
                 .file(mockMultipartFile)
                 .header("Authorization", readHeader)
-                .content(json)
-                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+                .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)).andExpect(status().isForbidden());
 
 
     }
@@ -185,8 +190,11 @@ public class BathymetryDataSetControllerTest {
                 32634, "test", SQLDateBuilder.now(), "owner");
 
         String json = JSONUtil.convertObjectToJsonString(bathymetryDataSetDTO);
+
+        MockMultipartFile jsonFile = new MockMultipartFile("data", "", "application/json", json.getBytes());
         String response = mockMvc.perform(multipart(dataAPI)
                 .file(mockMultipartFile)
+                .file(jsonFile)
                 .header("Authorization", adminHeader)
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();

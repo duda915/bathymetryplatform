@@ -80,12 +80,14 @@ public class ApplicationUserControllerTest {
 
     @Test
     public void changeUserPassword_ChangeAdminPassword_ShouldChangePassword() throws Exception {
-        String newPassword = "newpassword";
+        PasswordDTO passwordDTO = new PasswordDTO("newpassword");
+        String json = JSONUtil.convertObjectToJsonString(passwordDTO);
         mockMvc.perform(put(userAPI).header("Authorization", adminHeader)
-            .content(newPassword)).andExpect(status().isOk());
+            .content(json)
+        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
         ApplicationUser applicationUser = applicationUserService.getApplicationUser("admin");
 
-        assertTrue(ApplicationUser.PASSWORD_ENCODER.matches(newPassword, applicationUser.getPassword()));
+        assertTrue(ApplicationUser.PASSWORD_ENCODER.matches("newpassword", applicationUser.getPassword()));
     }
 
     @Test
