@@ -3,6 +3,7 @@ package com.mdud.bathymetryplatform.user.registration;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +39,14 @@ public class RegistrationService {
     public void activateUser(String token) {
         RegistrationToken registrationToken = registrationRepository
                 .findByToken(token).orElseThrow(() -> new WrongTokenException("wrong token"));
-        applicationUserService.activateUser(registrationToken.getApplicationUser().getUsername());
-        registrationRepository.delete(registrationToken);
+
+        if(registrationToken.getExpirationDate().before(SQLDateBuilder.now())) {
+            applicationUserService.activateUser(registrationToken.getApplicationUser().getUsername());
+            registrationRepository.delete(registrationToken);
+        } else {
+            registrationRepository.delete(registrationToken);
+            throw new RegistrationException("token expired");
+        }
     }
 }
 
