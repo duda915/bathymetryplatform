@@ -27,7 +27,6 @@ public class GDALService {
         String targetFile = appConfiguration.getGDALTargetLocation() + metaId + ".tif";
 
         String gdal = buildCommand(targetFile, metaId);
-        logger.info(gdal);
 
         try {
             ProcessBuilder processBuilder = new ProcessBuilder("bash", "-c", gdal);

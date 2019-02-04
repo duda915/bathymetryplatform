@@ -40,7 +40,7 @@ public class RegistrationService {
         RegistrationToken registrationToken = registrationRepository
                 .findByToken(token).orElseThrow(() -> new WrongTokenException("wrong token"));
 
-        if(registrationToken.getExpirationDate().before(SQLDateBuilder.now())) {
+        if(registrationToken.getExpirationDate().after(SQLDateBuilder.now())) {
             applicationUserService.activateUser(registrationToken.getApplicationUser().getUsername());
             registrationRepository.delete(registrationToken);
         } else {

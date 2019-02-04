@@ -22,10 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @CrossOrigin
 @RestController
@@ -64,9 +66,9 @@ public class BathymetryDataSetController {
     }
 
     @PreAuthorize("hasAuthority('WRITE')")
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResourceIdResponse addDataSet(Principal principal, @RequestParam(value = "file") MultipartFile file,
-                                         @RequestBody BathymetryDataSetDTO bathymetryDataSetDTO) {
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
+    public ResourceIdResponse addDataSet(Principal principal, @RequestPart("file") MultipartFile file,
+                                         @Valid @RequestPart("data") BathymetryDataSetDTO bathymetryDataSetDTO) {
         bathymetryDataSetDTO.setApplicationUser(applicationUserService.getApplicationUser(principal.getName()));
         BathymetryDataSet bathymetryDataSet;
 
@@ -112,6 +114,20 @@ public class BathymetryDataSetController {
 
         byte file[] = bathymetryFileBuilder.buildFile().getBytes();
         return createFileResponseEntity(file);
+    }
+
+    @GetMapping(value = "/download/selection/count", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public StringResponse countDataSetsBySelection(@RequestParam("id") Long[] ids, @RequestBody BoxRectangle boxRectangle) {
+        AtomicInteger integer = new AtomicInteger();
+        integer.set(0);
+        Arrays.asList(ids).forEach(id -> {
+            List<BathymetryPoint> bathymetryPoints = bathymetryDataSetService.getAllBathymetryPointsWithinGeometry(id, boxRectangle);
+            integer.addAndGet(bathymetryPoints.size());
+        });
+
+
+        return new StringResponse(String.valueOf(integer.get()));
     }
 
     @GetMapping("/center")

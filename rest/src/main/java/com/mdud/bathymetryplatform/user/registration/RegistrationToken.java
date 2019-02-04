@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.user.registration;
 
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -11,6 +12,7 @@ import java.util.UUID;
 @Data
 @Entity
 @Table(name = "registration_token")
+@NoArgsConstructor
 public class RegistrationToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,8 +29,8 @@ public class RegistrationToken {
     private Date expirationDate = setTommorowDate();
 
     private Date setTommorowDate() {
-        long unix = LocalDate.now().plusDays(1).toEpochDay();
-        return new Date(unix);
+        LocalDate tommorow = LocalDate.now().plusDays(1);
+        return Date.valueOf(tommorow);
     }
 
     public RegistrationToken(ApplicationUser applicationUser) {

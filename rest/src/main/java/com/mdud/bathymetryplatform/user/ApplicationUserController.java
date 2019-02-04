@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @CrossOrigin
@@ -29,8 +30,8 @@ public class ApplicationUserController {
     }
 
     @PutMapping
-    public ApplicationUser changeUserPassword(Principal principal, @RequestBody String newPassword) {
-        return applicationUserService.changeUserPassword(principal.getName(), newPassword);
+    public ApplicationUser changeUserPassword(Principal principal, @Valid @RequestBody PasswordDTO passwordDTO) {
+        return applicationUserService.changeUserPassword(principal.getName(), passwordDTO.getNewPassword());
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
