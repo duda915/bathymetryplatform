@@ -117,11 +117,24 @@ public class GeoServerService {
         urlBuilder.append("rest/workspaces/");
         urlBuilder.append(appConfiguration.getGeoServerWorkspaceName());
 
+        return queryGeoServerResource(urlBuilder);
+    }
+
+    public boolean checkIfStyleExists(String styleName) {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(appConfiguration.getGeoServerHost());
+        urlBuilder.append("rest/styles/");
+        urlBuilder.append(styleName);
+        urlBuilder.append(".json");
+
+        return queryGeoServerResource(urlBuilder);
+    }
+
+    private boolean queryGeoServerResource(StringBuilder urlBuilder) {
         HttpHeaders httpHeaders = getAuthorizationHeader();
         HttpEntity<?> request = new HttpEntity<>(httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<?> responseEntity = null;
         try {
             restTemplate.exchange(urlBuilder.toString(),
                     HttpMethod.GET, request, String.class);
@@ -129,7 +142,7 @@ public class GeoServerService {
         } catch (HttpClientErrorException e) {
             if(e.getStatusCode() != HttpStatus.NOT_FOUND) {
                 e.printStackTrace();
-                throw new GeoServerException("geoserver workspace check error");
+                throw new GeoServerException("geoserver resource check error");
             }
 
             return false;
