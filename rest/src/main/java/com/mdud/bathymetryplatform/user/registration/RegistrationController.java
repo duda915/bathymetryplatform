@@ -1,12 +1,12 @@
 package com.mdud.bathymetryplatform.user.registration;
 
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
+import com.mdud.bathymetryplatform.controller.StringResponse;
 import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/register")
@@ -19,8 +19,15 @@ public class RegistrationController {
     }
 
     @PostMapping
-    public ResourceIdResponse registerAccount(ApplicationUserDTO applicationUserDTO) {
+    public ResourceIdResponse registerAccount(@Valid @RequestBody ApplicationUserDTO applicationUserDTO) {
+        RegistrationToken registrationToken = registrationService.registerUser(applicationUserDTO);
 
-        return new ResourceIdResponse(1L, "ss");
+        return new ResourceIdResponse(registrationToken.getId(), "registration code send");
+    }
+
+    @GetMapping
+    public StringResponse activateAccount(@RequestParam("token") String token) {
+        registrationService.activateUser(token);
+        return new StringResponse("account activated");
     }
 }
