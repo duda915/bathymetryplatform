@@ -14,7 +14,13 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class ApplicationUserDTO {
+
+    @NotNull
+    @NotEmpty
     private String username;
+
+    @NotNull
+    @NotEmpty
     private String password;
 
     @NotNull
