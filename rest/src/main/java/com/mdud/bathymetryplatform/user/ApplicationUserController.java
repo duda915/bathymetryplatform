@@ -36,7 +36,7 @@ public class ApplicationUserController {
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     public ApplicationUser addUserWithoutRegistration(@RequestBody ApplicationUserDTO applicationUserDTO) {
-        return applicationUserService.addNewUser(applicationUserDTO.getUsername(), applicationUserDTO.getPassword());
+        return applicationUserService.addNewUser(applicationUserDTO.getUsername(), applicationUserDTO.getPassword(), "");
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

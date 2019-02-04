@@ -206,7 +206,7 @@ public class BathymetryDataSetControllerTest {
     }
 
     @Test
-    @Transactional
+    @Transactional(propagation = Propagation.NEVER)
     public void getDataSetBoundingBox_GetBoundingBoxFromGeoServer_ShouldReturnBoundingBox() throws Exception {
         ResourceIdResponse resourceIdResponse = addTestDataSet();
         mockMvc.perform(get(dataAPI + "/box")
@@ -214,9 +214,6 @@ public class BathymetryDataSetControllerTest {
                 .param("id", resourceIdResponse.getId().toString()))
                 .andExpect(status().isOk()).andDo(print());
     }
-
-
-
 
     private void clearDataSetAfterNonTransactionalTest(Long id) throws Exception {
         mockMvc.perform(delete(dataAPI)

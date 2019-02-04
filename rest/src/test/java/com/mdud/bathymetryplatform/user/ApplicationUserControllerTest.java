@@ -90,7 +90,7 @@ public class ApplicationUserControllerTest {
 
     @Test
     public void addUserWithoutRegistration_AddWithAdminAccount_ShouldAddNewUser() throws Exception {
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test");
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "test@mail.com");
         mockMvc.perform(post(userAPI).header("Authorization", adminHeader)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(JSONUtil.convertObjectToJsonString(applicationUserDTO)))
@@ -101,7 +101,7 @@ public class ApplicationUserControllerTest {
 
     @Test
     public void addUserWithoutRegistration_AddWithNormalUserAccount_ShouldReturnForbiddenStatus() throws Exception {
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "Test");
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "Test", "test@mail.com");
         String writeUserHeader = tokenTestHelper.obtainAccessTokenHeader("write", "write");
         mockMvc.perform(post(userAPI).header("Authorization", writeUserHeader)
                 .contentType(MediaType.APPLICATION_JSON)

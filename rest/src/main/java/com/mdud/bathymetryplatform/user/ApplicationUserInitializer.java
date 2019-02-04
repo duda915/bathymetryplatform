@@ -42,6 +42,7 @@ public class ApplicationUserInitializer extends AbstractInitializer {
         authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.WRITE));
         authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.ADMIN));
         ApplicationUser admin = new ApplicationUser("admin", "admin", authoritySet);
+        admin.setActive(true);
         applicationUserRepository.save(admin);
     }
 
@@ -50,6 +51,7 @@ public class ApplicationUserInitializer extends AbstractInitializer {
         authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.READ));
         authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.WRITE));
         ApplicationUser writeAuthorityUser = new ApplicationUser("write", "write", authoritySet);
+        writeAuthorityUser.setActive(true);
         applicationUserRepository.save(writeAuthorityUser);
     }
 
@@ -57,6 +59,7 @@ public class ApplicationUserInitializer extends AbstractInitializer {
         Set<UserAuthority> authoritySet = new HashSet<>();
         authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.READ));
         ApplicationUser readAuthorityUser = new ApplicationUser("read", "read", authoritySet);
+        readAuthorityUser.setActive(true);
         applicationUserRepository.save(readAuthorityUser);
     }
 

@@ -1,26 +1,16 @@
 package com.mdud.bathymetryplatform.geoserver;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mdud.bathymetryplatform.exception.GeoServerException;
 import com.mdud.bathymetryplatform.initializer.AbstractInitializer;
-import com.mdud.bathymetryplatform.utility.JSONUtil;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class GeoServerInitializer extends AbstractInitializer {
     private final Logger logger = LoggerFactory.getLogger(GeoServerInitializer.class);

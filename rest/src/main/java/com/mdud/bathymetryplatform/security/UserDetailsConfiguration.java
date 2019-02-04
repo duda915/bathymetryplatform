@@ -37,7 +37,7 @@ public class UserDetailsConfiguration implements UserDetailsService {
                 .username(applicationUser.getUsername())
                 .password(applicationUser.getPassword())
                 .authorities(authorityList)
+                .disabled(!applicationUser.isActive())
                 .build();
-
     }
 }

@@ -30,6 +30,13 @@ public class ApplicationUser {
     @JsonIgnore
     private String password;
 
+    @JsonIgnore
+    @Column(name = "active")
+    private boolean isActive = false;
+
+    @Column(name = "email")
+    private String email;
+
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private Set<UserAuthority> userAuthorities;

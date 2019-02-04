@@ -1,7 +1,16 @@
 CREATE TABLE IF NOT EXISTS application_user (
   id SERIAL PRIMARY KEY,
   user_name VARCHAR(50) UNIQUE,
-  pass_hash CHAR(60)
+  pass_hash CHAR(60),
+  email VARCHAR(255) UNIQUE,
+  active BOOLEAN
+);
+
+CREATE TABLE IF NOT EXISTS registration_token (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER REFERENCES application_user(id),
+  token VARCHAR(255) UNIQUE NOT NULL,
+  expiration_date DATE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS authority (

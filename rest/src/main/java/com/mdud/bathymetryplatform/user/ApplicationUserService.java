@@ -42,12 +42,21 @@ public class ApplicationUserService {
         }
     }
 
+    private void throwIfEmailExists(String email) {
+        ApplicationUser applicationUser = applicationUserRepository.findByEmail(email)
+                .orElse(null);
+        if(applicationUser != null) {
+            throw new UserAlreadyExistsException("email already in use");
+        }
+    }
+
     private void throwIfUserNotExists(String username) {
         getApplicationUser(username);
     }
 
-    public ApplicationUser addNewUser(String username, String password) {
+    public ApplicationUser addNewUser(String username, String password, String email) {
         throwIfUserExists(username);
+        throwIfEmailExists(email);
 
         UserAuthority readAuthority = userAuthorityProvider.getUserAuthority(Authorities.READ);
         UserAuthority writeAuthority = userAuthorityProvider.getUserAuthority(Authorities.WRITE);
@@ -56,6 +65,7 @@ public class ApplicationUserService {
         userAuthoritySet.add(writeAuthority);
 
         ApplicationUser applicationUser = new ApplicationUser(username, password, userAuthoritySet);
+        applicationUser.setEmail(email);
         return applicationUserRepository.save(applicationUser);
     }
 
@@ -113,5 +123,12 @@ public class ApplicationUserService {
                 .stream().anyMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName() == authority);
     }
 
+    public void activateUser(String username) {
+        throwIfUserNotExists(username);
+
+        ApplicationUser applicationUser = getApplicationUser(username);
+        applicationUser.setActive(true);
+        applicationUserRepository.save(applicationUser);
+    }
 
 }

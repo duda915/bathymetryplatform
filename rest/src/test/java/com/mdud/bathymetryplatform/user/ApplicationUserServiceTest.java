@@ -34,7 +34,7 @@ public class ApplicationUserServiceTest {
 
     @Test
     public void addNewUser_AddNewUser_ShouldPersistNewUser() {
-        ApplicationUser applicationUser = applicationUserService.addNewUser("test", "test");
+        ApplicationUser applicationUser = applicationUserService.addNewUser("test", "test", "");
 
         boolean act = applicationUser.getId() != null
                 && applicationUser.getUserAuthorities().stream().allMatch(userAuthority -> userAuthority.getId() != null)
@@ -44,7 +44,7 @@ public class ApplicationUserServiceTest {
 
     @Test(expected = UserAlreadyExistsException.class)
     public void addNewUser_AddUserWithExistingUsername_ShouldThrowServiceException() {
-        applicationUserService.addNewUser("read", "test");
+        applicationUserService.addNewUser("read", "test", "");
     }
 
     @Test
