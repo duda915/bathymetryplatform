@@ -36,6 +36,7 @@ public class BathymetryDataSet {
     @Column(name = "owner")
     private String dataOwner;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "bathymetry_id", nullable = false)
     private List<BathymetryPoint> measurements;

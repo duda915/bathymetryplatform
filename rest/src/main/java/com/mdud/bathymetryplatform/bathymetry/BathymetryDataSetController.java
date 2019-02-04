@@ -17,6 +17,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -47,11 +48,13 @@ public class BathymetryDataSetController {
     }
 
     @GetMapping
+    @Transactional
     public List<BathymetryDataSet> getAllDataSets() {
         return bathymetryDataSetService.getAllDataSets();
     }
 
     @GetMapping("/user")
+    @Transactional
     public List<BathymetryDataSet> getUserDataSets(Principal principal) {
         if(applicationUserService.checkUserAuthority(principal.getName(), Authorities.ADMIN)) {
             return bathymetryDataSetService.getAllDataSets();
@@ -60,6 +63,7 @@ public class BathymetryDataSetController {
         }
     }
 
+    @PreAuthorize("hasAuthority('WRITE')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResourceIdResponse addDataSet(Principal principal, @RequestParam(value = "file") MultipartFile file,
                                          @RequestBody BathymetryDataSetDTO bathymetryDataSetDTO) {
@@ -113,6 +117,11 @@ public class BathymetryDataSetController {
     @GetMapping("/center")
     public Coordinate getDataSetCenter(@RequestParam("id") Long id) {
         return geoServerService.getCoverageStoreCenter(id);
+    }
+
+    @GetMapping("/box")
+    public BoxRectangle getDataSetBoundingBox(@RequestParam("id") Long id) {
+        return geoServerService.getCoverageStoreBoundingBox(id);
     }
 
     private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {

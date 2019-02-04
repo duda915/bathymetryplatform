@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.bathymetry;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
@@ -11,9 +12,13 @@ import com.mdud.bathymetryplatform.utility.JSONUtil;
 import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
 import org.apache.commons.io.IOUtils;
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -26,6 +31,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 public class BathymetryDataSetControllerTest {
+
+    private Logger logger = LoggerFactory.getLogger(BathymetryDataSetControllerTest.class);
 
     @Autowired
     private ApplicationUserService applicationUserService;
@@ -77,23 +85,63 @@ public class BathymetryDataSetControllerTest {
         this.testBathymetryDataSet = new BathymetryDataSet(applicationUser, "name", SQLDateBuilder.now(), "owner", bathymetryPointList);
     }
 
+    @After
+    public void after() {
+        bathymetryDataSetService.getAllDataSets().forEach(dataSet -> {
+            try {
+                clearDataSetAfterNonTransactionalTest(dataSet.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            bathymetryDataSetRepository.delete(dataSet);
+        });
+
+    }
+
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     public void getAllDataSets_GetAllDataSetsWithoutAuthentication_ShouldReturnForbiddenStatus() throws Exception {
         mockMvc.perform(get(dataAPI)).andExpect(status().isUnauthorized());
     }
 
     @Test
+    @Transactional(propagation = Propagation.NEVER)
     public void getAllDataSets_GetAllDataSetsWithAuthentication_ShouldReturnOKStatus() throws Exception {
+        addTestDataSet();
         mockMvc.perform(get(dataAPI)
                 .header("Authorization", adminHeader))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
     @Transactional(propagation = Propagation.NEVER)
     public void addDataSet_AddDataSet_ShouldReturnOKStatus() throws Exception {
         ResourceIdResponse resourceIdResponse = addTestDataSet();
-        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
+        assertNotEmpty(resourceIdResponse.getResponse());
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void addDataSet_AddDataSetAsReadUser_ShouldReturnForbiddenStatus() throws Exception {
+        byte[] file = IOUtils.toByteArray(resource.getURI());
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file);
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+        BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(applicationUser,
+                32634, "test", SQLDateBuilder.now(), "owner");
+
+        String readHeader = tokenTestHelper.obtainAccessTokenHeader("read", "read");
+
+        String json = JSONUtil.convertObjectToJsonString(bathymetryDataSetDTO);
+
+        mockMvc.perform(multipart(dataAPI)
+                .file(mockMultipartFile)
+                .header("Authorization", readHeader)
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+
+
     }
 
     @Test
@@ -106,8 +154,6 @@ public class BathymetryDataSetControllerTest {
                 .header("Authorization", adminHeader))
                 .andExpect(status().isOk())
                 .andDo(print());
-        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
-
     }
 
     @Test
@@ -128,8 +174,6 @@ public class BathymetryDataSetControllerTest {
                 .andExpect(status().isOk())
                 .andDo(print());
 
-        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
-
     }
 
     private ResourceIdResponse addTestDataSet() throws Exception {
@@ -145,7 +189,7 @@ public class BathymetryDataSetControllerTest {
                 .file(mockMultipartFile)
                 .header("Authorization", adminHeader)
                 .content(json)
-                .contentType(MediaType.APPLICATION_JSON)).andDo(print()).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 
         return JSONUtil.convertJSONStringToObject(response, ResourceIdResponse.class);
     }
@@ -159,8 +203,19 @@ public class BathymetryDataSetControllerTest {
                 .param("id", resourceIdResponse.getId().toString())
                 .header("Authorization", adminHeader))
                 .andExpect(status().isOk()).andDo(print());
-        clearDataSetAfterNonTransactionalTest(resourceIdResponse.getId());
     }
+
+    @Test
+    @Transactional
+    public void getDataSetBoundingBox_GetBoundingBoxFromGeoServer_ShouldReturnBoundingBox() throws Exception {
+        ResourceIdResponse resourceIdResponse = addTestDataSet();
+        mockMvc.perform(get(dataAPI + "/box")
+                .header("Authorization", adminHeader)
+                .param("id", resourceIdResponse.getId().toString()))
+                .andExpect(status().isOk()).andDo(print());
+    }
+
+
 
 
     private void clearDataSetAfterNonTransactionalTest(Long id) throws Exception {
@@ -170,9 +225,9 @@ public class BathymetryDataSetControllerTest {
                 .andExpect(status().isOk());
     }
 
-
-
-
+    private void assertNotEmpty(String actual) {
+        Assert.assertNotEquals("", actual);
+    }
 
 
 }

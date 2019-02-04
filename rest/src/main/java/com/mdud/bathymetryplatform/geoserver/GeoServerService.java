@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
@@ -58,7 +60,12 @@ public class GeoServerService {
         HttpEntity<byte[]> request = new HttpEntity<>(body, httpHeaders);
 
         RestTemplate restTemplate = new RestTemplate();
-        restTemplate.exchange(urlBuilder.toString(), HttpMethod.PUT, request, String.class);
+        try {
+            restTemplate.exchange(urlBuilder.toString(), HttpMethod.PUT, request, String.class);
+        } catch (Exception e) {
+            bathymetryDataSetService.removeDataSet("admin", Long.valueOf(storeName));
+            throw new GeoServerException("geoserver file transfer error");
+        }
     }
 
     public void deleteCoverageStore(Long id) {
@@ -104,7 +111,33 @@ public class GeoServerService {
         return new BoxRectangle(upperLeft, lowerRight);
     }
 
-    private HttpHeaders getAuthorizationHeader() {
+    public boolean checkIfWorkspaceExists() {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append(appConfiguration.getGeoServerHost());
+        urlBuilder.append("rest/workspaces/");
+        urlBuilder.append(appConfiguration.getGeoServerWorkspaceName());
+
+        HttpHeaders httpHeaders = getAuthorizationHeader();
+        HttpEntity<?> request = new HttpEntity<>(httpHeaders);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<?> responseEntity = null;
+        try {
+            restTemplate.exchange(urlBuilder.toString(),
+                    HttpMethod.GET, request, String.class);
+            return true;
+        } catch (HttpClientErrorException e) {
+            if(e.getStatusCode() != HttpStatus.NOT_FOUND) {
+                e.printStackTrace();
+                throw new GeoServerException("geoserver workspace check error");
+            }
+
+            return false;
+        }
+    }
+
+
+    HttpHeaders getAuthorizationHeader() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Authorization", "Basic " + base64Credentials);
         return httpHeaders;
