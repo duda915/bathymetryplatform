@@ -6,10 +6,11 @@ import {Password} from 'primereact/password';
 import {Button} from 'primereact/button';
 import {Growl} from 'primereact/growl';
 
+import './Login.css';
 
 
-import UserService from '../services/UserService';
-import LoadingComponent from './utility/LoadingComponent';
+import UserService from '../../services/UserService';
+import LoadingComponent from '../utility/LoadingComponent';
 
 
 class LoginControl extends Component {
@@ -65,8 +66,12 @@ class LoginControl extends Component {
                 <LoadingComponent ref={(ref) => this.progress = ref}/>
                 <div className="p-grid p-nogutter p-fluid" >
                 
-                    {/* first row */}
-                    <div className="p-col-12" style={{height: '25vh'}}></div>
+
+                    {/* <div className="p-col-4"/> */}
+                    <div className="p-col-12 logo" style={{height: '15vh'}}></div>
+                    {/* <div className="p-col-4"/> */}
+
+                    <div className="p-col-12" style={{height: '5vh'}}></div>
 
                     {/* login row */}
                     <div className="p-col-1 p-lg-4"></div>

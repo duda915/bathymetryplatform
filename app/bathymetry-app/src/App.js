@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import LoginControl from './components/LoginControl';
+import LoginControl from './components/login/LoginControl';
 import MainWindow from './components/MainWindow';
 import 'primereact/resources/primereact.min.css';
 import './theme/PrimeReactTheme.scss';
