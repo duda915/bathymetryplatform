@@ -9,7 +9,7 @@ services:
       - appnetwork
     volumes:
       - ./restcontainer:/app
-    command: java -jar /app/App.jar
+    command: java -jar -Dspring.profiles.active=production /app/App.jar
   nodecontainer:
     container_name: node
     build: ./nodecontainer
