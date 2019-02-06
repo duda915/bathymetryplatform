@@ -1,10 +1,8 @@
-import React from 'react'
-import { InputText } from 'primereact/inputtext';
-import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
-import { Growl } from 'primereact/growl';
-import LoadingComponent from '../utility/LoadingComponent';
+import { InputText } from 'primereact/inputtext';
 import { Panel } from 'primereact/panel';
+import { Password } from 'primereact/password';
+import React from 'react';
 import UserService from '../../services/UserService';
 
 export class LoginForm extends React.Component {
@@ -45,6 +43,7 @@ export class LoginForm extends React.Component {
         this.props.loadingService(true);
         this.userService.loginUser(this.state.username, this.state.password)
             .then(response => {
+                this.props.loadingService(false);
                 this.props.signIn();
             })
             .catch(response => {
@@ -59,7 +58,7 @@ export class LoginForm extends React.Component {
         return <Panel header="Login">
             <form onSubmit={this.handleSubmit}>
                 <div className="p-grid">
-                    <div className="p-col">
+                    <div className="p-col-12">
                         <div className="p-inputgroup">
                             <span className="p-inputgroup-addon">
                                 <i className="pi pi-user"></i>
@@ -67,9 +66,7 @@ export class LoginForm extends React.Component {
                             <InputText autoComplete="off" placeholder="Username" name="username" value={this.username} onChange={this.handleChange}></InputText>
                         </div>
                     </div>
-                </div>
-                <div className="p-grid">
-                    <div className="p-col">
+                    <div className="p-col-12">
                         <div className="p-inputgroup">
                             <span className="p-inputgroup-addon">
                                 <i className="pi pi-key"></i>
@@ -77,16 +74,12 @@ export class LoginForm extends React.Component {
                             <Password placeholder="Enter password" feedback={false} name="password" value={this.password} onChange={this.handleChange}></Password>
                         </div>
                     </div>
-                </div>
-                <div className="p-grid p-fluid">
-                    <div className="p-col p-md-4"></div>
-                    <div className="p-col p-md-4"></div>
-                    <div className="p-col p-md-4">
+                    <div className="p-md-4 p-offset-8">
                         <Button label="Login" type="submit" />
                     </div>
                 </div>
-            </form>
-        </Panel>;
+            </form >
+        </Panel >;
     }
 
 }
