@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import LoginControl from './components/login/LoginControl';
+import LandingPage from './components/login/LandingPage';
 import MainWindow from './components/MainWindow';
 import 'primereact/resources/primereact.min.css';
 import './theme/PrimeReactTheme.scss';
@@ -8,6 +8,8 @@ import 'primeicons/primeicons.css';
 
 import './theme/Theme.css';
 import './theme/Utility.css';
+import { Growl } from 'primereact/growl';
+import LoadingComponent from './components/utility/LoadingComponent';
 
 class App extends Component {
   constructor(props) {
@@ -18,18 +20,44 @@ class App extends Component {
     };
 
     this.changeLoginState = this.changeLoginState.bind(this);
+    this.signIn = this.signIn.bind(this)
+    this.signOut = this.signOut.bind(this)
+    this.showMessage = this.showMessage.bind(this)
+    this.showLoading = this.showLoading.bind(this)
   }
 
-  changeLoginState(loginBoolean) {
+  changeLoginState(loginState) {
     this.setState({
-      isLoggedIn: loginBoolean,
+      isLoggedIn: loginState,
     });
   }
+
+  signIn() {
+    this.changeLoginState(true);
+  }
+
+  signOut() {
+    this.changeLoginState(false);
+  }
+
+  showMessage(severity, title, message) {
+    this.growl.show({ severity: severity, summary: title, detail: message, closable: false });
+  }
+
+  showLoading(boolean) {
+    this.progress.showLoading(boolean);
+  }
+
 
   render() {
     return (
       <div className="App" >
-        {this.state.isLoggedIn ? <MainWindow changeLoginState={this.changeLoginState}/> : <LoginControl changeLoginState={this.changeLoginState}/>}
+        <Growl ref={(ref) => this.growl = ref} />
+        <LoadingComponent ref={(ref) => this.progress = ref} />
+        {this.state.isLoggedIn
+          ? <MainWindow messageService={this.showMessage} loadingService={this.showLoading} signOut={this.signOut} />
+          : <LandingPage messageService={this.showMessage} loadingService={this.showLoading} signIn={this.signIn} />
+        }
       </div>
     );
   }

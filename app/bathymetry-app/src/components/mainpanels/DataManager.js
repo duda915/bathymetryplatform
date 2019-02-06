@@ -103,7 +103,7 @@ export default class DataManager extends Component {
             crs: this.state.crs
         };
 
-        this.progress.showProgress(true);
+        this.progress.showLoading(true);
 
         this.dataService.addData(urlParams, this.state.file)
             .then(response => {
@@ -114,7 +114,7 @@ export default class DataManager extends Component {
                 console.log(error.response.data);
             })
             .finally(response => {
-                this.progress.showProgress(false);
+                this.progress.showLoading(false);
                 this.fetchUserDataSets();
             });
 
@@ -122,12 +122,12 @@ export default class DataManager extends Component {
     }
 
     deleteDataSet(dataSet) {
-        this.progress.showProgress(true);
+        this.progress.showLoading(true);
         this.dataService.deleteUserData(dataSet.id)  
         .then(response => this.growl.show({severity: 'info', summary: 'Success', detail: 'Data deleted.', closable: false}))
         .catch(response => this.growl.show({severity: 'error', summary: 'Error', detail: 'Cannot delete data', closable: false}))
         .finally(response => {
-            this.progress.showProgress(false);
+            this.progress.showLoading(false);
             this.fetchUserDataSets();
         })
     }

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {ProgressSpinner} from 'primereact/progressspinner';
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 export default class LoadingComponent extends Component {
     constructor(props) {
@@ -10,7 +10,7 @@ export default class LoadingComponent extends Component {
         }
     }
 
-    showProgress(show) {
+    showLoading(show) {
         this.setState({
             show: show,
         })
@@ -20,9 +20,9 @@ export default class LoadingComponent extends Component {
     render() {
         return (
             <div>
-                {this.state.show ? 
+                {this.state.show ?
                     <div className="loading-container ">
-                        <ProgressSpinner className="loading-progress"/>
+                        <ProgressSpinner className="loading-progress" />
                     </div>
                     : null}
             </div>

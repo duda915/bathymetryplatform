@@ -1,8 +1,7 @@
 
 export default class ServiceMeta {
-    
     getBackendServiceAddress() {
-        const host = "http://localhost:8082/";
+        const host = 'http://' + window.location.hostname + ':8082/';
         return host;
     }
 
