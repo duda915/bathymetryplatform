@@ -171,7 +171,7 @@ public class BathymetryDataSetControllerTest {
 
         String jsonRectangle = JSONUtil.convertObjectToJsonString(boxRectangle);
 
-        mockMvc.perform(get(dataAPI + "/download/selection")
+        mockMvc.perform(post(dataAPI + "/download/selection")
                 .param("id", String.valueOf(resourceIdResponse.getId()))
                 .header("Authorization", adminHeader)
                 .content(jsonRectangle)

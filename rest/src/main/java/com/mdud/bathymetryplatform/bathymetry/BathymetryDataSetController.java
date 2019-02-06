@@ -102,7 +102,7 @@ public class BathymetryDataSetController {
         return createFileResponseEntity(file);
     }
 
-    @GetMapping(value = "/download/selection",  produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/download/selection",  produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<byte[]> downloadDataSetsBySelection(@RequestParam("id") Long[] ids, @RequestBody BoxRectangle boxRectangle) {
         BathymetryFileBuilder bathymetryFileBuilder = new BathymetryFileBuilder();
@@ -116,7 +116,7 @@ public class BathymetryDataSetController {
         return createFileResponseEntity(file);
     }
 
-    @GetMapping(value = "/download/selection/count", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/download/selection/count", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public StringResponse countDataSetsBySelection(@RequestParam("id") Long[] ids, @RequestBody BoxRectangle boxRectangle) {
         AtomicInteger integer = new AtomicInteger();

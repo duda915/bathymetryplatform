@@ -5,6 +5,8 @@ import UserService from '../../../services/UserService';
 
 import './MenuPanel.css';
 import { Button } from 'primereact/button';
+import { ScrollPanel } from 'primereact/scrollpanel';
+
 
 
 class MenuPanel extends Component {
@@ -63,14 +65,30 @@ class MenuPanel extends Component {
     render() {
         return (
             <div className="p-col-fixed menuslide-init menupanel">
-                <div className="p-grid p-nogutter p-fluid">
-                    <div className="p-col-12 brand"/>
+                <div className="p-grid p-nogutter">
+                    <div className="p-col-12 brand" />
+                    <div className="p-col-12" style={{ 'height': '50px' }} />
+
                     <div className="p-col-12">
-                        <Button label="xx"/>
+                        <ScrollPanel>
+                            <div className="p-grid p-fluid">
+                                <div className="p-col-12" >
+                    <Menu model={this.state.menuItems} className=""/>                                    
+                                </div>
+                            </div>
+                        </ScrollPanel>
                     </div>
-                    {/* <Menu model={this.state.menuItems} className="margin-center leftmenu-container"/> */}
+                    {/* <div className="p-grid">
+                            <div className="p-col-12">
+                                <Button label="Browse Data" icon="pi pi-search" />
+                            </div> */}
+                    {/* <Button label="Map" icon="pi pi-map-marker" />
+                        <Button label="My Data" icon="pi pi-cloud-upload" />
+                        <Button label="xx" />
+                        <Button label="xx" /> */}
+                    {/* <Menu model={this.state.menuItems} className=""/> */}
                 </div>
-            </div>
+            </div >
         );
     }
 
