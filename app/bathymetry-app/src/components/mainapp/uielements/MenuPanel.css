@@ -1,0 +1,11 @@
+.menupanel {
+    background-color: #685C78;
+}
+
+.brand {
+    height: 90px;
+    background-color: #4C5C79;
+    background-image: url('../../../assets/logocolor.svg');
+    background-position: center;
+    background-repeat: no-repeat;
+}

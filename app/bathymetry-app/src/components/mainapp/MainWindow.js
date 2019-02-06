@@ -11,8 +11,9 @@ import MapComponent from './mainpanels/MapComponent';
 import DataComponent from './mainpanels/DataComponent';
 import UserService from '../../services/UserService';
 import DataManager from './mainpanels/DataManager';
-import MenuPanel from './MenuPanel';
+import MenuPanel from './uielements/MenuPanel';
 import TopBar from './TopBar';
+import './MainWindow.css';
 
 
 class MainWindow extends Component {
@@ -64,21 +65,19 @@ class MainWindow extends Component {
     render() {
         return (
             <div className="mainWindow">
-                <div className="p-grid p-nogutter">
-
-                    {/* left menu */}
+                <div className="p-grid p-nogutter ">
                     <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
                         onExited={() => this.tryMapSizeUpdate()}>
-                        <ScrollPanel className="p-col-fixed menuslide-init leftmenu">
-                            <div className="p-grid p-justify-center">
-                                <div className="p-col-12" style={{ height: '15vh' }} />
-                                <div className="p-col ">
-                                    <MenuPanel logoutFun={this.handleLogout} />
+                        {/* <ScrollPanel className="p-col-fixed menuslide-init leftmenu">
+                                <div className="p-grid p-justify-center">
+                                    <div className="p-col-12" style={{ height: '15vh' }} />
+                                    <div className="p-col ">
+                                        <MenuPanel logoutFun={this.handleLogout} />
+                                    </div>
                                 </div>
-                            </div>
-                        </ScrollPanel>
+                            </ScrollPanel> */}
+                        <MenuPanel logoutFun={this.handleLogout} />
                     </CSSTransition>
-
                     <div className="p-col main-window">
                         <div className="p-grid p-nogutter">
                             <div className="p-col-12" style={{ height: '50px' }}>
@@ -104,7 +103,7 @@ class MainWindow extends Component {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         );
     }
 }
