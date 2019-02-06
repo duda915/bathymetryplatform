@@ -6,8 +6,11 @@ export default class ServiceMeta {
     }
 
     getGeoServerAddress() {
-        const geoserver = "http://localhost:8081/geoserver/bathymetry/wms";
+        const geoserver = "http://" + window.location.hostname + ":8081/geoserver/bathymetry/wms";
         return geoserver;
     }
 
+    getBasicAuthorizationHeader() {
+        return "Basic " + btoa("bathymetry:bathymetry");
+    }
 }

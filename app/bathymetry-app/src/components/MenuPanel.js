@@ -24,16 +24,16 @@ class MenuPanel extends Component {
     checkUser() {
         this.userService.getUser()
         .then(response => {
-            if(response.data.userRoles[0].role.roleName === "GUEST") {
-                this.setState({
-                    isGuest: true
-                });
-                window.location.hash="/";
-            } else {
-                this.setState({
-                    isGuest: false
-                })
-            }
+            // if(response.data.userRoles[0].role.roleName === "GUEST") {
+            //     this.setState({
+            //         isGuest: true
+            //     });
+            //     window.location.hash="/";
+            // } else {
+            //     this.setState({
+            //         isGuest: false
+            //     })
+            // }
             this.generateMenu();
         });
     }
