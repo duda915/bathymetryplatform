@@ -38,12 +38,11 @@ export class LoginForm extends React.Component {
             .then(response => {
                 this.props.loadingService(false);
                 this.props.signIn();
-                console.log(response.status);
             })
-            .catch(response => {
-                console.log(response.status);
+            .catch(error => {
+                console.log(error.response);
                 this.props.loadingService(false);
-                this.props.messageService("error", "Error", "wrong credentials");
+                this.props.messageService("error", "Error", error.response.data.error_description);
             });
     }
 
