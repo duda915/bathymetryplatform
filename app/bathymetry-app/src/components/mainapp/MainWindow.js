@@ -8,11 +8,11 @@ import CSSTransition from 'react-transition-group/CSSTransition';
 import { ScrollPanel } from 'primereact/scrollpanel';
 
 import MapComponent from './mainpanels/MapComponent';
+import DataComponent from './mainpanels/DataComponent';
+import UserService from '../../services/UserService';
+import DataManager from './mainpanels/DataManager';
 import MenuPanel from './MenuPanel';
 import TopBar from './TopBar';
-import DataComponent from './mainpanels/DataComponent';
-import UserService from '../services/UserService';
-import DataManager from './mainpanels/DataManager';
 
 
 class MainWindow extends Component {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import {Menu} from 'primereact/menu';
-import UserService from '../services/UserService';
+import UserService from '../../services/UserService';
 
 
 

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import LandingPage from './components/login/LandingPage';
-import MainWindow from './components/MainWindow';
 import 'primereact/resources/primereact.min.css';
 import './theme/PrimeReactTheme.scss';
 import 'primeflex/primeflex.css';
@@ -10,6 +9,7 @@ import './theme/Theme.css';
 import './theme/Utility.css';
 import { Growl } from 'primereact/growl';
 import LoadingComponent from './components/utility/LoadingComponent';
+import MainWindow from './components/mainapp/MainWindow';
 
 class App extends Component {
   constructor(props) {

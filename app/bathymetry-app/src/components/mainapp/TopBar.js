@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
-import UserService from '../services/UserService';
+import UserService from '../../services/UserService';
 
 export default class TopBar extends Component {
     constructor(props) {

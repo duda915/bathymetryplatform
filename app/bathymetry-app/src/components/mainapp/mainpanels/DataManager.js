@@ -8,9 +8,9 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import {Growl} from 'primereact/growl';
 import {ContextMenu} from 'primereact/contextmenu';
-import DataService from '../../services/DataService';
-import LoadingComponent from '../utility/LoadingComponent';
-import UserService from '../../services/UserService';
+import DataService from '../../../services/DataService';
+import LoadingComponent from '../../utility/LoadingComponent';
+import UserService from '../../../services/UserService';
 
 export default class DataManager extends Component {
     constructor(props) {

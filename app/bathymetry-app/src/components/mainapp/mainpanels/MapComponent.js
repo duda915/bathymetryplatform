@@ -6,16 +6,16 @@ import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS.js';
 import {transform} from 'ol/proj.js'
-import ServiceMeta from '../../services/ServiceMeta';
+import ServiceMeta from '../../../services/ServiceMeta';
 import { DragBox, Select } from 'ol/interaction.js';
 import {platformModifierKeyOnly} from 'ol/events/condition.js';
 import {transformExtent} from 'ol/proj.js';
-import DataService from '../../services/DataService';
 import {Growl} from 'primereact/growl';
 import {Dialog} from 'primereact/dialog';
 import {Button} from 'primereact/button';
 import downloadjs from 'downloadjs';
-import LoadingComponent from '../utility/LoadingComponent';
+import LoadingComponent from '../../utility/LoadingComponent';
+import DataService from '../../../services/DataService';
 
 export default class MapComponent extends Component {
     constructor(props) {
