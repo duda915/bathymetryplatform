@@ -32,7 +32,7 @@ export default class TopBar extends Component {
                 <div className="p-toolbar-group-right">
                 <i className="pi pi-user p-toolbar-separator" style={{marginRight: '0'}}></i>
                 <span className="p-toolbar-separator" style={{marginLeft: '0'}}>{this.state.user}</span>
-                    <Button icon="pi pi-sign-out" onClick={this.props.logoutFun} />
+                    <Button icon="pi pi-sign-out" onClick={this.props.signOut} />
                 </div>
             </Toolbar>
         );

@@ -25,7 +25,6 @@ class MainWindow extends Component {
             selectedLayers: [],
         };
 
-        this.handleLogout = this.handleLogout.bind(this);
         this.togglePanel = this.togglePanel.bind(this);
 
         this.mapReference = React.createRef();
@@ -41,11 +40,6 @@ class MainWindow extends Component {
     fetchUsername() {
         this.userService.getUser()
             .then(response => this.setState({ username: response.data }));
-    }
-
-    handleLogout() {
-        this.userService.logoutUser()
-            .then(response => this.props.changeLoginState(false));
     }
 
     togglePanel() {
@@ -76,7 +70,6 @@ class MainWindow extends Component {
                     <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
                         onExited={() => this.tryMapSizeUpdate()}>
                         <ScrollPanel className="p-col-fixed menuslide-init leftmenu">
-
                             <div className="p-grid p-justify-center">
                                 <div className="p-col-12" style={{ height: '15vh' }} />
                                 <div className="p-col ">
@@ -90,7 +83,7 @@ class MainWindow extends Component {
                         <div className="p-grid p-nogutter">
                             <div className="p-col-12" style={{ height: '50px' }}>
                                 {/* main bar */}
-                                <TopBar togglePanel={this.togglePanel} logoutFun={this.handleLogout} />
+                                <TopBar togglePanel={this.togglePanel} signOut={this.props.signOut} />
                             </div>
                             {/* main panel */}
                             <Router>

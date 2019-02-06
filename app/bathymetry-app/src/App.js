@@ -10,6 +10,7 @@ import './theme/Utility.css';
 import { Growl } from 'primereact/growl';
 import LoadingComponent from './components/utility/LoadingComponent';
 import MainWindow from './components/mainapp/MainWindow';
+import UserService from './services/UserService';
 
 class App extends Component {
   constructor(props) {
@@ -24,6 +25,8 @@ class App extends Component {
     this.signOut = this.signOut.bind(this)
     this.showMessage = this.showMessage.bind(this)
     this.showLoading = this.showLoading.bind(this)
+
+    this.userService = new UserService();
   }
 
   changeLoginState(loginState) {
@@ -38,6 +41,7 @@ class App extends Component {
 
   signOut() {
     this.changeLoginState(false);
+    this.userService.logoutUser();
   }
 
   showMessage(severity, title, message) {
