@@ -21,13 +21,6 @@ export class LoginForm extends React.Component {
 
     }
 
-    componentDidMount() {
-        this.props.loadingService(true);
-        this.userService.getUser()
-            .then(response => this.props.signIn())
-            .catch(response => this.props.loadingService(false));
-    }
-
     handleChange(event) {
         const target = event.target;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -45,9 +38,10 @@ export class LoginForm extends React.Component {
             .then(response => {
                 this.props.loadingService(false);
                 this.props.signIn();
+                console.log(response.status);
             })
             .catch(response => {
-                console.log(response);
+                console.log(response.status);
                 this.props.loadingService(false);
                 this.props.messageService("error", "Error", "wrong credentials");
             });

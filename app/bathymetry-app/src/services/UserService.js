@@ -11,6 +11,7 @@ export default class UserService {
         this.tokenEndpoint = this.backend + "oauth/token";
         this.userEndpoint = this.backend + "api/user";
         this.cookie = new Cookies();
+        
     }
 
     async loginUser(username, password) {
@@ -24,7 +25,7 @@ export default class UserService {
                 'Authorization': this.serviceMeta.getBasicAuthorizationHeader()
             }
         };
-
+        
         return axios.post(this.tokenEndpoint, formData, loginConfig)
             .then(response => this.saveTokens(response));
     }

@@ -4,6 +4,7 @@ import './LandingPage.css';
 import { LandingPageHeader } from './LandingPageHeader';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';
+import UserService from "../../services/UserService";
 
 export default class LandingPage extends Component {
     constructor(props) {
@@ -12,6 +13,20 @@ export default class LandingPage extends Component {
         this.state = {
             register: false
         }
+
+        this.userService = new UserService();
+    }
+
+    componentDidMount() {
+        this.props.loadingService(true);
+        this.userService.getUser()
+            .then(response => {
+                this.props.loadingService(false);
+                this.props.signIn()
+            })
+            .catch(error => {
+                this.props.loadingService(false)
+            });
     }
 
     toggleRegisterForm(boolean) {
@@ -30,7 +45,7 @@ export default class LandingPage extends Component {
                         {
                             this.state.register
                                 ? <RegisterForm messageService={this.props.messageService} loadingService={this.props.loadingService} />
-                                : <LoginForm signIn={this.props.signIn} messageService={this.props.messageService} loadingService={this.props.loadingService}  />
+                                : <LoginForm signIn={this.props.signIn} messageService={this.props.messageService} loadingService={this.props.loadingService} />
                         }
                     </div>
                     <div className="p-col-1 p-lg-4"></div>

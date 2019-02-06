@@ -33,7 +33,6 @@ export class RegisterForm extends Component {
     event.preventDefault();
 
     this.checkIfPasswordsMatch();
-
   }
 
   checkIfPasswordsMatch() {
