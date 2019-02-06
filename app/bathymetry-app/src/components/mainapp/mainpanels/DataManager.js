@@ -123,7 +123,7 @@ export default class DataManager extends Component {
 
     deleteDataSet(dataSet) {
         this.progress.showLoading(true);
-        this.dataService.deleteUserData(dataSet.id)  
+        this.dataService.deleteData(dataSet.id)  
         .then(response => this.growl.show({severity: 'info', summary: 'Success', detail: 'Data deleted.', closable: false}))
         .catch(response => this.growl.show({severity: 'error', summary: 'Error', detail: 'Cannot delete data', closable: false}))
         .finally(response => {

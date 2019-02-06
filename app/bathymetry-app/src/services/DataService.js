@@ -8,89 +8,108 @@ export default class DataService {
     constructor() {
         this.serviceMeta = new ServiceMeta();
 
-        this.dataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets";;
-        this.userDataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/user";
-        this.addDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets";
-        this.downloadDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/download";
-        this.deleteUserDataEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets";
-        this.downloadSelectedDataSetsEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/download/geometry";
-        this.getLayerCenterEndpoint = this.serviceMeta.getBackendServiceAddress() + "api/data/datasets/center";
+        this.backend = this.serviceMeta.getBackendServiceAddress();
+
+        this.dataEndpoint = this.backend + "api/data";
+        this.userDataEndpoint = this.dataEndpoint + "/user";
+
+        this.downloadDataEndpoint = this.dataEndpoint + "/download";
+        this.downloadSelectionEndpoint = this.downloadDataEndpoint + "/selection";
+        this.downloadSelectionCountEndpoint = this.downloadSelectionEndpoint + "/count";
+        this.layerCenterEndpoint = this.dataEndpoint + "/center";
+        this.layerBoundingBoxEndpoint = this.dataEndpoint + "/box";
 
         this.cookie = new Cookies();
         this.userService = new UserService();
     }
 
     async getDataSets() {
-        return axios.get(this.dataSetsEndpoint, this.userService.getConfig())
+        return axios.get(this.dataEndpoint, this.userService.getTokenAuthorizationHeaderConfig())
+    }
+
+    async getUserDataSets() {
+        return axios.get(this.userDataEndpoint, this.userService.getTokenAuthorizationHeaderConfig());
     }
 
     async downloadDataSet(id) {
         let params = {
             id: id
         };
+
         let url = new URL(this.downloadDataEndpoint);
         url.search = new URLSearchParams(params);
 
-        return axios.get(url, this.userService.getConfig())
-        .then(response => {
-            downloadjs(response.data, "bathymetry"+id+".csv", "text/plain");
-        })
+        return axios.get(url, this.userService.getTokenAuthorizationHeaderConfig())
+            .then(response => {
+                downloadjs(response.data, "bathymetry" + id + ".csv", "text/plain");
+            })
     }
 
-    async downloadSelectedDataSets(ids, polygon) {
-        let url = new URL(this.downloadSelectedDataSetsEndpoint);
-        url+="?";
-        
+    async downloadSelectedDataSets(ids, boundingBoxDTO) {
+        let url = new URL(this.downloadSelectionEndpoint);
+        url.search = new URLSearchParams();
+
         ids.forEach(element => {
-            url+=("id="+element+"&");
+            url.search.append("id", element);
         });
 
-        polygon.forEach(element => {
-            url+=("coords="+element+"&");
-        })
-
-        console.log(polygon);
-
-        return axios.get(url, this.userService.getConfig());
+        return axios.post(url, boundingBoxDTO, this.userService.getTokenAuthorizationHeaderConfig())
+            .then(response => {
+                downloadjs(response.data, "bathymetry_selection.csv", "text/plain");
+            });
     }
 
-    async addData(params, file) {
+    async getSelectionDataSetCount(ids, boundingBoxDTO) {
+        let url = new URL(this.downloadSelectionCountEndpoint);
+        url.search = new URLSearchParams();
+
+        ids.forEach(element => {
+            url.search.append("id", element);
+        });
+
+        return axios.post(url, boundingBoxDTO, this.userService.getTokenAuthorizationHeaderConfig());
+    }
+
+    async addData(bathymetryDataSetDTO, file) {
         let url = new URL(this.addDataEndpoint);
-        url.search = new URLSearchParams(params);
         let formData = new FormData();
         formData.append("file", file);
+        formData.append("data", JSON.stringify(bathymetryDataSetDTO));
 
-        console.log(url);
-
-        return axios.post(url, formData, this.userService.getConfig());
+        return axios.post(url, formData, this.userService.getTokenAuthorizationHeaderConfig());
     }
 
-    async getUserDataSets() {
-        return axios.get(this.userDataSetsEndpoint, this.userService.getConfig());
-    }
-
-    async deleteUserData(id) {
+    async deleteData(id) {
         let params = {
             id: id
         };
-        let url = new URL(this.deleteUserDataEndpoint);
+
+        let url = new URL(this.dataEndpoint);
         url.search = new URLSearchParams(params);
 
         return axios.delete(url, this.userService.getConfig());
     }
 
     async getLayerCenter(id) {
+        return this.singleIdGet(id, this.layerCenterEndpoint);
+    }
+
+    async getLayerBoundingBox(id) {
+        return this.singleIdGet(id, this.layerBoundingBoxEndpoint);
+    }
+
+    singleIdGet(id, endpoint) {
         let params = {
             id: id
         };
-        let url = new URL(this.getLayerCenterEndpoint);
+        let url = new URL(endpoint);
         url.search = new URLSearchParams(params);
-
         return axios.get(url, this.userService.getConfig());
     }
 
-    async geoserverGetFeatureInfo(url) {
-        return axios.get(url);
-    }
+    
 
 }
+
+
+
