@@ -4,6 +4,8 @@ import { Panel } from 'primereact/panel';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
+import RegistrationService from '../../services/RegistrationService';
+import UserDTO from '../../services/dtos/UserDTO';
 
 export class RegisterForm extends Component {
   constructor(props) {
@@ -16,7 +18,8 @@ export class RegisterForm extends Component {
     });
 
     this.onSubmit = this.onSubmit.bind(this)
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this);
+    this.registrationService = new RegistrationService();
   }
 
   handleChange(event) {
@@ -31,14 +34,30 @@ export class RegisterForm extends Component {
 
   onSubmit(event) {
     event.preventDefault();
+    if(this.checkIfPasswordsMatch()) {
+      this.props.loadingService(true);
 
-    this.checkIfPasswordsMatch();
+      const userDTO = new UserDTO(this.state.username, this.state.password, this.state.email);
+      this.registrationService.registerNewAccount(userDTO)
+        .then(response => {
+          this.props.loadingService(false);
+          this.props.messageService("success", "Success", "account activation link send to email");
+          this.props.toggleRegisterForm(false);
+        })
+        .catch(error => {
+          console.log(error);
+          this.props.messageService('error', "Error", error.response.data.message);
+          this.props.loadingService(false);
+        })
+    }
   }
 
   checkIfPasswordsMatch() {
     if (this.state.password !== this.state.confirmPassword) {
       this.props.messageService("warn", "Error", "passwords are not the same");
+      return false;
     }
+    return true;
   }
 
   render() {
