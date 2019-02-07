@@ -115,7 +115,7 @@ class MainWindow extends Component {
                                     }} />
                                     <Route path="/settings" render={() => {
                                         return (
-                                            <Settings />
+                                            <Settings loadingService={this.props.loadingService} messageService={this.props.messageService} />
                                         )
                                     }} />
                                 </div>
