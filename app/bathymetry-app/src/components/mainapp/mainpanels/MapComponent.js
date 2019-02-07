@@ -25,7 +25,6 @@ export default class MapComponent extends Component {
         this.map = null;
         this.layer = null;
         this.wmsSource = null;
-        this.olOnClickFunction = null;
         this.olView = null;
 
         this.selectedLayersGroup = null;
@@ -33,6 +32,7 @@ export default class MapComponent extends Component {
         this.olGenerateGetFeatureInfoFunction = this.olGenerateGetFeatureInfoFunction.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
         this.downloadAccept = this.downloadAccept.bind(this);
+        
         this.serviceMeta = new ServiceMeta();
         this.dataService = new DataService();
         this.geoServerService = new GeoServerService();
@@ -150,7 +150,7 @@ export default class MapComponent extends Component {
             'LAYERS': layersParam,
             'TILED': true,
         };
-        // this.prepareLayerChange();
+
         this.wmsSource = new TileWMS({
             url: this.serviceMeta.getGeoServerAddress(),
             params: wmsParams,
@@ -171,8 +171,8 @@ export default class MapComponent extends Component {
             });
 
             this.map.setView(this.olView);
-            this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
-            this.map.on('singleclick', this.olOnClickFunction);
+            const olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
+            this.map.on('singleclick', olOnClickFunction);
         });
     }
 
@@ -194,25 +194,8 @@ export default class MapComponent extends Component {
             title: layer,
             source: wmsSource
         });
-        // this.map.addLayer(this.layer);
+
         this.selectedLayersGroup.getLayers().push(this.layer);
-        // this.selectedLayersGroup.getLayers().push(
-        //     new LayerTile({
-        //         title: 'Water color',
-        //         visible: false,
-        //         source: new SourceStamen({
-        //             layer: 'watercolor'
-        //         })
-        //     }),
-        // );
-
-
-
-    }
-
-    prepareLayerChange() {
-        this.map.removeLayer(this.layer);
-        this.map.un('singleclick', this.olOnClickFunction);
     }
 
     olGenerateGetFeatureInfoFunction(evt) {
