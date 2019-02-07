@@ -5,15 +5,13 @@ import View from 'ol/View';
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
 import TileWMS from 'ol/source/TileWMS.js';
-import {transform} from 'ol/proj.js'
+import { transform } from 'ol/proj.js'
 import ServiceMeta from '../../../services/ServiceMeta';
 import { DragBox, Select } from 'ol/interaction.js';
-import {platformModifierKeyOnly} from 'ol/events/condition.js';
-import {transformExtent} from 'ol/proj.js';
-import {Dialog} from 'primereact/dialog';
-import {Button} from 'primereact/button';
-import downloadjs from 'downloadjs';
-import LoadingComponent from '../../utility/LoadingComponent';
+import { platformModifierKeyOnly } from 'ol/events/condition.js';
+import { transformExtent } from 'ol/proj.js';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 import DataService from '../../../services/DataService';
 import GeoServerService from '../../../services/GeoServerService';
 
@@ -79,61 +77,52 @@ export default class MapComponent extends Component {
 
         this.map.addInteraction(dragBox);
         dragBox.on('boxend', function () {
-            // features that intersect the box are added to the collection of
-            // selected features
-
 
             let extent = dragBox.getGeometry().getExtent();
             let transformed = transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
 
-            
             const upperLeftCoord = new CoordinateDTO(transformed[0], transformed[3]);
             const lowerLeftCoord = new CoordinateDTO(transformed[2], transformed[1]);
             const box = new BoundingBoxDTO(upperLeftCoord, lowerLeftCoord);
 
-            console.log(box);
-            this.setState({box: box});
-            console.log(this.props.layers);
+            this.setState({ box: box });
 
-
-            if(this.props.layers.length == 0) {
+            if (this.props.layers.length === 0) {
                 return;
             }
 
             this.props.loadingService(true);
 
             this.dataService.getSelectionDataSetCount(this.props.layers, box)
-            .then(response => {
-                if(response.data.response == 0) {
-                    this.props.messageService('info', 'No data', 'No data found within polygon');
-                } else {
-                    this.setState({selectionRecords: response.data.response}, callback => {
-                        this.setState({downloadDialog: true});
-                    })
-                }
-            })
-            .finally(e => this.props.loadingService(false));
+                .then(response => {
+                    if (response.data.response === 0) {
+                        this.props.messageService('info', 'No data', 'No data found within polygon');
+                    } else {
+                        this.setState({ selectionRecords: response.data.response }, callback => {
+                            this.setState({ downloadDialog: true });
+                        })
+                    }
+                })
+                .finally(e => this.props.loadingService(false));
         }.bind(this));
 
     }
 
     downloadAccept() {
         this.props.loadingService(true);
-        this.setState({selectionData: null, downloadDialog: false, selectionRecords: 0});
+        this.setState({ downloadDialog: false, selectionRecords: 0 });
         this.dataService.downloadSelectedDataSets(this.props.layers, this.state.box)
-        .finally(e=> this.props.loadingService(false));
+            .finally(e => this.props.loadingService(false));
     }
-    
+
     hideDialog() {
-        this.setState({selectionData:null, downloadDialog: false, selectionRecords: 0})
+        this.setState({ downloadDialog: false, selectionRecords: 0 })
     }
 
     loadLayer(layersId) {
-        if(layersId.length === 0) {
+        if (layersId.length === 0) {
             return;
         }
-
-        
 
         let layers = 'bathymetry:' + layersId[0];
 
@@ -144,10 +133,6 @@ export default class MapComponent extends Component {
         let wmsParams = {
             'LAYERS': layers,
             'TILED': true,
-            // 'viewparams': selection,
-            // 'width': '200',
-            // 'height': '200',
-            // 'format': 'image/png8'
         };
 
         this.prepareLayerChange();
@@ -165,21 +150,21 @@ export default class MapComponent extends Component {
         this.map.addLayer(this.layer);
 
         this.dataService.getLayerCenter(layersId[0])
-        .then(response => {
-            let coord = [response.data.x, response.data.y];
-            let reprojected = transform(coord, 'EPSG:4326', 'EPSG:3857');
+            .then(response => {
+                let coord = [response.data.x, response.data.y];
+                let reprojected = transform(coord, 'EPSG:4326', 'EPSG:3857');
 
-            this.olView = new View ({
-                projection: 'EPSG:3857',
-                center: reprojected,
-                zoom: 10,
+                this.olView = new View({
+                    projection: 'EPSG:3857',
+                    center: reprojected,
+                    zoom: 10,
+                });
+
+                this.map.setView(this.olView);
+                this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
+                this.map.on('singleclick', this.olOnClickFunction);
             });
-            
-            this.map.setView(this.olView);
-            this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
-            this.map.on('singleclick', this.olOnClickFunction);
-        });
-        
+
     }
 
     prepareLayerChange() {
@@ -194,20 +179,17 @@ export default class MapComponent extends Component {
             { 'INFO_FORMAT': 'application/json' });
         if (url) {
             this.geoServerService.geoserverGetFeatureInfo(url)
-            .then(response => {
-                console.log(response.data.features);
-                let features = response.data.features;
+                .then(response => {
+                    console.log(response.data.features);
+                    let features = response.data.features;
 
-                if(features.length === 0) {
-                    return;
-                }
+                    if (features.length === 0) {
+                        return;
+                    }
 
-                console.log(features[0]);
-                // let info = "lat: " + features[0].geometry.coordinates[0] + " long: " + features[0].geometry.coordinates[1]
-                //     + " measurement: " + features[0].properties.measure;
-                let info = "measurement: " + features[0].properties.GRAY_INDEX;
-                this.props.messageService('info', 'Point', info);
-            });
+                    let info = "measurement: " + features[0].properties.GRAY_INDEX;
+                    this.props.messageService('info', 'Point', info);
+                });
         }
     }
 
@@ -225,10 +207,9 @@ export default class MapComponent extends Component {
 
         return (
             <div className="mapComponent" style={{ height: '100%' }}>
-            <LoadingComponent ref={(ref) => this.progress = ref}/>
-            <Dialog header="Download selection" footer={dialogFooter} visible={this.state.downloadDialog} width="350px" modal={true} onHide={this.hideDialog}>
-                Found {this.state.selectionRecords} records.
-            </Dialog>
+                <Dialog header="Download selection" footer={dialogFooter} visible={this.state.downloadDialog} width="350px" modal={true} onHide={this.hideDialog}>
+                    Found {this.state.selectionRecords} records.
+                </Dialog>
                 <div id="map" style={{ height: '100%' }}></div>
             </div>
         );
