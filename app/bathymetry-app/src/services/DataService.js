@@ -75,12 +75,27 @@ export default class DataService {
     }
 
     async addData(bathymetryDataSetDTO, file) {
-        let url = new URL(this.addDataEndpoint);
+        bathymetryDataSetDTO.measurementDate = this.formatDate(bathymetryDataSetDTO.measurementDate);
+        
+        let url = new URL(this.dataEndpoint);
         let formData = new FormData();
         formData.append("file", file);
-        formData.append("data", JSON.stringify(bathymetryDataSetDTO));
+        console.log(JSON.stringify(bathymetryDataSetDTO));
+        formData.append("data", new Blob([JSON.stringify(bathymetryDataSetDTO)], {type: "application/json"}));
 
         return axios.post(url, formData, this.userService.getTokenAuthorizationHeaderConfig());
+    }
+
+    formatDate(date) {
+        var d = new Date(date),
+            month = '' + (d.getMonth() + 1),
+            day = '' + d.getDate(),
+            year = d.getFullYear();
+    
+        if (month.length < 2) month = '0' + month;
+        if (day.length < 2) day = '0' + day;
+    
+        return [year, month, day].join('-');
     }
 
     async deleteData(id) {

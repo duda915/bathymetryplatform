@@ -11,6 +11,7 @@ import {ContextMenu} from 'primereact/contextmenu';
 import DataService from '../../../services/DataService';
 import LoadingComponent from '../../utility/LoadingComponent';
 import UserService from '../../../services/UserService';
+import BathymetryDataSetDTO from '../../../services/dtos/BathymetryDataSetDTO';
 
 export default class DataManager extends Component {
     constructor(props) {
@@ -26,7 +27,6 @@ export default class DataManager extends Component {
                 {label: 'Delete', icon: 'pi pi-fw pi-times', command: (event) => this.deleteDataSet(this.state.selectedData)}
             ]
         }
-
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -92,29 +92,20 @@ export default class DataManager extends Component {
     }
 
     handleSubmit(event) {
-        let dateObject = new Date(this.state.date);
-        let parseDate = dateObject.getFullYear() + "-" + (dateObject.getMonth()+1) + "-" + dateObject.getDate();
-        console.log(parseDate);
+        const dataSetDTO = new BathymetryDataSetDTO(this.state.crs, this.state.dataName,
+            new Date(), this.state.dataOwner);
 
-        let urlParams = {
-            name: this.state.dataName,
-            date: parseDate,
-            owner: this.state.dataOwner,
-            crs: this.state.crs
-        };
+        this.props.loadingService(true);
 
-        this.progress.showLoading(true);
-
-        this.dataService.addData(urlParams, this.state.file)
+        this.dataService.addData(dataSetDTO, this.state.file)
             .then(response => {
-                this.growl.show({severity: 'success', summary: 'Success', detail: 'File upload success', closable: false})
+                this.props.messageService('success', "Success", "file upload success");
             })
             .catch(error => {
-                this.growl.show({severity: 'error', summary: 'Error', detail: error.response.data.message, closable: false})
-                console.log(error.response.data);
+                this.props.messageService('error', 'Error', error.response.data.message);
             })
             .finally(response => {
-                this.progress.showLoading(false);
+                this.props.loadingService(false);
                 this.fetchUserDataSets();
             });
 
@@ -122,12 +113,16 @@ export default class DataManager extends Component {
     }
 
     deleteDataSet(dataSet) {
-        this.progress.showLoading(true);
+        this.props.loadingService(true);
         this.dataService.deleteData(dataSet.id)  
-        .then(response => this.growl.show({severity: 'info', summary: 'Success', detail: 'Data deleted.', closable: false}))
-        .catch(response => this.growl.show({severity: 'error', summary: 'Error', detail: 'Cannot delete data', closable: false}))
+        .then(response => {
+            this.props.messageService('info', 'Success', 'date deleted');
+        })
+        .catch(response => {
+            this.props.messageService('error', 'Error', 'cannot delete data');
+        })
         .finally(response => {
-            this.progress.showLoading(false);
+            this.props.loadingService(false);
             this.fetchUserDataSets();
         })
     }
@@ -186,8 +181,8 @@ export default class DataManager extends Component {
                         <DataTable header="My Datasets" value={this.state.data} responsive={true} contextMenuSelection={this.state.selectedData}
                         onContextMenuSelectionChange={e => this.setState({selectedData: e.value})} onContextMenu={e => this.cm.show(e.originalEvent)}>
                             <Column field="id" header="Id" />
-                            <Column field="acquisitionName" header="Name" />
-                            <Column field="acquisitionDate" header="Date" />
+                            <Column field="name" header="Name" />
+                            <Column field="measurementDate" header="Date" />
                             <Column field="dataOwner" header="Owner" />
                         </DataTable>
                     </div>

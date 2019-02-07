@@ -45,6 +45,14 @@
     background-color: rgba(0,0,0,0.5); 
 }
 
+td {
+    white-space: nowrap; 
+    width: 50px; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    border: 1px solid #000000;
+}
+
 .loading-progress {
     top: 30%;
     left: calc(50% - 50px);

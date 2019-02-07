@@ -107,7 +107,11 @@ class MainWindow extends Component {
                                             <DataComponent setSelectedLayers={this.setSelectedLayers} />
                                         )
                                     }} />
-                                    <Route path="/mydata" component={DataManager} />
+                                    <Route path="/mydata" render={() => {
+                                        return (
+                                            <DataManager loadingService={this.props.loadingService} messageService={this.props.messageService}/>
+                                        )
+                                    }}/>
                                 </div>
                             </Router>
                         </div>
