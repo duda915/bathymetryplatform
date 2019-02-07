@@ -78,14 +78,15 @@ class MenuPanel extends Component {
                     <div className="p-col-12 accent-color" style={{ 'height': '100px' }} />
 
                     <div className="p-col-12 p-col-align-center">
-                        <Menu model={this.state.menuItems} className="menu" />
+                        {/* <Menu model={this.state.menuItems} className="menu" /> */}
                         <HashRouter>
                             <div className="router-container">
+                                <div className="menu-top" />
                                 <MenuButton to="/" label="Map" icon="pi pi-map-marker" />
                                 <MenuButton to="/select" label="Select Data" icon="pi pi-search" />
                                 <MenuButton to="/mydata" label="My Data" icon="pi pi-cloud-upload" />
                                 <MenuButton to="/settings" label="Settings" icon="pi pi-cog" />
-                                <MenuButtonOnClick to="/" label="Logout" icon="pi pi-sign-out" onClick={this.props.signOut}/>
+                                <MenuButtonOnClick to="/" label="Logout" icon="pi pi-sign-out" onClick={this.props.signOut} />
                             </div>
                         </HashRouter>
                     </div>

@@ -15,6 +15,11 @@
     background-repeat: no-repeat;
 }
 
+.menu-top {
+    background-color: #4C5C79;
+    height: 25px;
+}
+
 .menu-button-container {
     display: flex;
     flex-direction: column;
@@ -23,6 +28,7 @@
     background-color: #A56A83;
     height: 50px;
     width: 100%;
+    border-bottom: 1px solid #685C78;
 }
 
 .menu-button {
@@ -33,6 +39,7 @@
     height:100%;
     color: white;
     padding-left: 10px;
+    
 }
 
 .menu-button:hover {
@@ -43,6 +50,8 @@
 
 .menu-button-active {
     background-color:#F3B971;
+    border-left:5px solid;
+    border-color:#CF6D80;
 }
 
 .menu-button-content-container {
