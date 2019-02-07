@@ -9,3 +9,16 @@
     background-position: center;
     background-repeat: no-repeat;
 }
+
+.menu {
+    width: 100%;
+    border-radius: 0px !important;
+    border: 0px !important;
+}
+
+.menu .p-submenu-header {
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+
+}
+

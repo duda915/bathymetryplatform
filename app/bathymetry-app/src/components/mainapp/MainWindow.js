@@ -76,7 +76,7 @@ class MainWindow extends Component {
                                     </div>
                                 </div>
                             </ScrollPanel> */}
-                        <MenuPanel logoutFun={this.handleLogout}/>
+                        <MenuPanel signOut={this.props.signOut}/>
                     </CSSTransition>
                     <div className="p-col main-window">
                         <div className="p-grid p-nogutter">

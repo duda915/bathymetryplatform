@@ -46,8 +46,13 @@ class MenuPanel extends Component {
         this.setState({
             menuItems: [
                 {
-                    label: 'Map',
-                    items: [{ label: 'Map', icon: 'pi pi-map-marker', command: () => { window.location.hash = "/"; } }],
+                    label: '',
+                    items: [{ label: 'Map', icon: 'pi pi-map-marker', command: () => { window.location.hash = "/"; } },
+                    { label: 'Select Data', icon: 'pi pi-search', command: () => { window.location.hash = "/select"; } },
+                    { label: 'My Data', disabled: this.state.isGuest, icon: 'pi pi-cloud-upload', command: () => { window.location.hash = "/mydata"; } },
+                    { label: 'Settings', icon: 'pi pi-cog', command: () => { this.props.signOut() } },
+                    { label: 'Logout', icon: 'pi pi-sign-out', command: () => { this.props.signOut() } }
+                    ],
                 },
                 {
                     label: 'Data',
@@ -70,23 +75,8 @@ class MenuPanel extends Component {
                     <div className="p-col-12" style={{ 'height': '50px' }} />
 
                     <div className="p-col-12">
-                        <ScrollPanel>
-                            <div className="p-grid p-fluid">
-                                <div className="p-col-12" >
-                    <Menu model={this.state.menuItems} className=""/>                                    
-                                </div>
-                            </div>
-                        </ScrollPanel>
+                        <Menu model={this.state.menuItems} className="menu" />
                     </div>
-                    {/* <div className="p-grid">
-                            <div className="p-col-12">
-                                <Button label="Browse Data" icon="pi pi-search" />
-                            </div> */}
-                    {/* <Button label="Map" icon="pi pi-map-marker" />
-                        <Button label="My Data" icon="pi pi-cloud-upload" />
-                        <Button label="xx" />
-                        <Button label="xx" /> */}
-                    {/* <Menu model={this.state.menuItems} className=""/> */}
                 </div>
             </div >
         );
