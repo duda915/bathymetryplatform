@@ -1,23 +1,22 @@
-import React, { Component } from 'react';
-
-import Map from 'ol/Map';
-import View from 'ol/View';
-import TileLayer from 'ol/layer/Tile';
-import XYZ from 'ol/source/XYZ';
-import TileWMS from 'ol/source/TileWMS.js';
-import { transform } from 'ol/proj.js'
-import ServiceMeta from '../../../services/ServiceMeta';
-import { DragBox, Select } from 'ol/interaction.js';
+import LayerSwitcher from 'ol-layerswitcher';
 import { platformModifierKeyOnly } from 'ol/events/condition.js';
-import { transformExtent } from 'ol/proj.js';
-import { Dialog } from 'primereact/dialog';
+import { DragBox } from 'ol/interaction.js';
+import LayerGroup from 'ol/layer/Group';
+import { default as LayerTile, default as TileLayer } from 'ol/layer/Tile';
+import Map from 'ol/Map';
+import { transform, transformExtent } from 'ol/proj.js';
+import SourceOSM from 'ol/source/OSM';
+import SourceStamen from 'ol/source/Stamen';
+import TileWMS from 'ol/source/TileWMS.js';
+import View from 'ol/View';
 import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import React, { Component } from 'react';
 import DataService from '../../../services/DataService';
-import GeoServerService from '../../../services/GeoServerService';
-
 import BoundingBoxDTO from '../../../services/dtos/BoundingBoxDTO';
 import CoordinateDTO from '../../../services/dtos/CoordinateDTO';
-
+import GeoServerService from '../../../services/GeoServerService';
+import ServiceMeta from '../../../services/ServiceMeta';
 
 export default class MapComponent extends Component {
     constructor(props) {
@@ -28,6 +27,8 @@ export default class MapComponent extends Component {
         this.wmsSource = null;
         this.olOnClickFunction = null;
         this.olView = null;
+
+        this.selectedLayersGroup = null;
 
         this.olGenerateGetFeatureInfoFunction = this.olGenerateGetFeatureInfoFunction.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
@@ -44,67 +45,78 @@ export default class MapComponent extends Component {
 
     componentDidMount() {
         this.initOpenLayers();
-        this.loadLayer(this.props.layers);
+        this.loadLayers(this.props.layers);
+
     }
 
     initOpenLayers() {
-        let baseLayer = [
-            new TileLayer({
-                source: new XYZ({
-                    url: 'https://{a-c}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-                })
-            })
-        ];
-
         this.olView = new View({
             projection: 'EPSG:3857',
             center: [19, 51],
             zoom: 2,
         });
 
+        this.selectedLayersGroup = new LayerGroup({
+            'title': 'Selected layers',
+            layers: []
+        });
+
         this.map = new Map({
-            layers: baseLayer,
             target: 'map',
+            layers: [
+                new LayerGroup({
+                    'title': 'Base maps',
+                    layers: [
+                        new LayerTile({
+                            title: 'OSM',
+                            type: 'base',
+                            visible: true,
+                            source: new SourceOSM()
+                        })
+                    ]
+                }),
+                this.selectedLayersGroup
+            ],
             view: this.olView
         });
 
-        let select = new Select();
-        this.map.addInteraction(select);
+        const layerSwitcher = new LayerSwitcher();
+        this.map.addControl(layerSwitcher);
+        this.addDragBoxInteractionToMap();
 
+
+
+    }
+
+    addDragBoxInteractionToMap() {
         let dragBox = new DragBox({
             condition: platformModifierKeyOnly
         });
-
-        this.map.addInteraction(dragBox);
         dragBox.on('boxend', function () {
-
             let extent = dragBox.getGeometry().getExtent();
             let transformed = transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
-
             const upperLeftCoord = new CoordinateDTO(transformed[0], transformed[3]);
             const lowerLeftCoord = new CoordinateDTO(transformed[2], transformed[1]);
             const box = new BoundingBoxDTO(upperLeftCoord, lowerLeftCoord);
-
             this.setState({ box: box });
-
             if (this.props.layers.length === 0) {
                 return;
             }
-
             this.props.loadingService(true);
-
             this.dataService.getSelectionDataSetCount(this.props.layers, box)
                 .then(response => {
-                    if (response.data.response === 0) {
+                    if (response.data.response == 0) {
                         this.props.messageService('info', 'No data', 'No data found within polygon');
-                    } else {
+                    }
+                    else {
                         this.setState({ selectionRecords: response.data.response }, callback => {
                             this.setState({ downloadDialog: true });
-                        })
+                        });
                     }
                 })
                 .finally(e => this.props.loadingService(false));
         }.bind(this));
+        this.map.addInteraction(dragBox);
 
     }
 
@@ -119,23 +131,26 @@ export default class MapComponent extends Component {
         this.setState({ downloadDialog: false, selectionRecords: 0 })
     }
 
-    loadLayer(layersId) {
-        if (layersId.length === 0) {
+    loadLayers(layers) {
+        if (layers.length === 0) {
             return;
         }
+        this.setMapOnClickFunction(layers);
+        layers.forEach(layer => this.loadLayer(layer))
+    }
 
-        let layers = 'bathymetry:' + layersId[0];
+    setMapOnClickFunction(layers) {
+        let layersParam = 'bathymetry:' + layers[0];
 
-        for (let i = 1; i < layersId.length; i++) {
-            layers += ",bathymetry:" + layersId[i];
+        for (let i = 1; i < layers.length; i++) {
+            layersParam += ",bathymetry:" + layers[i];
         }
 
         let wmsParams = {
-            'LAYERS': layers,
+            'LAYERS': layersParam,
             'TILED': true,
         };
-
-        this.prepareLayerChange();
+        // this.prepareLayerChange();
         this.wmsSource = new TileWMS({
             url: this.serviceMeta.getGeoServerAddress(),
             params: wmsParams,
@@ -144,26 +159,54 @@ export default class MapComponent extends Component {
             projection: 'EPSG:3857'
         })
 
-        this.layer = new TileLayer({
-            source: this.wmsSource
-        });
-        this.map.addLayer(this.layer);
+        this.dataService.getLayerCenter(layers[0])
+        .then(response => {
+            let coord = [response.data.x, response.data.y];
+            let reprojected = transform(coord, 'EPSG:4326', 'EPSG:3857');
 
-        this.dataService.getLayerCenter(layersId[0])
-            .then(response => {
-                let coord = [response.data.x, response.data.y];
-                let reprojected = transform(coord, 'EPSG:4326', 'EPSG:3857');
-
-                this.olView = new View({
-                    projection: 'EPSG:3857',
-                    center: reprojected,
-                    zoom: 10,
-                });
-
-                this.map.setView(this.olView);
-                this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
-                this.map.on('singleclick', this.olOnClickFunction);
+            this.olView = new View({
+                projection: 'EPSG:3857',
+                center: reprojected,
+                zoom: 10,
             });
+
+            this.map.setView(this.olView);
+            this.olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
+            this.map.on('singleclick', this.olOnClickFunction);
+        });
+    }
+
+    loadLayer(layer) {
+        const wmsParams = {
+            'LAYERS': `bathymetry:${layer}`,
+            'TILED': true,
+        };
+
+        const wmsSource = new TileWMS({
+            url: this.serviceMeta.getGeoServerAddress(),
+            params: wmsParams,
+            serverType: 'geoserver',
+            transition: 0,
+            projection: 'EPSG:3857'
+        })
+
+        this.layer = new TileLayer({
+            title: layer,
+            source: wmsSource
+        });
+        // this.map.addLayer(this.layer);
+        this.selectedLayersGroup.getLayers().push(this.layer);
+        // this.selectedLayersGroup.getLayers().push(
+        //     new LayerTile({
+        //         title: 'Water color',
+        //         visible: false,
+        //         source: new SourceStamen({
+        //             layer: 'watercolor'
+        //         })
+        //     }),
+        // );
+
+
 
     }
 

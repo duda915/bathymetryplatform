@@ -4,7 +4,7 @@ import 'primereact/resources/primereact.min.css';
 import './theme/PrimeReactTheme.scss';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
-
+import 'ol-layerswitcher/src/ol-layerswitcher.css';
 import './theme/Theme.css';
 import './theme/Utility.css';
 import { Growl } from 'primereact/growl';
