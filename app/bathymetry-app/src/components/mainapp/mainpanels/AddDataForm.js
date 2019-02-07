@@ -8,6 +8,7 @@ import DataService from '../../../services/DataService';
 import UserService from '../../../services/UserService';
 import BathymetryDataSetDTO from '../../../services/dtos/BathymetryDataSetDTO';
 import EPSGCodeService from '../../../services/EPSGCodeService';
+import { AutoComplete } from 'primereact/autocomplete';
 
 export class AddDataForm extends React.Component {
     constructor(props) {
@@ -32,7 +33,7 @@ export class AddDataForm extends React.Component {
         this.epsgService = new EPSGCodeService();
 
 
-        this.epsgCodes = [];
+        this.epsgCodes = ['32634', '2222', '222'];
     }
 
     componentDidMount() {
@@ -44,7 +45,10 @@ export class AddDataForm extends React.Component {
     fetchEpsgCodes() {
         this.epsgService.getEPSGCodes()
             .then(response => {
-                this.epsgCodes = response.data;
+
+                this.epsgCodes = response.data.map(code =>
+                    code.epsgCode.toString()
+                );
                 console.log(this.epsgCodes);
             })
     }
@@ -113,9 +117,17 @@ export class AddDataForm extends React.Component {
         event.preventDefault();
     }
 
+    itemTemplate(brand) {
+        return (
+            <div className="p-clearfix">
+                <div style={{ fontSize: '16px', float: 'right', margin: '10px 10px 0 0' }}>{brand}</div>
+            </div>
+        );
+    }
+
     suggestEpsgCode(event) {
         let results = this.epsgCodes.filter((code) => {
-            return code.epsgCode.toLowerCase().startsWith(event.query.toLowerCase());
+            return code.toLowerCase().startsWith(event.query.toLowerCase());
         })
 
         this.setState({ epsgSuggestions: results });
@@ -150,12 +162,9 @@ export class AddDataForm extends React.Component {
                         })} showIcon={true}></Calendar>
                     </div>
                     <div className="p-col-12">
-                        <div className="p-inputgroup">
-                            <span className="p-inputgroup-addon">
-                                <i className="pi pi-globe"></i>
-                            </span>
-                            <InputText placeholder="EPSG" name="crs" value={this.state.crs} onChange={this.handleChange}></InputText>
-                        </div>
+                        <AutoComplete placeholder="EPSG" name="crs" value={this.state.crs} onChange={(e) => this.setState({ crs: e.value })}
+                            suggestions={this.state.epsgSuggestions} completeMethod={this.suggestEpsgCode.bind(this)}
+                        />
                     </div>
 
                     <div className="p-col-12">

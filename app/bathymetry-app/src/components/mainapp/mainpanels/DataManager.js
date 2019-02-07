@@ -54,10 +54,10 @@ export default class DataManager extends Component {
         return (
             <div className="bathymetry-app-padding">
                 <div className="p-grid p-fluid ">
-                    <div className="p-col-12 p-lg-3">
+                    <div className="p-col-4">
                         <AddDataForm fetchUserDataSets={this.fetchUserDataSets} loadingService={this.props.loadingService} messageService={this.props.messageService}/>
                     </div>
-                    <div className="p-col-12 p-lg-9 bathymetry-app-padding">
+                    <div className="p-col-8 bathymetry-app-padding">
                         <ContextMenu model={this.state.contextMenu} ref={el => this.cm = el} onHide={() => this.setState({ selectedData: null })} />
                         <DataTable header="My Datasets" value={this.state.data} responsive={true} contextMenuSelection={this.state.selectedData}
                             onContextMenuSelectionChange={e => this.setState({ selectedData: e.value })} onContextMenu={e => this.cm.show(e.originalEvent)}>
