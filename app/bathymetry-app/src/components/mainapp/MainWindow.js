@@ -15,6 +15,7 @@ import MenuPanel from './uielements/MenuPanel';
 import TopBar from './TopBar';
 import './MainWindow.css';
 import { toStringHDMS } from 'ol/coordinate';
+import Settings from './mainpanels/Settings';
 
 
 class MainWindow extends Component {
@@ -67,14 +68,14 @@ class MainWindow extends Component {
 
     changeLayerStyle() {
         let nextStyle;
-        if(this.state.layerStyle == "primarystyle") {
+        if (this.state.layerStyle == "primarystyle") {
             nextStyle = 'secondarystyle';
         } else {
             nextStyle = 'primarystyle';
         }
 
-        this.setState({layerStyle: nextStyle}, callback => {
-            if(this.mapReference.current != null) {
+        this.setState({ layerStyle: nextStyle }, callback => {
+            if (this.mapReference.current != null) {
                 this.mapReference.current.updateLayers();
             }
         })
@@ -86,7 +87,7 @@ class MainWindow extends Component {
                 <div className="p-grid p-nogutter">
                     <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
                         onExited={() => this.tryMapSizeUpdate()}>
-                        <MenuPanel changeStyle={this.changeLayerStyle} signOut={this.props.signOut}/>
+                        <MenuPanel changeStyle={this.changeLayerStyle} signOut={this.props.signOut} />
                     </CSSTransition>
                     <div className="p-col main-window">
                         <div className="p-grid p-nogutter">
@@ -109,9 +110,14 @@ class MainWindow extends Component {
                                     }} />
                                     <Route path="/mydata" render={() => {
                                         return (
-                                            <DataManager loadingService={this.props.loadingService} messageService={this.props.messageService}/>
+                                            <DataManager loadingService={this.props.loadingService} messageService={this.props.messageService} />
                                         )
-                                    }}/>
+                                    }} />
+                                    <Route path="/settings" render={() => {
+                                        return (
+                                            <Settings />
+                                        )
+                                    }} />
                                 </div>
                             </Router>
                         </div>
