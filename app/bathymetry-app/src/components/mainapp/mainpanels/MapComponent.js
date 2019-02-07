@@ -32,7 +32,7 @@ export default class MapComponent extends Component {
         this.olGenerateGetFeatureInfoFunction = this.olGenerateGetFeatureInfoFunction.bind(this);
         this.hideDialog = this.hideDialog.bind(this);
         this.downloadAccept = this.downloadAccept.bind(this);
-        
+
         this.serviceMeta = new ServiceMeta();
         this.dataService = new DataService();
         this.geoServerService = new GeoServerService();
@@ -45,11 +45,11 @@ export default class MapComponent extends Component {
 
     componentDidMount() {
         this.initOpenLayers();
-        this.loadLayers(this.props.layers);
 
     }
 
     initOpenLayers() {
+
         this.olView = new View({
             projection: 'EPSG:3857',
             center: [19, 51],
@@ -84,7 +84,7 @@ export default class MapComponent extends Component {
         this.map.addControl(layerSwitcher);
         this.addDragBoxInteractionToMap();
 
-
+        this.loadLayers(this.props.layers);
 
     }
 
@@ -180,6 +180,7 @@ export default class MapComponent extends Component {
         const wmsParams = {
             'LAYERS': `bathymetry:${layer}`,
             'TILED': true,
+            'STYLES': this.props.layerStyle
         };
 
         const wmsSource = new TileWMS({
@@ -221,6 +222,11 @@ export default class MapComponent extends Component {
 
     updateMapSize() {
         this.map.updateSize();
+    }
+
+    updateLayers() {
+        this.selectedLayersGroup.getLayers().clear();
+        this.loadLayers(this.props.layers);
     }
 
     render() {

@@ -14,6 +14,7 @@ import DataManager from './mainpanels/DataManager';
 import MenuPanel from './uielements/MenuPanel';
 import TopBar from './TopBar';
 import './MainWindow.css';
+import { toStringHDMS } from 'ol/coordinate';
 
 
 class MainWindow extends Component {
@@ -24,6 +25,7 @@ class MainWindow extends Component {
             username: '',
             menuVisible: true,
             selectedLayers: [],
+            layerStyle: 'primarystyle'
         };
 
         this.togglePanel = this.togglePanel.bind(this);
@@ -32,6 +34,7 @@ class MainWindow extends Component {
         this.userService = new UserService();
 
         this.setSelectedLayers = this.setSelectedLayers.bind(this)
+        this.changeLayerStyle = this.changeLayerStyle.bind(this)
     }
 
     componentDidMount() {
@@ -62,13 +65,28 @@ class MainWindow extends Component {
         })
     }
 
+    changeLayerStyle() {
+        let nextStyle;
+        if(this.state.layerStyle == "primarystyle") {
+            nextStyle = 'secondarystyle';
+        } else {
+            nextStyle = 'primarystyle';
+        }
+
+        this.setState({layerStyle: nextStyle}, callback => {
+            if(this.mapReference.current != null) {
+                this.mapReference.current.updateLayers();
+            }
+        })
+    }
+
     render() {
         return (
             <div className="mainWindow">
                 <div className="p-grid p-nogutter">
                     <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
                         onExited={() => this.tryMapSizeUpdate()}>
-                        <MenuPanel signOut={this.props.signOut}/>
+                        <MenuPanel changeStyle={this.changeLayerStyle} signOut={this.props.signOut}/>
                     </CSSTransition>
                     <div className="p-col main-window">
                         <div className="p-grid p-nogutter">
@@ -81,7 +99,7 @@ class MainWindow extends Component {
                                 <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}>
                                     <Route exact path="/" render={() => {
                                         return (
-                                            <MapComponent loadingService={this.props.loadingService} messageService={this.props.messageService} ref={this.mapReference} layers={this.state.selectedLayers} />
+                                            <MapComponent layerStyle={this.state.layerStyle} loadingService={this.props.loadingService} messageService={this.props.messageService} ref={this.mapReference} layers={this.state.selectedLayers} />
                                         )
                                     }} />
                                     <Route path="/select" render={() => {
