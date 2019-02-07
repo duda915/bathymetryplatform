@@ -7,7 +7,10 @@ import './MenuPanel.css';
 import { Button } from 'primereact/button';
 import { ScrollPanel } from 'primereact/scrollpanel';
 
-
+import { HashRouter } from 'react-router-dom'
+import { NavLink } from 'react-router-dom'
+import MenuButton from './MenuButton';
+import MenuButtonOnClick from './MenuButtonOnClick';
 
 class MenuPanel extends Component {
     constructor(props) {
@@ -54,15 +57,15 @@ class MenuPanel extends Component {
                     { label: 'Logout', icon: 'pi pi-sign-out', command: () => { this.props.signOut() } }
                     ],
                 },
-                {
-                    label: 'Data',
-                    items: [{ label: 'Select Data', icon: 'pi pi-search', command: () => { window.location.hash = "/select"; } },
-                    { label: 'My Data', disabled: this.state.isGuest, icon: 'pi pi-cloud-upload', command: () => { window.location.hash = "/mydata"; } }]
-                },
-                {
-                    label: 'User',
-                    items: [{ label: 'Logout', icon: 'pi pi-sign-out', command: () => { this.props.logoutFun() } }],
-                }
+                // {
+                //     label: 'Data',
+                //     items: [{ label: 'Select Data', icon: 'pi pi-search', command: () => { window.location.hash = "/select"; } },
+                //     { label: 'My Data', disabled: this.state.isGuest, icon: 'pi pi-cloud-upload', command: () => { window.location.hash = "/mydata"; } }]
+                // },
+                // {
+                //     label: 'User',
+                //     items: [{ label: 'Logout', icon: 'pi pi-sign-out', command: () => { this.props.logoutFun() } }],
+                // }
             ],
         });
     }
@@ -72,13 +75,26 @@ class MenuPanel extends Component {
             <div className="p-col-fixed menuslide-init menupanel">
                 <div className="p-grid p-nogutter">
                     <div className="p-col-12 brand" />
-                    <div className="p-col-12" style={{ 'height': '50px' }} />
+                    <div className="p-col-12 accent-color" style={{ 'height': '100px' }} />
 
-                    <div className="p-col-12">
+                    <div className="p-col-12 p-col-align-center">
                         <Menu model={this.state.menuItems} className="menu" />
+                        <HashRouter>
+                            <div className="router-container">
+                                <MenuButton to="/" label="Map" icon="pi pi-map-marker" />
+                                <MenuButton to="/select" label="Select Data" icon="pi pi-search" />
+                                <MenuButton to="/mydata" label="My Data" icon="pi pi-cloud-upload" />
+                                <MenuButton to="/settings" label="Settings" icon="pi pi-cog" />
+                                <MenuButtonOnClick to="/" label="Logout" icon="pi pi-sign-out" onClick={this.props.signOut}/>
+                            </div>
+                        </HashRouter>
                     </div>
+
+
+
                 </div>
-            </div >
+
+            </div>
         );
     }
 

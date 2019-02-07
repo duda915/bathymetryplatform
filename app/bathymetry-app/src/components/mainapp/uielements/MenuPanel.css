@@ -1,4 +1,9 @@
 .menupanel {
+    /* background-color: #685C78; */
+    background-color: #4C5C79;
+}
+
+.accent-color {
     background-color: #685C78;
 }
 
@@ -10,8 +15,48 @@
     background-repeat: no-repeat;
 }
 
-.menu {
+.menu-button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    background-color: #A56A83;
+    height: 50px;
     width: 100%;
+}
+
+.menu-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    height:100%;
+    color: white;
+    padding-left: 10px;
+}
+
+.menu-button:hover {
+    background-color: #F3B971;
+    color: white;
+
+}
+
+.menu-button-active {
+    background-color:#F3B971;
+}
+
+.menu-button-content-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.menu-button-icon {
+    padding-right: 5px;
+}
+
+
+.menu {
+    width: 250px;
     border-radius: 0px !important;
     border: 0px !important;
 }
@@ -19,6 +64,5 @@
 .menu .p-submenu-header {
     border-top-left-radius: 0px !important;
     border-top-right-radius: 0px !important;
-
 }
 
