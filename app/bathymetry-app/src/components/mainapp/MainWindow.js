@@ -81,7 +81,7 @@ class MainWindow extends Component {
                                 <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}>
                                     <Route exact path="/" render={() => {
                                         return (
-                                            <MapComponent ref={this.mapReference} layers={this.state.selectedLayers} />
+                                            <MapComponent loadingService={this.props.loadingService} messageService={this.props.messageService} ref={this.mapReference} layers={this.state.selectedLayers} />
                                         )
                                     }} />
                                     <Route path="/select" render={() => {

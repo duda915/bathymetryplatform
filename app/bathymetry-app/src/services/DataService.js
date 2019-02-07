@@ -47,11 +47,13 @@ export default class DataService {
 
     async downloadSelectedDataSets(ids, boundingBoxDTO) {
         let url = new URL(this.downloadSelectionEndpoint);
-        url.search = new URLSearchParams();
+        const urlParams = new URLSearchParams();
 
         ids.forEach(element => {
-            url.search.append("id", element);
+            urlParams.append("id", element);
         });
+
+        url.search = urlParams;
 
         return axios.post(url, boundingBoxDTO, this.userService.getTokenAuthorizationHeaderConfig())
             .then(response => {
@@ -61,11 +63,13 @@ export default class DataService {
 
     async getSelectionDataSetCount(ids, boundingBoxDTO) {
         let url = new URL(this.downloadSelectionCountEndpoint);
-        url.search = new URLSearchParams();
+        const urlParams = new URLSearchParams();
 
         ids.forEach(element => {
-            url.search.append("id", element);
+            urlParams.append("id", element);
         });
+
+        url.search = urlParams;
 
         return axios.post(url, boundingBoxDTO, this.userService.getTokenAuthorizationHeaderConfig());
     }

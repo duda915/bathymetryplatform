@@ -10,12 +10,16 @@ import ServiceMeta from '../../../services/ServiceMeta';
 import { DragBox, Select } from 'ol/interaction.js';
 import {platformModifierKeyOnly} from 'ol/events/condition.js';
 import {transformExtent} from 'ol/proj.js';
-import {Growl} from 'primereact/growl';
 import {Dialog} from 'primereact/dialog';
 import {Button} from 'primereact/button';
 import downloadjs from 'downloadjs';
 import LoadingComponent from '../../utility/LoadingComponent';
 import DataService from '../../../services/DataService';
+import GeoServerService from '../../../services/GeoServerService';
+
+import BoundingBoxDTO from '../../../services/dtos/BoundingBoxDTO';
+import CoordinateDTO from '../../../services/dtos/CoordinateDTO';
+
 
 export default class MapComponent extends Component {
     constructor(props) {
@@ -32,6 +36,7 @@ export default class MapComponent extends Component {
         this.downloadAccept = this.downloadAccept.bind(this);
         this.serviceMeta = new ServiceMeta();
         this.dataService = new DataService();
+        this.geoServerService = new GeoServerService();
 
         this.state = {
             downloadDialog: false,
@@ -77,30 +82,46 @@ export default class MapComponent extends Component {
             // features that intersect the box are added to the collection of
             // selected features
 
-            this.progress.showProgress(true);
 
             let extent = dragBox.getGeometry().getExtent();
             let transformed = transformExtent(extent, 'EPSG:3857', 'EPSG:4326');
-            console.log(extent);
-            console.log(transformed);
-            this.dataService.downloadSelectedDataSets(this.props.layers, transformed)
+
+            
+            const upperLeftCoord = new CoordinateDTO(transformed[0], transformed[3]);
+            const lowerLeftCoord = new CoordinateDTO(transformed[2], transformed[1]);
+            const box = new BoundingBoxDTO(upperLeftCoord, lowerLeftCoord);
+
+            console.log(box);
+            this.setState({box: box});
+            console.log(this.props.layers);
+
+
+            if(this.props.layers.length == 0) {
+                return;
+            }
+
+            this.props.loadingService(true);
+
+            this.dataService.getSelectionDataSetCount(this.props.layers, box)
             .then(response => {
-                console.log(response);
-                let records = response.data.split(/\r\n|\r|\n/).length - 2;
-                this.setState({selectionData: response.data, selectionRecords: records}, callback => this.setState({downloadDialog: true}))
+                if(response.data.response == 0) {
+                    this.props.messageService('info', 'No data', 'No data found within polygon');
+                } else {
+                    this.setState({selectionRecords: response.data.response}, callback => {
+                        this.setState({downloadDialog: true});
+                    })
+                }
             })
-            .catch(error => {
-                console.log(error.response)
-                this.growl.show({severity: 'info', summary: 'No data', detail: 'No data found within polygon'})
-            })
-            .finally(e => this.progress.showProgress(false));
+            .finally(e => this.props.loadingService(false));
         }.bind(this));
 
     }
 
     downloadAccept() {
-        downloadjs(this.state.selectionData, "bathymetry_selection.csv", "text/plain");
+        this.props.loadingService(true);
         this.setState({selectionData: null, downloadDialog: false, selectionRecords: 0});
+        this.dataService.downloadSelectedDataSets(this.props.layers, this.state.box)
+        .finally(e=> this.props.loadingService(false));
     }
     
     hideDialog() {
@@ -172,7 +193,7 @@ export default class MapComponent extends Component {
             evt.coordinate, viewResolution, 'EPSG:3857',
             { 'INFO_FORMAT': 'application/json' });
         if (url) {
-            this.dataService.geoserverGetFeatureInfo(url)
+            this.geoServerService.geoserverGetFeatureInfo(url)
             .then(response => {
                 console.log(response.data.features);
                 let features = response.data.features;
@@ -185,7 +206,7 @@ export default class MapComponent extends Component {
                 // let info = "lat: " + features[0].geometry.coordinates[0] + " long: " + features[0].geometry.coordinates[1]
                 //     + " measurement: " + features[0].properties.measure;
                 let info = "measurement: " + features[0].properties.GRAY_INDEX;
-                this.growl.show({severity: 'info', summary: 'Point', detail: info})
+                this.props.messageService('info', 'Point', info);
             });
         }
     }
@@ -208,7 +229,6 @@ export default class MapComponent extends Component {
             <Dialog header="Download selection" footer={dialogFooter} visible={this.state.downloadDialog} width="350px" modal={true} onHide={this.hideDialog}>
                 Found {this.state.selectionRecords} records.
             </Dialog>
-                <Growl ref={(el) => this.growl = el} />
                 <div id="map" style={{ height: '100%' }}></div>
             </div>
         );

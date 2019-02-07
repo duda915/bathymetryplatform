@@ -2,7 +2,7 @@
 export default class BoundingBoxDTO {
     constructor(upperLeftCoordinate, lowerRightCoordinate) {
         this.upperLeftVertex = upperLeftCoordinate;
-        this.lowerRightCoordinate = lowerRightCoordinate;
+        this.lowerRightVertex = lowerRightCoordinate;
     }
 }
 

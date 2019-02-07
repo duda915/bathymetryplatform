@@ -1,4 +1,4 @@
-class CoordinateDTO {
+export default class CoordinateDTO {
     constructor(x, y) {
         this.x = x;
         this.y = y;
