@@ -39,7 +39,7 @@ export default class DataComponent extends Component {
         console.log(this.state.selection);
         let ids = this.state.selection.map(value => value.id);
         console.log(ids);
-        this.props.loadLayersFun(ids);
+        this.props.setSelectedLayers(ids);
         window.location.hash = "/";
 
     }
@@ -60,13 +60,13 @@ export default class DataComponent extends Component {
                             contextMenuSelection={this.state.selectedData} onContextMenuSelectionChange={e => this.setState({selectedData: e.value})}
                             onContextMenu={e => this.cm.show(e.originalEvent)}>
                             <Column field="id" header="Id" />
-                            <Column field="acquisitionName" header="Name" />
-                            <Column field="acquisitionDate" header="Date" />
+                            <Column field="name" header="Name" />
+                            <Column field="measurementDate" header="Date" />
                             <Column field="dataOwner" header="Owner" />
                         </DataTable>
                     </div>
-                    <div className="p-col p-lg-10"></div>
-                    <div className="p-col-12 p-lg-2">
+                    <div className="p-col-10"></div>
+                    <div className="p-col-2">
                         <Button label="Show" onClick={this.showOnMap} />
                     </div>
                 </div>

@@ -31,7 +31,7 @@ class MainWindow extends Component {
         this.mapReference = React.createRef();
         this.userService = new UserService();
 
-        this.loadSelectedLayers = this.loadSelectedLayers.bind(this);
+        this.setSelectedLayers = this.setSelectedLayers.bind(this)
     }
 
     componentDidMount() {
@@ -56,7 +56,7 @@ class MainWindow extends Component {
         }
     }
 
-    loadSelectedLayers(ids) {
+    setSelectedLayers(ids) {
         this.setState({
             selectedLayers: ids,
         })
@@ -68,14 +68,6 @@ class MainWindow extends Component {
                 <div className="p-grid p-nogutter">
                     <CSSTransition in={this.state.menuVisible} appear={true} timeout={500} classNames="menuslide" onEntered={() => this.tryMapSizeUpdate()}
                         onExited={() => this.tryMapSizeUpdate()}>
-                        {/* <ScrollPanel className="p-col-fixed menuslide-init leftmenu">
-                                <div className="p-grid p-justify-center">
-                                    <div className="p-col-12" style={{ height: '15vh' }} />
-                                    <div className="p-col ">
-                                        <MenuPanel logoutFun={this.handleLogout} />
-                                    </div>
-                                </div>
-                            </ScrollPanel> */}
                         <MenuPanel signOut={this.props.signOut}/>
                     </CSSTransition>
                     <div className="p-col main-window">
@@ -94,7 +86,7 @@ class MainWindow extends Component {
                                     }} />
                                     <Route path="/select" render={() => {
                                         return (
-                                            <DataComponent loadLayersFun={this.loadSelectedLayers} />
+                                            <DataComponent setSelectedLayers={this.setSelectedLayers} />
                                         )
                                     }} />
                                     <Route path="/mydata" component={DataManager} />

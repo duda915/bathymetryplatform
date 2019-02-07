@@ -87,7 +87,7 @@ export default class DataService {
         let url = new URL(this.dataEndpoint);
         url.search = new URLSearchParams(params);
 
-        return axios.delete(url, this.userService.getConfig());
+        return axios.delete(url, this.userService.getTokenAuthorizationHeaderConfig());
     }
 
     async getLayerCenter(id) {
@@ -104,7 +104,7 @@ export default class DataService {
         };
         let url = new URL(endpoint);
         url.search = new URLSearchParams(params);
-        return axios.get(url, this.userService.getConfig());
+        return axios.get(url, this.userService.getTokenAuthorizationHeaderConfig());
     }
 
     
