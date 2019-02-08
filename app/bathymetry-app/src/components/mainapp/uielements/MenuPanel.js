@@ -12,6 +12,7 @@ import { NavLink } from 'react-router-dom'
 import MenuButton from './MenuButton';
 import MenuButtonOnClick from './MenuButtonOnClick';
 import { ToggleButton } from 'primereact/togglebutton';
+import Tools from './Tools';
 
 class MenuPanel extends Component {
     constructor(props) {
@@ -20,7 +21,6 @@ class MenuPanel extends Component {
         this.state = {
             menuItems: [
             ],
-            toggleStyleButton: false,
         }
 
         this.userService = new UserService();
@@ -33,7 +33,6 @@ class MenuPanel extends Component {
     }
 
     changeStyle() {
-        this.setState({toggleStyleButton: !this.state.toggleStyleButton});
         this.props.changeStyle();
     }
 
@@ -85,8 +84,9 @@ class MenuPanel extends Component {
                 <div className="p-grid p-nogutter">
                     <div className="p-col-12 brand" />
                     <div className="p-col-12 accent-color" style={{ 'padding': '15px' }} >
-                        <ToggleButton offLabel="Style" onLabel="Style"
-                            checked={this.state.toggleStyleButton} onChange={this.changeStyle} onIcon='pi pi-eye' offIcon='pi pi-eye' />
+                        <Tools signOut={this.props.signOut} changeStyle={this.changeStyle}/>
+                        {/* <ToggleButton offLabel="Style" onLabel="Style"
+                            checked={this.state.toggleStyleButton} onChange={this.changeStyle} onIcon='pi pi-eye' offIcon='pi pi-eye' /> */}
                     </div>
 
                     <div className="p-col-12 p-col-align-center">
