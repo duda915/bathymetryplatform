@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Menu } from 'primereact/menu';
 import UserService from '../../../services/UserService';
 
-import './MenuPanel.css';
+import './MenuPanel.scss';
 import { Button } from 'primereact/button';
 import { ScrollPanel } from 'primereact/scrollpanel';
 

@@ -1,6 +1,6 @@
 import { ToggleButton } from "primereact/togglebutton";
 import React, { Component } from 'react';
-import './LandingPage.css';
+import './LandingPage.scss';
 import { LandingPageHeader } from './LandingPageHeader';
 import { LoginForm } from './LoginForm';
 import { RegisterForm } from './RegisterForm';

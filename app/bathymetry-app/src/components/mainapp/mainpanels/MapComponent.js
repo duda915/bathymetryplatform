@@ -1,14 +1,12 @@
 import LayerSwitcher from 'ol-layerswitcher';
 import { platformModifierKeyOnly } from 'ol/events/condition.js';
+import { boundingExtent } from 'ol/extent.js';
 import { DragBox } from 'ol/interaction.js';
 import LayerGroup from 'ol/layer/Group';
 import { default as LayerTile, default as TileLayer } from 'ol/layer/Tile';
 import Map from 'ol/Map';
-import {boundingExtent} from 'ol/extent.js';
-
 import { transform, transformExtent } from 'ol/proj.js';
 import SourceOSM from 'ol/source/OSM';
-import SourceStamen from 'ol/source/Stamen';
 import TileWMS from 'ol/source/TileWMS.js';
 import View from 'ol/View';
 import { Button } from 'primereact/button';
@@ -19,6 +17,7 @@ import BoundingBoxDTO from '../../../services/dtos/BoundingBoxDTO';
 import CoordinateDTO from '../../../services/dtos/CoordinateDTO';
 import GeoServerService from '../../../services/GeoServerService';
 import ServiceMeta from '../../../services/ServiceMeta';
+
 
 export default class MapComponent extends Component {
     constructor(props) {

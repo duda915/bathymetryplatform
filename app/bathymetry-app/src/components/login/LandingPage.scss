@@ -1,10 +1,12 @@
+@import '../../theme/AppTheme.scss';
+
 .loginControl {
-    background-color: #A56A83;
+    background-color: $tertiary;
     height: 100vh;
 }
 
 .logo {
-    background-color: #4C5C79;
+    background-color: $primary;
     background-image: url('../../assets/logocolor.svg');
     background-position: center;
     background-repeat: no-repeat;
