@@ -59,7 +59,7 @@ export default class DataManager extends Component {
                     </div>
                     <div className="p-col-8 bathymetry-app-padding">
                         <ContextMenu model={this.state.contextMenu} ref={el => this.cm = el} onHide={() => this.setState({ selectedData: null })} />
-                        <DataTable header="My Datasets" value={this.state.data} responsive={true} contextMenuSelection={this.state.selectedData}
+                        <DataTable header="My Datasets" value={this.state.data} responsive={true} scrollable={true} scrollHeight="75vh" contextMenuSelection={this.state.selectedData}
                             onContextMenuSelectionChange={e => this.setState({ selectedData: e.value })} onContextMenu={e => this.cm.show(e.originalEvent)}>
                             <Column field="id" header="Id" sortable={true} />
                             <Column field="name" header="Name" sortable={true} />
