@@ -84,7 +84,7 @@ class MenuPanel extends Component {
                 <div className="p-grid p-nogutter">
                     <div className="p-col-12 brand" />
                     <div className="p-col-12 accent-color" style={{ 'padding': '15px' }} >
-                        <Tools signOut={this.props.signOut} changeStyle={this.changeStyle}/>
+                        <Tools signOut={this.props.signOut} changeStyle={this.changeStyle} />
                         {/* <ToggleButton offLabel="Style" onLabel="Style"
                             checked={this.state.toggleStyleButton} onChange={this.changeStyle} onIcon='pi pi-eye' offIcon='pi pi-eye' /> */}
                     </div>
@@ -93,16 +93,24 @@ class MenuPanel extends Component {
                         {/* <Menu model={this.state.menuItems} className="menu" /> */}
                         <HashRouter>
                             <div className="router-container">
-                                <div className="menu-top" />
+                                <div className="menu-top"><div className="menu-header">Menu</div></div>
                                 <MenuButton to="/" label="Map" icon="pi pi-map-marker" />
                                 <MenuButton to="/select" label="Select Data" icon="pi pi-search" />
                                 <MenuButton to="/mydata" label="My Data" icon="pi pi-cloud-upload" />
-                                <MenuButton to="/settings" label="Settings" icon="pi pi-cog" />
-                                <MenuButtonOnClick to="/" label="Logout" icon="pi pi-sign-out" onClick={this.props.signOut} />
                             </div>
                         </HashRouter>
                     </div>
+                    <div className="p-col-12 menu-spacer" style={{ 'height': '50px' }} />
 
+                    <div className="p-col-12 p-col-align-center">
+                        <HashRouter>
+                            <div className="router-container">
+                                <MenuButton to="/settings" label="Settings" icon="pi pi-cog" />
+                                <MenuButtonOnClick to="/" label="Logout" icon="pi pi-sign-out" onClick={this.props.signOut} />
+                            </div>
+
+                        </HashRouter>
+                    </div>
 
 
                 </div>
