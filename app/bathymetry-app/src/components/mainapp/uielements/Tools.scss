@@ -1,0 +1,24 @@
+@import '../../../theme/AppTheme.scss';
+
+.tools-username {
+    text-align: center;
+    color: white;
+    font-size: 20px;
+}
+
+.tools-button-container {
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+
+.tools-button {
+    width: 25px;
+    height: 25px;
+    text-align: center;
+}
+
+.tools-toolbar {
+    background-color: $secondary !important;
+    border: 0px !important;
+}

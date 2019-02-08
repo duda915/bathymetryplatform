@@ -2,7 +2,7 @@
 import React from 'react';
 import { Toolbar } from 'primereact/toolbar';
 import UserService from '../../../services/UserService';
-import './Tools.css';
+import './Tools.scss';
 import { Button } from 'primereact/button';
 
 export default class Tools extends React.Component {
