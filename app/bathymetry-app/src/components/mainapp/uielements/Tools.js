@@ -31,10 +31,10 @@ export default class Tools extends React.Component {
             <div className="p-grid p-nogutter tools-username">
                 <div className="p-col-12">
                     <div className="p-grid p-nogutter tools-username-box">
-                        <div className="p-col-1 ">
+                        <div className="p-col-5" style={{'textAlign': 'right'}}>
                             <i className="pi pi-user"></i>
                         </div>
-                        <div className="p-col-11 tools-username-font">
+                        <div className="p-col-1 tools-username-font">
                             {this.state.username}
                         </div>
                     </div>
