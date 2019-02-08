@@ -29,19 +29,22 @@ export default class Tools extends React.Component {
     render() {
         return (
             <div className="p-grid p-nogutter tools-username">
-                <div className="p-col-1">
-                    <i className="pi pi-user"></i>
+                <div className="p-col-12">
+                    <div className="p-grid p-nogutter tools-username-box">
+                        <div className="p-col-1 ">
+                            <i className="pi pi-user"></i>
+                        </div>
+                        <div className="p-col-11">
+                            {this.state.username}
+                        </div>
+                    </div>
                 </div>
-                <div className="p-col-11">
-                    {this.state.username}
-                </div>
+
                 <div className="p-col-12">
                     <Toolbar className="tools-toolbar">
-                        <div className="p-toolbar-group-right" >
-                            <Button className="p-button-secondary" onClick={this.props.changeStyle} icon="pi pi-eye"/>
-                        </div>
                         <div className="p-toolbar-group-left" >
-                            <Button className="p-button-secondary" onClick={this.props.signOut} icon="pi pi-sign-out"/>
+                            <Button  style={{'marginRight': '10px'}} className="p-button-warning" onClick={this.props.signOut} icon="pi pi-sign-out" />
+                            <Button className="p-button-warning" onClick={this.props.changeStyle} icon="pi pi-eye" />
                         </div>
                     </Toolbar>
                 </div>
