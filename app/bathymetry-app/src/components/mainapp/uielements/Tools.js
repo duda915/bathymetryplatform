@@ -34,7 +34,7 @@ export default class Tools extends React.Component {
                         <div className="p-col-1 ">
                             <i className="pi pi-user"></i>
                         </div>
-                        <div className="p-col-11">
+                        <div className="p-col-11 tools-username-font">
                             {this.state.username}
                         </div>
                     </div>
