@@ -38,10 +38,10 @@ export default class Tools extends React.Component {
                 <div className="p-col-12">
                     <Toolbar className="tools-toolbar">
                         <div className="p-toolbar-group-right" >
-                            <Button className="p-button-info" onClick={this.props.changeStyle} icon="pi pi-eye"/>
+                            <Button className="p-button-secondary" onClick={this.props.changeStyle} icon="pi pi-eye"/>
                         </div>
                         <div className="p-toolbar-group-left" >
-                            <Button className="p-button-info" onClick={this.props.signOut} icon="pi pi-sign-out"/>
+                            <Button className="p-button-secondary" onClick={this.props.signOut} icon="pi pi-sign-out"/>
                         </div>
                     </Toolbar>
                 </div>

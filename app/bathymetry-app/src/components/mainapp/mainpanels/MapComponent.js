@@ -4,6 +4,8 @@ import { DragBox } from 'ol/interaction.js';
 import LayerGroup from 'ol/layer/Group';
 import { default as LayerTile, default as TileLayer } from 'ol/layer/Tile';
 import Map from 'ol/Map';
+import {boundingExtent} from 'ol/extent.js';
+
 import { transform, transformExtent } from 'ol/proj.js';
 import SourceOSM from 'ol/source/OSM';
 import SourceStamen from 'ol/source/Stamen';
@@ -159,10 +161,18 @@ export default class MapComponent extends Component {
             projection: 'EPSG:3857'
         })
 
-        this.dataService.getLayerCenter(layers[0])
+        this.dataService.getLayerBoundingBox(layers[0])
         .then(response => {
-            let coord = [response.data.x, response.data.y];
-            let reprojected = transform(coord, 'EPSG:4326', 'EPSG:3857');
+
+            console.log(response);
+            
+            const upperLeft = response.data.upperLeftVertex;
+            const lowerRight = response.data.lowerRightVertex;
+            const xCenter = (upperLeft.x + lowerRight.x) /2;
+            const yCenter = (upperLeft.y + lowerRight.y) /2;
+
+            const coord = [xCenter, yCenter];
+            const reprojected = transform(coord, 'EPSG:4326', 'EPSG:3857');
 
             this.olView = new View({
                 projection: 'EPSG:3857',
@@ -171,9 +181,20 @@ export default class MapComponent extends Component {
             });
 
             this.map.setView(this.olView);
+
+            const coordExtentUL = [upperLeft.x, upperLeft.y];
+            const coordExtentLR = [lowerRight.x, lowerRight.y];
+
+            const reprojectedUL = transform(coordExtentUL, 'EPSG:4326', 'EPSG:3857');
+            const reprojectedLR = transform(coordExtentLR, 'EPSG:4326', 'EPSG:3857');
+
+            const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
+            this.map.getView().fit(ext);
+
+
             const olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
             this.map.on('singleclick', olOnClickFunction);
-        });
+        })
     }
 
     loadLayer(layer) {
