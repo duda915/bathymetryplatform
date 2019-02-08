@@ -97,8 +97,15 @@ export class AddDataForm extends React.Component {
     }
 
     handleSubmit(event) {
+        event.preventDefault();
+
+        if(this.state.date == '') {
+            this.props.messageService('error', 'Error', 'date must not be empty');
+            return;
+        }
+
         const dataSetDTO = new BathymetryDataSetDTO(this.state.crs, this.state.dataName,
-            new Date(), this.state.dataOwner);
+            this.state.date, this.state.dataOwner);
 
         this.props.loadingService(true);
 
@@ -114,7 +121,6 @@ export class AddDataForm extends React.Component {
                 this.props.fetchUserDataSets();
             });
 
-        event.preventDefault();
     }
 
     itemTemplate(brand) {
