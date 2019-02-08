@@ -61,10 +61,10 @@ export default class DataManager extends Component {
                         <ContextMenu model={this.state.contextMenu} ref={el => this.cm = el} onHide={() => this.setState({ selectedData: null })} />
                         <DataTable header="My Datasets" value={this.state.data} responsive={true} contextMenuSelection={this.state.selectedData}
                             onContextMenuSelectionChange={e => this.setState({ selectedData: e.value })} onContextMenu={e => this.cm.show(e.originalEvent)}>
-                            <Column field="id" header="Id" />
-                            <Column field="name" header="Name" />
-                            <Column field="measurementDate" header="Date" />
-                            <Column field="dataOwner" header="Owner" />
+                            <Column field="id" header="Id" sortable={true} />
+                            <Column field="name" header="Name" sortable={true} />
+                            <Column field="measurementDate" header="Date" sortable={true} />
+                            <Column field="dataOwner" header="Owner" sortable={true} />
                         </DataTable>
                     </div>
                 </div>

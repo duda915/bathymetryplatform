@@ -59,10 +59,10 @@ export default class DataComponent extends Component {
                             onSelectionChange={e => this.setState({ selection: e.value })} metaKeySelection={false}
                             contextMenuSelection={this.state.selectedData} onContextMenuSelectionChange={e => this.setState({selectedData: e.value})}
                             onContextMenu={e => this.cm.show(e.originalEvent)}>
-                            <Column field="id" header="Id" />
-                            <Column field="name" header="Name" />
-                            <Column field="measurementDate" header="Date" />
-                            <Column field="dataOwner" header="Owner" />
+                            <Column field="id" header="Id" sortable={true}/>
+                            <Column field="name" header="Name" sortable={true}/>
+                            <Column field="measurementDate" header="Date" sortable={true}/>
+                            <Column field="dataOwner" header="Owner" sortable={true}/>
                         </DataTable>
                     </div>
                     <div className="p-col-10"></div>

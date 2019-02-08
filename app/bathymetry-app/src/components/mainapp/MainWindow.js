@@ -91,13 +91,12 @@ class MainWindow extends Component {
                     </CSSTransition>
                     <div className="p-col main-window">
                         <div className="p-grid p-nogutter">
-                            <div className="p-col-12" style={{ height: '50px' }}>
-                                {/* main bar */}
+                            {/* <div className="p-col-12" style={{ height: '50px' }}>
                                 <TopBar togglePanel={this.togglePanel} signOut={this.props.signOut} />
-                            </div>
+                            </div> */}
                             {/* main panel */}
                             <Router>
-                                <div className="p-col-12" style={{ height: 'calc(100vh - 50px)' }}>
+                                <div className="p-col-12" style={{ height: 'calc(100vh)' }}>
                                     <Route exact path="/" render={() => {
                                         return (
                                             <MapComponent layerStyle={this.state.layerStyle} loadingService={this.props.loadingService} messageService={this.props.messageService} ref={this.mapReference} layers={this.state.selectedLayers} />

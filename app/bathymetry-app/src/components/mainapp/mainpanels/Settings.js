@@ -105,7 +105,7 @@ export default class Settings extends React.Component {
             <div className="bathymetry-app-padding">
                 <Panel header="Account">
                     <div className="p-grid">
-                        <div className="p-col-8">
+                        <div className="p-col-4">
                             <Panel header="Info">
                                 Username: {this.state.user.username} <br />
                                 Email: {this.state.user.email} <br />
