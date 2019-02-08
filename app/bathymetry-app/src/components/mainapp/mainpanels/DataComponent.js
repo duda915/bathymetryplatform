@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { InputText } from 'primereact/inputtext';
 
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -50,12 +51,26 @@ export default class DataComponent extends Component {
     }
 
     render() {
+        var header = <div style={{ 'textAlign': 'left' }}>
+            <div className="p-grid p-nogutter">
+                <div className="p-col-8">
+                    <i className="pi pi-search" style={{ margin: '4px 4px 0 0' }}></i>
+                    <span>Select Data</span>
+                </div>
+                <div className="p-col-4">
+                    <i className="pi pi-search" style={{ margin: '4px 4px 0 0' }}></i>
+                    <InputText style={{ 'width': '45%' }} type="search" onInput={(e) => this.setState({ globalFilter: e.target.value })} placeholder="Search" size="2" />
+                </div>
+
+            </div>
+        </div>;
+
         return (
             <div className="bathymetry-app-padding">
                 <div className="p-grid p-fluid ">
                     <div className="p-col-12">
                         <ContextMenu model={this.state.contextMenu} ref={el => this.cm = el} onHide={() => this.setState({ selectedData: null })} />
-                        <DataTable header="Datasets" value={this.state.data} responsive={true} scrollable={true} scrollHeight="75vh" selectionMode="multiple" selection={this.state.selection}
+                        <DataTable header={header} globalFilter={this.state.globalFilter} value={this.state.data} responsive={true} scrollable={true} scrollHeight="75vh" selectionMode="multiple" selection={this.state.selection}
                             onSelectionChange={e => this.setState({ selection: e.value })} metaKeySelection={false}
                             contextMenuSelection={this.state.selectedData} onContextMenuSelectionChange={e => this.setState({ selectedData: e.value })}
                             onContextMenu={e => this.cm.show(e.originalEvent)}>

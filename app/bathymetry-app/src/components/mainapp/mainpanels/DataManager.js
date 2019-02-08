@@ -51,6 +51,7 @@ export default class DataManager extends Component {
     }
 
     render() {
+        
         return (
             <div className="bathymetry-app-padding">
                 <div className="p-grid p-fluid ">
