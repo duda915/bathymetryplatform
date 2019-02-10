@@ -77,7 +77,7 @@ public class BathymetryDataSetServiceTest {
 
     @Test(expected = AccessDeniedException.class)
     public void addDataSet_TryToAddDataWithReadOnlyAuthorityUser_ShouldThrowAccessDeniedException() {
-        ApplicationUser readUser = applicationUserService.getApplicationUser("read");
+        ApplicationUser readUser = applicationUserService.getApplicationUser("guest");
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(readUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
         bathymetryDataSetService.addDataSet(readUser.getUsername(), bathymetryDataSet);
     }
@@ -108,7 +108,7 @@ public class BathymetryDataSetServiceTest {
     public void removeDataSet_RemoveOtherUserDataSet_ShouldThrowAccessDeniedException() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
         bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
-        bathymetryDataSetService.removeDataSet("read", bathymetryDataSet.getId());
+        bathymetryDataSetService.removeDataSet("guest", bathymetryDataSet.getId());
     }
 
     @Test

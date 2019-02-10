@@ -23,7 +23,7 @@ public class ApplicationUserServiceTest {
 
     @Test
     public void getApplicationUser_GetExistingUser_ShouldReturnUser() {
-        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("guest");
         assertNotNull(applicationUser);
     }
 
@@ -44,13 +44,13 @@ public class ApplicationUserServiceTest {
 
     @Test(expected = UserAlreadyExistsException.class)
     public void addNewUser_AddUserWithExistingUsername_ShouldThrowServiceException() {
-        applicationUserService.addNewUser("read", "test", "");
+        applicationUserService.addNewUser("guest", "test", "");
     }
 
     @Test
     public void changeUserPassword_ChangeExistingUserPassword_ShouldChangeUserPassword() {
-        ApplicationUser applicationUser = applicationUserService.changeUserPassword("read", "newpass");
-        ApplicationUser newPass = applicationUserService.getApplicationUser("read");
+        ApplicationUser applicationUser = applicationUserService.changeUserPassword("guest", "newpass");
+        ApplicationUser newPass = applicationUserService.getApplicationUser("guest");
 
         boolean act = ApplicationUser.PASSWORD_ENCODER.matches("newpass", newPass.getPassword());
 
@@ -59,7 +59,7 @@ public class ApplicationUserServiceTest {
 
     @Test(expected = UserException.class)
     public void changeUserPassword_ChangePasswordToTheSamePassword_ShouldThrowServiceException() {
-        applicationUserService.changeUserPassword("read", "read");
+        applicationUserService.changeUserPassword("guest", "guest");
     }
 
     @Test(expected = UserNotFoundException.class)
@@ -69,26 +69,26 @@ public class ApplicationUserServiceTest {
 
     @Test
     public void addNewAuthority_AddNewAuthorityToUser_ShouldAddNewAuthority() {
-        applicationUserService.addNewAuthority("read", Authorities.ADMIN);
-        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+        applicationUserService.addNewAuthority("guest", Authorities.ADMIN);
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("guest");
 
         assertEquals(2, applicationUser.getUserAuthorities().size());
     }
 
     @Test(expected = UserException.class)
     public void addNewAuthority_AddExistingAuthority_ShouldThrowServiceException() {
-        applicationUserService.addNewAuthority("read", Authorities.READ);
+        applicationUserService.addNewAuthority("guest", Authorities.READ);
     }
 
     @Test(expected = UserNotFoundException.class)
     public void addNewAuthority_AddAuthorityToNonExistentUser_ShouldThrowServiceException() {
-        applicationUserService.addNewAuthority("test", Authorities.READ);
+        applicationUserService.addNewAuthority("read", Authorities.READ);
     }
 
     @Test
     public void removeAuthority_RemoveUserAuthority_ShouldRemoveUserAuthority() {
-        applicationUserService.removeUserAuthority("read", Authorities.READ);
-        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+        applicationUserService.removeUserAuthority("guest", Authorities.READ);
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("guest");
 
         assertEquals(0, applicationUser.getUserAuthorities().size());
     }
@@ -100,13 +100,13 @@ public class ApplicationUserServiceTest {
 
     @Test(expected = UserNotFoundException.class)
     public void removeAuthority_RemoveAuthorityFromUserWhichDoNotHaveThisAuthority_ShouldThrowServiceException() {
-        applicationUserService.removeUserAuthority("rest", Authorities.ADMIN);
+        applicationUserService.removeUserAuthority("read", Authorities.ADMIN);
     }
 
     @Test(expected = UserNotFoundException.class)
     public void removeUser_RemoveExistingUser_ShouldRemoveUser() {
-        applicationUserService.removeUser("read");
-        applicationUserService.getApplicationUser("read");
+        applicationUserService.removeUser("guest");
+        applicationUserService.getApplicationUser("guest");
     }
 
     @Test(expected = UserNotFoundException.class)

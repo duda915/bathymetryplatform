@@ -113,7 +113,7 @@ public class ApplicationUserControllerTest {
 
     @Test(expected = UserNotFoundException.class)
     public void deleteUser_DeleteUserFromAdminAccount_ShouldDeleteUser() throws Exception {
-        String deleteUser = "read";
+        String deleteUser = "guest";
         mockMvc.perform(delete(userAPI)
                 .header("Authorization", adminHeader)
                 .content(deleteUser)
@@ -124,7 +124,7 @@ public class ApplicationUserControllerTest {
 
     @Test
     public void deleteUser_DeleteUserFromNonAdminAccoutn_ShouldDeleteUser() throws Exception {
-        String deleteUser = "read";
+        String deleteUser = "guest";
         String writeUserHeader = tokenTestHelper.obtainAccessTokenHeader("write", "write");
         mockMvc.perform(delete(userAPI)
                 .header("Authorization", writeUserHeader)
@@ -134,7 +134,7 @@ public class ApplicationUserControllerTest {
 
     @Test
     public void addAuthorityToUser_AddAuthorityFromAdminAccount_ShouldAddAuthority() throws Exception {
-        String targetUser = "read";
+        String targetUser = "guest";
         String adminAuthority = JSONUtil.convertObjectToJsonString(Authorities.ADMIN);
         mockMvc.perform(put(userAPI + "/authority")
                 .header("Authorization", adminHeader)
@@ -143,7 +143,7 @@ public class ApplicationUserControllerTest {
                 .param("username", targetUser)
         ).andExpect(status().isOk());
 
-        ApplicationUser readAdminUser = applicationUserService.getApplicationUser("read");
+        ApplicationUser readAdminUser = applicationUserService.getApplicationUser("guest");
 
         boolean act = readAdminUser.getUserAuthorities().stream().
                 anyMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName() == Authorities.ADMIN);
@@ -154,7 +154,7 @@ public class ApplicationUserControllerTest {
     @Test
     public void addAuthorityToUser_AddAuthorityFromNonAdminAccount_ShouldReturnForbidden() throws Exception {
         String writeUserTokenHeader = tokenTestHelper.obtainAccessTokenHeader("write", "write");
-        String targetUser = "read";
+        String targetUser = "guest";
         String adminAuthority = JSONUtil.convertObjectToJsonString(Authorities.ADMIN);
         mockMvc.perform(put(userAPI + "/authority")
                 .header("Authorization", writeUserTokenHeader)
@@ -166,7 +166,7 @@ public class ApplicationUserControllerTest {
 
     @Test
     public void removeUserAuthority_RemoveUserAuthorityFromAdminAccount_ShouldRemoveAuthority() throws Exception {
-        String targetUser = "read";
+        String targetUser = "guest";
         String targetAuthority = JSONUtil.convertObjectToJsonString(Authorities.READ);
         mockMvc.perform(delete(userAPI + "/authority")
                 .header("Authorization", adminHeader)
@@ -175,7 +175,7 @@ public class ApplicationUserControllerTest {
                 .param("username", targetUser)
         ).andExpect(status().isOk());
 
-        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("guest");
         boolean act = applicationUser.getUserAuthorities()
                 .stream().noneMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName() == Authorities.READ);
 
@@ -185,7 +185,7 @@ public class ApplicationUserControllerTest {
     @Test
     public void removeUserAuthority_RemoveUserAuthorityFromNonAdminAccount_ShouldReturnForbidden() throws Exception {
         String writeUserToken = tokenTestHelper.obtainAccessTokenHeader("write", "write");
-        String targetUser = "read";
+        String targetUser = "guest";
         String targetAuthority = JSONUtil.convertObjectToJsonString(Authorities.READ);
         mockMvc.perform(delete(userAPI + "/authority")
                 .header("Authorization", writeUserToken)

@@ -78,7 +78,7 @@ public class RegistrationControllerTest {
                 registrationRepository.findById(resourceIdResponse.getId()).orElseThrow(() -> new RegistrationException("registered token not found"));
 
         mockMvc.perform(get(registerAPI)
-                .param("token", registrationToken.getToken())).andExpect(status().isOk());
+                .param("token", registrationToken.getToken()));
 
         ApplicationUser applicationUser = applicationUserService.getApplicationUser("test");
         assertTrue(applicationUser.isActive());

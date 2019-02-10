@@ -29,7 +29,7 @@ public class BathymetryDataSetMappingTest {
 
     @Test
     public void save_SaveDataSetWithoutPoints_ShouldSaveDataSet() {
-        ApplicationUser applicationUser = applicationUserRepository.findByUsername("read").orElse(null);
+        ApplicationUser applicationUser = applicationUserRepository.findByUsername("guest").orElse(null);
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(applicationUser, "test", new java.sql.Date(new Date().getTime()), "owner", new ArrayList<>());
         bathymetryDataSet = bathymetryDataSetRepository.save(bathymetryDataSet);
 
@@ -38,7 +38,7 @@ public class BathymetryDataSetMappingTest {
 
     @Test
     public void save_SaveDataSetWithPoint_ShouldSaveDataSetWithPoint() {
-        ApplicationUser applicationUser = applicationUserRepository.findByUsername("read").orElse(null);
+        ApplicationUser applicationUser = applicationUserRepository.findByUsername("guest").orElse(null);
         List<BathymetryPoint> bathymetryPoints = new ArrayList<>();
         bathymetryPoints.add(new BathymetryPoint(new GeometryFactory(new PrecisionModel(), 4326).createPoint(new Coordinate(1,1))));
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(applicationUser, "test", new java.sql.Date(new Date().getTime()), "owner", new ArrayList<>());

@@ -129,11 +129,11 @@ public class BathymetryDataSetControllerTest {
     public void addDataSet_AddDataSetAsReadUser_ShouldReturnForbiddenStatus() throws Exception {
         byte[] file = IOUtils.toByteArray(resource.getURI());
         MockMultipartFile mockMultipartFile = new MockMultipartFile("file", file);
-        ApplicationUser applicationUser = applicationUserService.getApplicationUser("read");
+        ApplicationUser applicationUser = applicationUserService.getApplicationUser("guest");
         BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(applicationUser,
                 32634, "test", SQLDateBuilder.now(), "owner");
 
-        String readHeader = tokenTestHelper.obtainAccessTokenHeader("read", "read");
+        String readHeader = tokenTestHelper.obtainAccessTokenHeader("guest", "guest");
 
         String json = JSONUtil.convertObjectToJsonString(bathymetryDataSetDTO);
 
