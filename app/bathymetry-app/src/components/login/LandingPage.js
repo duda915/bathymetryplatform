@@ -41,12 +41,14 @@ export default class LandingPage extends Component {
 
     loginAsGuest() {
         this.props.loadingService(true);
-        this.userService.loginUser("read",  "read")
+        this.userService.loginUser("guest",  "guest")
         .then(response => {
             this.props.loadingService(false);
             this.props.signIn();
         })
         .catch(error => {
+            this.props.loadingService(false);
+
             this.props.messageService("error", "Error", "failed to login");
         })
     }
