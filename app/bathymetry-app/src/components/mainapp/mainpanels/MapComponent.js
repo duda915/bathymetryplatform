@@ -46,7 +46,8 @@ export default class MapComponent extends Component {
 
     componentDidMount() {
         this.initOpenLayers();
-
+        this.loadLayers(this.props.layers);
+        this.setMapOnClickFunction(this.props.layers);
     }
 
     initOpenLayers() {
@@ -85,7 +86,6 @@ export default class MapComponent extends Component {
         this.map.addControl(layerSwitcher);
         this.addDragBoxInteractionToMap();
 
-        this.loadLayers(this.props.layers);
 
     }
 
@@ -136,7 +136,6 @@ export default class MapComponent extends Component {
         if (layers.length === 0) {
             return;
         }
-        this.setMapOnClickFunction(layers);
         layers.forEach(layer => this.loadLayer(layer))
     }
 
