@@ -68,6 +68,22 @@
 
 }
 
+.menu-button-disabled {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    height:100%;
+    color: $primary;
+    padding-left: 10px;
+    pointer-events: none;
+    
+}
+
+.menu-button-disabled:hover {
+    color: $primary;
+}
+
 .menu-button-active {
     background-color: $accent-second;
     border-left:5px solid;
