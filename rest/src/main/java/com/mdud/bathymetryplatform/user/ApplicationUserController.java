@@ -30,6 +30,7 @@ public class ApplicationUserController {
     }
 
     @PutMapping
+    @PreAuthorize("hasAuthority('WRITE')")
     public ApplicationUser changeUserPassword(Principal principal, @Valid @RequestBody PasswordDTO passwordDTO) {
         return applicationUserService.changeUserPassword(principal.getName(), passwordDTO.getNewPassword());
     }

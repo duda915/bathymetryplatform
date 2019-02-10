@@ -31,7 +31,7 @@ public class ApplicationUserInitializer extends AbstractInitializer {
         }
 
         saveNoAuthorityUser();
-        saveReadAuthorityUser();
+        saveGuestUser();
         saveWriteAuthorityUser();
         saveAdminUser();
     }
@@ -55,12 +55,12 @@ public class ApplicationUserInitializer extends AbstractInitializer {
         applicationUserRepository.save(writeAuthorityUser);
     }
 
-    private void saveReadAuthorityUser() {
+    private void saveGuestUser() {
         Set<UserAuthority> authoritySet = new HashSet<>();
         authoritySet.add(userAuthorityProvider.getUserAuthority(Authorities.READ));
-        ApplicationUser readAuthorityUser = new ApplicationUser("read", "read", authoritySet);
-        readAuthorityUser.setActive(true);
-        applicationUserRepository.save(readAuthorityUser);
+        ApplicationUser guestUser = new ApplicationUser("guest", "guest", authoritySet);
+        guestUser.setActive(true);
+        applicationUserRepository.save(guestUser);
     }
 
     private void saveNoAuthorityUser() {
