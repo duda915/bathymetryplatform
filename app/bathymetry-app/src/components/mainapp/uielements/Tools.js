@@ -81,13 +81,15 @@ export default class Tools extends React.Component {
               >
                 Layers
               </h6>
-              {this.props.selectedLayers.map(layerId => 
-                <Layer layerName={layerId} />
-                )}
+              {this.props.selectedLayers.map(layer => (
+                <Layer
+                  layer={layer}
+                  toggleLayer={this.props.toggleLayer}
+                />
+              ))}
             </ScrollPanel>
           </div>
         ) : null}
-
       </div>
     );
   }

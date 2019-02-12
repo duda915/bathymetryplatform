@@ -21,14 +21,14 @@ export class Layer extends React.Component {
   render() {
     return (
       <div className="p-grid p-justify-between p-align-center">
-        <div className="p-col">{this.props.layerName.id}</div>
+        <div className="p-col">{this.props.layer.id}</div>
         <div className="p-col">
           <Button className="p-button-success" icon="pi pi-image" />
         </div>
         <div className="p-col">
           <Checkbox
-            checked={this.props.layerName.visible}
-            
+            checked={this.props.layer.visible}
+            onChange={(e) => this.props.toggleLayer(this.props.layer.id, !this.props.layer.visible)}
           />
         </div>
       </div>

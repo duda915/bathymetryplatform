@@ -38,7 +38,12 @@ export default class DataComponent extends Component {
         }
 
         console.log(this.state.selection);
-        let ids = this.state.selection.map(value => value.id);
+        let ids = this.state.selection.map(value => {
+            return {
+                id: value.id,
+                visible: true
+            }
+        });
         console.log(ids);
         this.props.setSelectedLayers(ids);
         window.location.hash = "/";

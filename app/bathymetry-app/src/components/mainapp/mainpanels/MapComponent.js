@@ -46,9 +46,14 @@ export default class MapComponent extends Component {
   }
 
   componentDidMount() {
+    const layersIds = this.getCol(this.props.layers, 'id');
     this.initOpenLayers();
-    this.loadLayers(this.props.layers);
-    this.setMapOnClickFunction(this.props.layers);
+    this.loadLayers(layersIds);
+    this.setMapOnClickFunction(layersIds);
+  }
+
+  getCol(array, col) {
+    return array.map(val => val[col]);
   }
 
   initOpenLayers() {
@@ -109,9 +114,12 @@ export default class MapComponent extends Component {
         if (this.props.layers.length === 0) {
           return;
         }
+
+        const layersIds = this.getCol(this.props.layers, 'id');
+
         this.props.loadingService(true);
         this.dataService
-          .getSelectionDataSetCount(this.props.layers, box)
+          .getSelectionDataSetCount(layersIds, box)
           .then(response => {
             if (response.data.response == 0) {
               this.props.messageService(
@@ -141,10 +149,13 @@ export default class MapComponent extends Component {
   }
 
   downloadAccept() {
+
+    const layersIds = this.getCol(this.props.layers, 'id');
+
     this.props.loadingService(true);
     this.setState({ downloadDialog: false, selectionRecords: 0 });
     this.dataService
-      .downloadSelectedDataSets(this.props.layers, this.state.box)
+      .downloadSelectedDataSets(layersIds, this.state.box)
       .finally(e => this.props.loadingService(false));
   }
 
@@ -265,8 +276,9 @@ export default class MapComponent extends Component {
   }
 
   updateLayers() {
+    const layersIds = this.getCol(this.props.layers, 'id')
     this.selectedLayersGroup.getLayers().clear();
-    this.loadLayers(this.props.layers);
+    this.loadLayers(layersIds);
   }
 
   render() {

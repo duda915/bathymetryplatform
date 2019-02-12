@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
 import CSSTransition from "react-transition-group/CSSTransition";
 
+
 import { ScrollPanel } from "primereact/scrollpanel";
 
 import MapComponent from "./mainpanels/MapComponent";
@@ -38,6 +39,7 @@ class MainWindow extends Component {
 
     this.setSelectedLayers = this.setSelectedLayers.bind(this);
     this.changeLayerStyle = this.changeLayerStyle.bind(this);
+    this.toggleLayer = this.toggleLayer.bind(this)
   }
 
   buildLayersGroup() {
@@ -80,8 +82,8 @@ class MainWindow extends Component {
   setSelectedLayers(ids) {
     const layersGroup = this.buildLayersGroup();
     ids.forEach(element => {
-        const newLayer = this.createLayer(element);
-        layersGroup.getLayers().push(newLayer);
+      const newLayer = this.createLayer(element.id);
+      layersGroup.getLayers().push(newLayer);
     });
     console.log(this.state.layerStyle);
     this.setState({
@@ -114,11 +116,33 @@ class MainWindow extends Component {
   }
 
   toggleLayer(layer, visible) {
-      this.state.selectedLayersGroup.forEach(l => {
-          if(l.get('title') === layer.get('title')) {
-              l.setVisible(visible);
-          }
+    console.log(layer);
+    console.log(visible);
+    this.state.selectedLayersGroup.getLayers().forEach(l => {
+      if (l.get("title") === layer) {
+        l.setVisible(visible);
+      }
+    });
+
+    const selectedLayers = this.state.selectedLayers.map(l => {
+      if(l.id == layer) {
+        console.log('x')
+        l.visible = visible
+      }
+      return l
     })
+
+    this.setState({
+      selectedLayers: this.state.selectedLayers.map(sl => {
+        if(sl.id === layer) {
+          console.log('xxx')
+          sl.visible = visible
+        }
+
+        return sl;
+      })
+    });
+
   }
 
   changeLayerStyle() {
@@ -130,14 +154,13 @@ class MainWindow extends Component {
     }
 
     this.setState({ layerStyle: nextStyle }, callback => {
-        this.state.selectedLayersGroup.getLayers().forEach(layer => {
-            console.log(layer.get('title'))
-            const params = layer.getSource().getParams();
-            params.STYLES = this.state.layerStyle;
-            layer.getSource().updateParams(params);
-        })
+      this.state.selectedLayersGroup.getLayers().forEach(layer => {
+        console.log(layer.get("title"));
+        const params = layer.getSource().getParams();
+        params.STYLES = this.state.layerStyle;
+        layer.getSource().updateParams(params);
+      });
     });
-    
   }
 
   render() {
@@ -156,6 +179,7 @@ class MainWindow extends Component {
               changeStyle={this.changeLayerStyle}
               signOut={this.props.signOut}
               selectedLayers={this.state.selectedLayers}
+              toggleLayer={this.toggleLayer}
             />
           </CSSTransition>
           <div className="p-col main-window">
