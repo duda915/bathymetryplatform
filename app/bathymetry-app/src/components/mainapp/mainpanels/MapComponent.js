@@ -223,6 +223,21 @@ export default class MapComponent extends Component {
     });
   }
 
+  zoomToLayer(layer) {
+    this.dataService.getLayerBoundingBox(layer).then(response => {
+      const upperLeft = response.data.upperLeftVertex;
+      const lowerRight = response.data.lowerRightVertex;
+      const coordExtentUL = [upperLeft.x, upperLeft.y];
+      const coordExtentLR = [lowerRight.x, lowerRight.y];
+
+      const reprojectedUL = transform(coordExtentUL, "EPSG:4326", "EPSG:3857");
+      const reprojectedLR = transform(coordExtentLR, "EPSG:4326", "EPSG:3857");
+
+      const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
+      this.map.getView().fit(ext);
+    })
+  }
+
   loadLayer(layer) {
     const wmsParams = {
       LAYERS: `bathymetry:${layer}`,

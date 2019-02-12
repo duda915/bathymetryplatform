@@ -85,6 +85,7 @@ export default class Tools extends React.Component {
                 <Layer
                   layer={layer}
                   toggleLayer={this.props.toggleLayer}
+                  zoomToLayer={this.props.zoomToLayer}
                 />
               ))}
             </ScrollPanel>

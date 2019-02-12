@@ -23,7 +23,7 @@ export class Layer extends React.Component {
       <div className="p-grid p-justify-between p-align-center">
         <div className="p-col">{this.props.layer.id}</div>
         <div className="p-col">
-          <Button className="p-button-success" icon="pi pi-image" />
+          <Button className="p-button-success" icon="pi pi-image" onClick={(e) => this.props.zoomToLayer(this.props.layer.id)} />
         </div>
         <div className="p-col">
           <Checkbox

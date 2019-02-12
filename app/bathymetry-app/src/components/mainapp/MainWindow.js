@@ -73,6 +73,12 @@ class MainWindow extends Component {
     }
   }
 
+  zoomToLayer = (layerId) => {
+    if (this.mapReference.current != null) {
+      this.mapReference.current.zoomToLayer(layerId);
+    }
+  }
+
   tryMapUpdate() {
     if (this.mapReference.current != null) {
       this.mapReference.current.updateLayerGroup();
@@ -114,6 +120,8 @@ class MainWindow extends Component {
 
     return newLayer;
   }
+
+
 
   toggleLayer(layer, visible) {
     console.log(layer);
@@ -180,6 +188,7 @@ class MainWindow extends Component {
               signOut={this.props.signOut}
               selectedLayers={this.state.selectedLayers}
               toggleLayer={this.toggleLayer}
+              zoomToLayer={this.zoomToLayer}
             />
           </CSSTransition>
           <div className="p-col main-window">
