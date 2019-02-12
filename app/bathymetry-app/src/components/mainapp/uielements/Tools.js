@@ -81,7 +81,9 @@ export default class Tools extends React.Component {
               >
                 Layers
               </h6>
-              <Layer layerName="51"/>
+              {this.props.selectedLayers.map(layerId => 
+                <Layer layerName={layerId} />
+                )}
             </ScrollPanel>
           </div>
         ) : null}

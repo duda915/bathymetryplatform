@@ -1,6 +1,7 @@
 import React from "react";
 import { Checkbox } from "primereact/checkbox";
 import { Button } from "primereact/button";
+import { transformWithProjections } from "ol/proj";
 
 export class Layer extends React.Component {
   constructor(props) {
@@ -11,21 +12,24 @@ export class Layer extends React.Component {
     };
   }
 
-  onLayerCheckBox = (e) => {
+  onLayerCheckBox = e => {
     this.setState({
       checked: !this.state.checked
-    })
-  }
+    });
+  };
 
   render() {
     return (
       <div className="p-grid p-justify-between p-align-center">
-        <div className="p-col">{this.props.layerName}</div>
+        <div className="p-col">{this.props.layerName.id}</div>
         <div className="p-col">
           <Button className="p-button-success" icon="pi pi-image" />
         </div>
         <div className="p-col">
-          <Checkbox checked={this.state.checked} onChange={this.onLayerCheckBox} />
+          <Checkbox
+            checked={this.props.layerName.visible}
+            
+          />
         </div>
       </div>
     );

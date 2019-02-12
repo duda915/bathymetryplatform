@@ -54,6 +54,7 @@ class MenuPanel extends Component {
             <Tools
               signOut={this.props.signOut}
               changeStyle={this.changeStyle}
+              selectedLayers={this.props.selectedLayers}
             />
             {/* <ToggleButton offLabel="Style" onLabel="Style"
                             checked={this.state.toggleStyleButton} onChange={this.changeStyle} onIcon='pi pi-eye' offIcon='pi pi-eye' /> */}

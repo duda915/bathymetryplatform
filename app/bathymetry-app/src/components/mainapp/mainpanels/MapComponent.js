@@ -77,7 +77,7 @@ export default class MapComponent extends Component {
             })
           ]
         }),
-        this.selectedLayersGroup
+        this.props.layersGroup
       ],
       view: this.olView
     });
@@ -132,6 +132,12 @@ export default class MapComponent extends Component {
       }.bind(this)
     );
     this.map.addInteraction(dragBox);
+  }
+
+  updateLayerGroup() {
+    this.map.getLayers().pop();
+    this.map.getLayers().push(this.props.layersGroup);
+    this.map.render();
   }
 
   downloadAccept() {
@@ -228,6 +234,8 @@ export default class MapComponent extends Component {
 
     this.selectedLayersGroup.getLayers().push(this.layer);
   }
+
+  
 
   olGenerateGetFeatureInfoFunction(evt) {
     let viewResolution = this.olView.getResolution();
