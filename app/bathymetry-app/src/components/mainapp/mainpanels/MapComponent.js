@@ -87,8 +87,6 @@ export default class MapComponent extends Component {
       view: this.olView
     });
 
-    const layerSwitcher = new LayerSwitcher();
-    this.map.addControl(layerSwitcher);
     this.addDragBoxInteractionToMap();
   }
 
