@@ -80,7 +80,6 @@ export default class DataService {
         let url = new URL(this.dataEndpoint);
         let formData = new FormData();
         formData.append("file", file);
-        console.log(JSON.stringify(bathymetryDataSetDTO));
         formData.append("data", new Blob([JSON.stringify(bathymetryDataSetDTO)], {type: "application/json"}));
 
         return axios.post(url, formData, this.userService.getTokenAuthorizationHeaderConfig());

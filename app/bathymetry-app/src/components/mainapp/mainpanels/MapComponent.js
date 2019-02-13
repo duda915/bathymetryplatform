@@ -47,8 +47,10 @@ export default class MapComponent extends Component {
   componentDidMount() {
     const layersIds = this.getCol(this.props.layers, "id");
     this.initOpenLayers();
-    this.loadLayers(layersIds);
-    this.setMapOnClickFunction(layersIds);
+    if (layersIds.length !== 0) {
+      this.loadLayers(layersIds);
+      this.setMapOnClickFunction(layersIds);
+    }
   }
 
   getCol(array, col) {
@@ -118,7 +120,7 @@ export default class MapComponent extends Component {
         this.dataService
           .getSelectionDataSetCount(layersIds, box)
           .then(response => {
-            if (response.data.response === '0') {
+            if (response.data.response === "0") {
               this.props.messageService(
                 "info",
                 "No data",
@@ -187,7 +189,6 @@ export default class MapComponent extends Component {
     });
 
     this.dataService.getLayerBoundingBox(layers[0]).then(response => {
-
       const upperLeft = response.data.upperLeftVertex;
       const lowerRight = response.data.lowerRightVertex;
       const xCenter = (upperLeft.x + lowerRight.x) / 2;

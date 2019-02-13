@@ -49,7 +49,6 @@ export default class UserService {
             window.location.reload();
           })
           .catch(error => {
-            console.log(error.response);
             this.cookie.remove("refresh_token");
             this.cookie.remove("access_token");
             window.location.reload();
@@ -91,6 +90,10 @@ export default class UserService {
   }
 
   async getUser() {
+    if(!this.cookie.get('access_token')) {
+      return Promise.reject(true);
+    }
+
     return axios.get(
       this.userEndpoint,
       this.getTokenAuthorizationHeaderConfig()
