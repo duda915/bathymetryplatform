@@ -1,4 +1,3 @@
-import LayerSwitcher from "ol-layerswitcher";
 import { platformModifierKeyOnly } from "ol/events/condition.js";
 import { boundingExtent } from "ol/extent.js";
 import { DragBox } from "ol/interaction.js";
@@ -46,7 +45,7 @@ export default class MapComponent extends Component {
   }
 
   componentDidMount() {
-    const layersIds = this.getCol(this.props.layers, 'id');
+    const layersIds = this.getCol(this.props.layers, "id");
     this.initOpenLayers();
     this.loadLayers(layersIds);
     this.setMapOnClickFunction(layersIds);
@@ -113,13 +112,13 @@ export default class MapComponent extends Component {
           return;
         }
 
-        const layersIds = this.getCol(this.props.layers, 'id');
+        const layersIds = this.getCol(this.props.layers, "id");
 
         this.props.loadingService(true);
         this.dataService
           .getSelectionDataSetCount(layersIds, box)
           .then(response => {
-            if (response.data.response == 0) {
+            if (response.data.response === '0') {
               this.props.messageService(
                 "info",
                 "No data",
@@ -147,8 +146,7 @@ export default class MapComponent extends Component {
   }
 
   downloadAccept() {
-
-    const layersIds = this.getCol(this.props.layers, 'id');
+    const layersIds = this.getCol(this.props.layers, "id");
 
     this.props.loadingService(true);
     this.setState({ downloadDialog: false, selectionRecords: 0 });
@@ -233,7 +231,7 @@ export default class MapComponent extends Component {
 
       const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
       this.map.getView().fit(ext);
-    })
+    });
   }
 
   loadLayer(layer) {
@@ -258,8 +256,6 @@ export default class MapComponent extends Component {
 
     this.selectedLayersGroup.getLayers().push(this.layer);
   }
-
-  
 
   olGenerateGetFeatureInfoFunction(evt) {
     let viewResolution = this.olView.getResolution();
@@ -289,7 +285,7 @@ export default class MapComponent extends Component {
   }
 
   updateLayers() {
-    const layersIds = this.getCol(this.props.layers, 'id')
+    const layersIds = this.getCol(this.props.layers, "id");
     this.selectedLayersGroup.getLayers().clear();
     this.loadLayers(layersIds);
   }

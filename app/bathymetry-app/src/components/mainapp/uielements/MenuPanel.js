@@ -1,17 +1,9 @@
 import React, { Component } from "react";
-
-import { Menu } from "primereact/menu";
-import UserService from "../../../services/UserService";
-
-import "./MenuPanel.scss";
-import { Button } from "primereact/button";
-import { ScrollPanel } from "primereact/scrollpanel";
-
 import { HashRouter } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+import UserService from "../../../services/UserService";
 import MenuButton from "./MenuButton";
 import MenuButtonOnClick from "./MenuButtonOnClick";
-import { ToggleButton } from "primereact/togglebutton";
+import "./MenuPanel.scss";
 import Tools from "./Tools";
 
 class MenuPanel extends Component {

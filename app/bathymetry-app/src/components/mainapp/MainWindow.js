@@ -1,23 +1,19 @@
+import LayerGroup from "ol/layer/Group";
+import { default as TileLayer } from "ol/layer/Tile";
+import TileWMS from "ol/source/TileWMS.js";
 import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
 import CSSTransition from "react-transition-group/CSSTransition";
-
-
-import { ScrollPanel } from "primereact/scrollpanel";
-
-import MapComponent from "./mainpanels/MapComponent";
-import DataComponent from "./mainpanels/DataComponent";
-import UserService from "../../services/UserService";
-import DataManager from "./mainpanels/DataManager";
-import MenuPanel from "./uielements/MenuPanel";
-import TopBar from "./TopBar";
-import "./MainWindow.css";
-import { toStringHDMS } from "ol/coordinate";
-import Settings from "./mainpanels/Settings";
-import LayerGroup from "ol/layer/Group";
-import TileWMS from "ol/source/TileWMS.js";
-import { default as LayerTile, default as TileLayer } from "ol/layer/Tile";
 import ServiceMeta from "../../services/ServiceMeta";
+import UserService from "../../services/UserService";
+import DataComponent from "./mainpanels/DataComponent";
+import DataManager from "./mainpanels/DataManager";
+import MapComponent from "./mainpanels/MapComponent";
+import Settings from "./mainpanels/Settings";
+import "./MainWindow.css";
+import MenuPanel from "./uielements/MenuPanel";
+
+
 
 class MainWindow extends Component {
   constructor(props) {
@@ -39,7 +35,7 @@ class MainWindow extends Component {
 
     this.setSelectedLayers = this.setSelectedLayers.bind(this);
     this.changeLayerStyle = this.changeLayerStyle.bind(this);
-    this.toggleLayer = this.toggleLayer.bind(this)
+    this.toggleLayer = this.toggleLayer.bind(this);
   }
 
   buildLayersGroup() {
@@ -73,11 +69,11 @@ class MainWindow extends Component {
     }
   }
 
-  zoomToLayer = (layerId) => {
+  zoomToLayer = layerId => {
     if (this.mapReference.current != null) {
       this.mapReference.current.zoomToLayer(layerId);
     }
-  }
+  };
 
   tryMapUpdate() {
     if (this.mapReference.current != null) {
@@ -121,8 +117,6 @@ class MainWindow extends Component {
     return newLayer;
   }
 
-
-
   toggleLayer(layer, visible) {
     console.log(layer);
     console.log(visible);
@@ -132,30 +126,21 @@ class MainWindow extends Component {
       }
     });
 
-    const selectedLayers = this.state.selectedLayers.map(l => {
-      if(l.id == layer) {
-        console.log('x')
-        l.visible = visible
-      }
-      return l
-    })
-
     this.setState({
       selectedLayers: this.state.selectedLayers.map(sl => {
-        if(sl.id === layer) {
-          console.log('xxx')
-          sl.visible = visible
+        if (sl.id === layer) {
+          console.log("xxx");
+          sl.visible = visible;
         }
 
         return sl;
       })
     });
-
   }
 
   changeLayerStyle() {
     let nextStyle;
-    if (this.state.layerStyle == "primarystyle") {
+    if (this.state.layerStyle === "primarystyle") {
       nextStyle = "secondarystyle";
     } else {
       nextStyle = "primarystyle";
@@ -193,10 +178,6 @@ class MainWindow extends Component {
           </CSSTransition>
           <div className="p-col main-window">
             <div className="p-grid p-nogutter">
-              {/* <div className="p-col-12" style={{ height: '50px' }}>
-                                <TopBar togglePanel={this.togglePanel} signOut={this.props.signOut} />
-                            </div> */}
-              {/* main panel */}
               <Router>
                 <div className="p-col-12" style={{ height: "calc(100vh)" }}>
                   <Route

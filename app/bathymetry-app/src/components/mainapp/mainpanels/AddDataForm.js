@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
-import { Panel } from 'primereact/panel';
-import { InputText } from 'primereact/inputtext';
+import { AutoComplete } from 'primereact/autocomplete';
+import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import { FileUpload } from 'primereact/fileupload';
-import { Button } from 'primereact/button';
+import { InputText } from 'primereact/inputtext';
+import { Panel } from 'primereact/panel';
+import React from 'react';
 import DataService from '../../../services/DataService';
-import UserService from '../../../services/UserService';
 import BathymetryDataSetDTO from '../../../services/dtos/BathymetryDataSetDTO';
 import EPSGCodeService from '../../../services/EPSGCodeService';
-import { AutoComplete } from 'primereact/autocomplete';
+import UserService from '../../../services/UserService';
 
 export class AddDataForm extends React.Component {
     constructor(props) {
@@ -99,7 +99,7 @@ export class AddDataForm extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        if(this.state.date == '') {
+        if(this.state.date === '') {
             this.props.messageService('error', 'Error', 'date must not be empty');
             return;
         }
