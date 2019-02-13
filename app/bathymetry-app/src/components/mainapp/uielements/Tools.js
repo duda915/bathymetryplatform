@@ -82,7 +82,7 @@ export default class Tools extends React.Component {
                 Layers
               </h6>
               {this.props.selectedLayers.map(layer => (
-                <Layer
+                <Layer key={layer.id}
                   layer={layer}
                   toggleLayer={this.props.toggleLayer}
                   zoomToLayer={this.props.zoomToLayer}

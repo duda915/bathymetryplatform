@@ -40,13 +40,12 @@ export class RegisterForm extends Component {
       const userDTO = new UserDTO(this.state.username, this.state.password, this.state.email);
       this.registrationService.registerNewAccount(userDTO)
         .then(response => {
-          this.props.loadingService(false);
           this.props.messageService("success", "Success", "account activation link send to email");
           this.props.toggleRegisterForm(false);
         })
         .catch(error => {
-          console.log(error);
           this.props.messageService('error', "Error", error.response.data.message);
+        }).finally(() => {
           this.props.loadingService(false);
         })
     }

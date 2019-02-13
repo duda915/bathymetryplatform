@@ -187,7 +187,6 @@ export default class MapComponent extends Component {
     });
 
     this.dataService.getLayerBoundingBox(layers[0]).then(response => {
-      console.log(response);
 
       const upperLeft = response.data.upperLeftVertex;
       const lowerRight = response.data.lowerRightVertex;
@@ -267,7 +266,6 @@ export default class MapComponent extends Component {
     );
     if (url) {
       this.geoServerService.geoserverGetFeatureInfo(url).then(response => {
-        console.log(response.data.features);
         let features = response.data.features;
 
         if (features.length === 0) {

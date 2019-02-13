@@ -87,7 +87,6 @@ class MainWindow extends Component {
       const newLayer = this.createLayer(element.id);
       layersGroup.getLayers().push(newLayer);
     });
-    console.log(this.state.layerStyle);
     this.setState({
       selectedLayers: ids,
       selectedLayersGroup: layersGroup
@@ -118,8 +117,6 @@ class MainWindow extends Component {
   }
 
   toggleLayer(layer, visible) {
-    console.log(layer);
-    console.log(visible);
     this.state.selectedLayersGroup.getLayers().forEach(l => {
       if (l.get("title") === layer) {
         l.setVisible(visible);
@@ -129,7 +126,6 @@ class MainWindow extends Component {
     this.setState({
       selectedLayers: this.state.selectedLayers.map(sl => {
         if (sl.id === layer) {
-          console.log("xxx");
           sl.visible = visible;
         }
 
@@ -148,7 +144,6 @@ class MainWindow extends Component {
 
     this.setState({ layerStyle: nextStyle }, callback => {
       this.state.selectedLayersGroup.getLayers().forEach(layer => {
-        console.log(layer.get("title"));
         const params = layer.getSource().getParams();
         params.STYLES = this.state.layerStyle;
         layer.getSource().updateParams(params);

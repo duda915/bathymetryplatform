@@ -49,7 +49,6 @@ export class AddDataForm extends React.Component {
                 this.epsgCodes = response.data.map(code =>
                     code.epsgCode.toString()
                 );
-                console.log(this.epsgCodes);
             })
     }
 
@@ -81,7 +80,6 @@ export class AddDataForm extends React.Component {
     }
 
     onFileSelect(event) {
-        console.log(event.files[0]);
         this.setState({
             file: event.files[0],
             dataName: event.files[0].name,

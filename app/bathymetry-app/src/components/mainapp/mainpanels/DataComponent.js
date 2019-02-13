@@ -6,6 +6,7 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { ContextMenu } from 'primereact/contextmenu';
 import DataService from '../../../services/DataService';
+import { resolve } from 'path';
 
 
 export default class DataComponent extends Component {
@@ -29,7 +30,6 @@ export default class DataComponent extends Component {
     fetchDataSets() {
         this.dataService.getDataSets()
             .then(response => this.setState({ data: response.data }))
-            .then(response => console.log(this.state.data));
     }
 
     showOnMap() {
@@ -37,14 +37,12 @@ export default class DataComponent extends Component {
             return;
         }
 
-        console.log(this.state.selection);
         let ids = this.state.selection.map(value => {
             return {
                 id: value.id,
                 visible: true
             }
         });
-        console.log(ids);
         this.props.setSelectedLayers(ids);
         window.location.hash = "/";
 
@@ -52,7 +50,7 @@ export default class DataComponent extends Component {
 
     downloadData(selectedData) {
         this.dataService.downloadDataSet(selectedData.id)
-            .catch(error => console.log(error.response))
+            .catch(error => resolve)
     }
 
     render() {

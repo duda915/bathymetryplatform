@@ -40,7 +40,6 @@ export class LoginForm extends React.Component {
                 this.props.signIn();
             })
             .catch(error => {
-                console.log(error.response);
                 this.props.loadingService(false);
                 this.props.messageService("error", "Error", error.response.data.error_description);
             });
