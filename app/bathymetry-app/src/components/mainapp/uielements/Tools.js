@@ -31,7 +31,7 @@ export default class Tools extends React.Component {
 
   render() {
     return (
-      <div className="p-grid p-nogutter tools-username">
+      <div className="p-grid p-nogutter tools-username tools-container">
         <div className="p-col-12">
           <div className="p-grid p-nogutter tools-username-box">
             <div className="p-col-5" style={{ textAlign: "right" }}>
@@ -48,18 +48,18 @@ export default class Tools extends React.Component {
             <div className="p-toolbar-group-left">
               <Button
                 style={{ marginRight: "10px" }}
-                className="p-button-warning"
+                className="p-button tools-button flat-button"
                 onClick={this.props.signOut}
                 icon="pi pi-sign-out"
               />
               <Button
                 style={{ marginRight: "10px" }}
-                className="p-button-warning"
+                className="p-button tools-button flat-button"
                 onClick={this.props.changeStyle}
                 icon="pi pi-eye"
               />
               <Button
-                className="p-button-warning"
+                className="p-button tools-button flat-button"
                 onClick={e =>
                   this.setState({ showLayers: !this.state.showLayers })
                 }
@@ -71,18 +71,20 @@ export default class Tools extends React.Component {
 
         {this.state.showLayers ? (
           <div className="p-col-12 layer-tool">
+            <h6
+              className="layer-tool-header"
+              style={{
+                marginTop: "5px",
+                marginBottom: "5px",
+                fontSize: "12px"
+              }}
+            >
+              Layers
+            </h6>
             <ScrollPanel style={{ height: "100px" }}>
-              <h6
-                style={{
-                  marginTop: "5px",
-                  marginBottom: "5px",
-                  fontSize: "12px"
-                }}
-              >
-                Layers
-              </h6>
               {this.props.selectedLayers.map(layer => (
-                <Layer key={layer.id}
+                <Layer
+                  key={layer.id}
                   layer={layer}
                   toggleLayer={this.props.toggleLayer}
                   zoomToLayer={this.props.zoomToLayer}

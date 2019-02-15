@@ -42,7 +42,7 @@ class MenuPanel extends Component {
       <div className="p-col-fixed menuslide-init menupanel">
         <div className="p-grid p-nogutter">
           <div className="p-col-12 brand" />
-          <div className="p-col-12 accent-color" style={{ padding: "15px" }}>
+          <div className="p-col-12 " style={{ padding: "15px" }}>
             <Tools
               signOut={this.props.signOut}
               changeStyle={this.changeStyle}
@@ -57,9 +57,9 @@ class MenuPanel extends Component {
           <div className="p-col-12 p-col-align-center">
             {/* <Menu model={this.state.menuItems} className="menu" /> */}
             <HashRouter>
-              <div className="router-container">
+              <div className="router-container menu-begin">
                 <div className="menu-top">
-                  <div className="menu-header">Menu</div>
+                  <div className="menu-header"></div>
                 </div>
                 <MenuButton to="/" label="Map" icon="pi pi-map-marker" />
                 <MenuButton

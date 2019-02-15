@@ -67,7 +67,7 @@ export class LoginForm extends React.Component {
                         </div>
                     </div>
                     <div className="p-md-4 p-offset-8">
-                        <Button label="Login" type="submit" />
+                        <Button label="Login" className="flat-button" type="submit" />
                     </div>
                 </div>
             </form >

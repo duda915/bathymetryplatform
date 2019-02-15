@@ -12,7 +12,7 @@
 }
 
 .brand {
-    height: 90px;
+    height: 85px;
     background-color: $primary;
     background-image: url('../../../assets/logocolor.svg');
     background-size: 85px;
@@ -20,24 +20,28 @@
     background-repeat: no-repeat;
 }
 
+// .menu-begin {
+//     border-top: 1px solid $secondary;
+// }
+
+
 .menu-top {
     display: flex;
     background-color: $primary;
-    height: 75px;
-    color: white;
+    height: 30px;
+    color: $secondary;
     align-items: flex-end;
 }
 
 .menu-header {
     text-align: center;
     align-items: center;
-    background-color: $secondary;
     width: 100%;
     padding: 10px;
 }
 
 .menu-spacer {
-    background-color: $secondary;
+    background-color: $primary;
 }
 
 .menu-button-container {
@@ -45,11 +49,13 @@
     flex-direction: column;
     justify-content: center;
     text-align: center;
-    background-color: $tertiary;
+    background-color: $primary;
     height: 35px;
     width: 100%;
-    border-bottom: 1px solid $secondary;
+    // border-bottom: 1px solid $primary;
 }
+
+
 
 .menu-button {
     display: flex;
@@ -57,7 +63,7 @@
     align-items: center;
     justify-content: left;
     height:100%;
-    color: white;
+    color: $secondary;
     padding-left: 10px;
     
 }
@@ -74,7 +80,7 @@
     align-items: center;
     justify-content: left;
     height:100%;
-    color: $primary;
+    color: $disabled;
     padding-left: 10px;
     pointer-events: none;
     
@@ -85,9 +91,10 @@
 }
 
 .menu-button-active {
-    background-color: $accent-second;
+    background-color: $secondary;
+    color: $primary;
     border-left:5px solid;
-    border-color: $accent;
+    border-color: $secondary;
 }
 
 .menu-button-content-container {

@@ -1,5 +1,13 @@
-$primary: #515C78;
-$secondary: #685B77;
-$tertiary: #9F6782;
-$accent: #C56881;
-$accent-second: #EBB774;
+$primary: #4980BD;
+$secondary: #ffffff;
+$tertiary: #ffffff;
+
+$accent: #4980BD;
+$accent-second: #4980BD;
+
+$disabled: #4C5C79;
+
+.flat-button:hover {
+    background-color: $secondary !important;
+    color: $primary !important;
+}

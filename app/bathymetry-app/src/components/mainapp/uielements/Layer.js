@@ -23,7 +23,7 @@ export class Layer extends React.Component {
         <div className="p-col">{this.props.layer.id}</div>
         <div className="p-col">
           <Button
-            className="p-button-success"
+            className="p-button tools-button"
             icon="pi pi-image"
             onClick={e => this.props.zoomToLayer(this.props.layer.id)}
           />
