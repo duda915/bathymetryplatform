@@ -5,7 +5,7 @@ import "./Tools.scss";
 import { Button } from "primereact/button";
 import { ScrollPanel } from "primereact/scrollpanel";
 
-import { Layer } from "./Layer";
+import { Layer } from "../layerswitcher/Layer";
 
 export default class Tools extends React.Component {
   constructor(props) {

@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import { HashRouter } from "react-router-dom";
-import UserService from "../../../services/UserService";
-import MenuButton from "./MenuButton";
-import MenuButtonOnClick from "./MenuButtonOnClick";
+import UserService from "../../services/UserService";
+import MenuButton from "./menubutton/MenuButton";
+import MenuButtonOnClick from "./menubutton/MenuButtonOnClick";
 import "./MenuPanel.scss";
-import Tools from "./Tools";
+import Tools from "./menutoolbar/Tools";
 
 class MenuPanel extends Component {
   constructor(props) {

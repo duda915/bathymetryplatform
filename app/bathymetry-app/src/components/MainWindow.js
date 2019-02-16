@@ -4,14 +4,14 @@ import TileWMS from "ol/source/TileWMS.js";
 import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
 import CSSTransition from "react-transition-group/CSSTransition";
-import ServiceMeta from "../../services/ServiceMeta";
-import UserService from "../../services/UserService";
-import DataComponent from "./mainpanels/DataComponent";
-import DataManager from "./mainpanels/DataManager";
-import MapComponent from "./mainpanels/MapComponent";
-import Settings from "./mainpanels/Settings";
+import ServiceMeta from "../services/ServiceMeta";
+import UserService from "../services/UserService";
+import DataComponent from "./mainapp/mainpanels/DataComponent";
+import DataManager from "./mainapp/mainpanels/DataManager";
+import MapComponent from "./mainapp/mainpanels/MapComponent";
+import Settings from "./mainapp/mainpanels/Settings";
 import "./MainWindow.css";
-import MenuPanel from "./uielements/MenuPanel";
+import MenuPanel from "./sidemenu/MenuPanel";
 
 
 

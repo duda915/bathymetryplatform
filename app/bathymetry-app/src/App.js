@@ -9,7 +9,7 @@ import './theme/Theme.css';
 import './theme/Utility.css';
 import { Growl } from 'primereact/growl';
 import LoadingComponent from './components/utility/LoadingComponent';
-import MainWindow from './components/mainapp/MainWindow';
+import MainWindow from './components/MainWindow';
 import UserService from './services/UserService';
 
 class App extends Component {
