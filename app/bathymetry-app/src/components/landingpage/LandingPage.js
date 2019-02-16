@@ -9,7 +9,6 @@ import { LoginForm } from "./login/LoginForm";
 import { RegisterForm } from "./register/RegisterForm";
 import "./LandingPage.scss";
 
-
 export default class LandingPage extends Component {
   constructor(props) {
     super(props);
@@ -32,9 +31,9 @@ export default class LandingPage extends Component {
       this.api
         .restUser()
         .getUser()
-        .then(response => this.props.signIn())
-        .catch(error => console.log("auto login not possible"))
-        .finally(this.props.loadingService(false));
+        .then(() => this.props.signIn())
+        .catch(() => console.log("auto login not possible"))
+        .finally(() => this.props.loadingService(false));
     }
   };
 
@@ -55,10 +54,10 @@ export default class LandingPage extends Component {
         this.props.signIn();
       })
       .catch(error => this.props.messageService("error", "Error", error))
-      .finally(this.props.loadingService(false));
+      .finally(() => this.props.loadingService(false));
   };
 
-  saveTokens = (response) => {
+  saveTokens = response => {
     const cookies = new Cookies();
 
     const accessTokenExpireDate = new Date();
@@ -76,14 +75,14 @@ export default class LandingPage extends Component {
     cookies.set("refresh_token", response.data.refresh_token, {
       expires: refreshTokenExpireDate
     });
-  }
+  };
 
   render() {
     return (
       <div className="loginControl">
         <div className="p-grid p-nogutter p-fluid">
           <LandingPageHeader />
-          
+
           <div className="p-col-4" />
           <div className="p-col-4">
             {this.state.register ? (
@@ -103,7 +102,7 @@ export default class LandingPage extends Component {
           </div>
 
           <VerticalSpacer />
-          
+
           <div className="p-col-4" />
           <div className="p-col-4">
             <ToggleButton

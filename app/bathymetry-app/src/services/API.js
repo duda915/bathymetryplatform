@@ -37,6 +37,8 @@ export default class API {
     rest.changePassword = password =>
       axios.put(endpoints.user, password, this.authorization());
 
+    rest.registerUser = newUser => axios.post(endpoints.registerUser, newUser);
+
     return rest;
   }
 

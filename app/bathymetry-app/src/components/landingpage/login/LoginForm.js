@@ -3,7 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
 import { Password } from "primereact/password";
 import React from "react";
-import UserService from "../../../services/UserService";
+import API from "../../../services/API";
 
 export class LoginForm extends React.Component {
   constructor(props) {
@@ -13,41 +13,35 @@ export class LoginForm extends React.Component {
       username: "",
       password: ""
     };
-
-    this.userService = new UserService();
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange(event) {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
-
+  handleChange = event => {
     this.setState({
-      [name]: value
+      [event.target.name]: event.target.value
     });
-  }
+  };
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     event.preventDefault();
     this.props.loadingService(true);
-    this.userService
+
+    const api = new API();
+    api
+      .restUser()
       .loginUser(this.state.username, this.state.password)
       .then(response => {
-        this.props.loadingService(false);
+        this.props.saveTokens(response);
         this.props.signIn();
       })
-      .catch(error => {
-        this.props.loadingService(false);
+      .catch(error =>
         this.props.messageService(
           "error",
           "Error",
           error.response.data.error_description
-        );
-      });
-  }
+        )
+      )
+      .finally(() => this.props.loadingService(false));
+  };
 
   render() {
     return (

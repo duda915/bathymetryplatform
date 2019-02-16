@@ -4,7 +4,7 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import RegistrationService from "../../../services/RegistrationService";
-import UserDTO from "../../../services/dtos/UserDTO";
+import API from "../../../services/API";
 
 export class RegisterForm extends Component {
   constructor(props) {
@@ -17,56 +17,53 @@ export class RegisterForm extends Component {
     };
 
     this.onSubmit = this.onSubmit.bind(this);
-    this.handleChange = this.handleChange.bind(this);
     this.registrationService = new RegistrationService();
   }
 
-  handleChange(event) {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
-
+  handleChange = event => {
     this.setState({
-      [name]: value
+      [event.target.name]: event.target.value
     });
-  }
+  };
 
   onSubmit(event) {
     event.preventDefault();
     if (this.checkIfPasswordsMatch()) {
       this.props.loadingService(true);
 
-      const userDTO = new UserDTO(
-        this.state.username,
-        this.state.password,
-        this.state.email
-      );
-      this.registrationService
-        .registerNewAccount(userDTO)
-        .then(response => {
+      const newUser = {
+        username: this.state.username,
+        password: this.state.password,
+        email: this.state.email
+      };
+
+      const api = new API();
+      api
+        .restUser()
+        .registerUser(newUser)
+        .then(() => {
           this.props.messageService(
             "success",
             "Success",
-            "account activation link send to email"
+            "account activation link has been sent to email"
           );
           this.props.toggleRegisterForm(false);
         })
-        .catch(error => {
+        .catch(error =>
           this.props.messageService(
             "error",
             "Error",
             error.response.data.message
-          );
-        })
-        .finally(() => {
-          this.props.loadingService(false);
-        });
+          )
+        )
+        .finally(() => this.props.loadingService(false));
     }
+
+    this.props.messageService("warn", "Error", "passwords are not the same");
   }
 
   checkIfPasswordsMatch() {
     if (this.state.password !== this.state.confirmPassword) {
-      this.props.messageService("warn", "Error", "passwords are not the same");
       return false;
     }
     return true;
