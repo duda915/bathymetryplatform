@@ -3,7 +3,6 @@ import { Panel } from "primereact/panel";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import RegistrationService from "../../../services/RegistrationService";
 import API from "../../../services/API";
 
 export class RegisterForm extends Component {
@@ -15,9 +14,6 @@ export class RegisterForm extends Component {
       confirmPassword: "",
       email: ""
     };
-
-    this.onSubmit = this.onSubmit.bind(this);
-    this.registrationService = new RegistrationService();
   }
 
   handleChange = event => {
@@ -26,7 +22,7 @@ export class RegisterForm extends Component {
     });
   };
 
-  onSubmit(event) {
+  onSubmit = event => {
     event.preventDefault();
     if (this.checkIfPasswordsMatch()) {
       this.props.loadingService(true);
@@ -60,7 +56,7 @@ export class RegisterForm extends Component {
     }
 
     this.props.messageService("warn", "Error", "passwords are not the same");
-  }
+  };
 
   checkIfPasswordsMatch() {
     if (this.state.password !== this.state.confirmPassword) {

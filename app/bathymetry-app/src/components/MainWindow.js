@@ -195,6 +195,8 @@ class MainWindow extends Component {
                       return (
                         <DataComponent
                           setSelectedLayers={this.setSelectedLayers}
+                          loadingService={this.props.loadingService}
+                          messageService={this.props.messageService}
                         />
                       );
                     }}
