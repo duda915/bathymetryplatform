@@ -6,14 +6,12 @@ import { HashRouter as Router, Route } from "react-router-dom";
 import CSSTransition from "react-transition-group/CSSTransition";
 import ServiceMeta from "../services/ServiceMeta";
 import UserService from "../services/UserService";
-import DataComponent from "./mainapp/mainpanels/DataComponent";
-import DataManager from "./mainapp/mainpanels/DataManager";
-import MapComponent from "./mainapp/mainpanels/MapComponent";
-import Settings from "./mainapp/mainpanels/Settings";
+import DataComponent from "./datachooser/DataComponent";
+import DataManager from "./datamanager/DataManager";
+import MapComponent from "./map/MapComponent";
+import Settings from "./usersettings/Settings";
 import "./MainWindow.css";
 import MenuPanel from "./sidemenu/MenuPanel";
-
-
 
 class MainWindow extends Component {
   constructor(props) {

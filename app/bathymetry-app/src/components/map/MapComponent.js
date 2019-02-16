@@ -11,11 +11,11 @@ import View from "ol/View";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import React, { Component } from "react";
-import DataService from "../../../services/DataService";
-import BoundingBoxDTO from "../../../services/dtos/BoundingBoxDTO";
-import CoordinateDTO from "../../../services/dtos/CoordinateDTO";
-import GeoServerService from "../../../services/GeoServerService";
-import ServiceMeta from "../../../services/ServiceMeta";
+import DataService from "../../services/DataService";
+import BoundingBoxDTO from "../../services/dtos/BoundingBoxDTO";
+import CoordinateDTO from "../../services/dtos/CoordinateDTO";
+import GeoServerService from "../../services/GeoServerService";
+import ServiceMeta from "../../services/ServiceMeta";
 
 export default class MapComponent extends Component {
   constructor(props) {

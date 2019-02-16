@@ -1,10 +1,10 @@
-import { AddDataForm } from './AddDataForm';
+import { AddDataForm } from './adddata/AddDataForm';
 import React, { Component } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { ContextMenu } from 'primereact/contextmenu';
-import DataService from '../../../services/DataService';
-import UserService from '../../../services/UserService';
+import DataService from '../../services/DataService';
+import UserService from '../../services/UserService';
 
 export default class DataManager extends Component {
     constructor(props) {

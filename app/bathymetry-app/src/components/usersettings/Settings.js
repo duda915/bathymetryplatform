@@ -1,10 +1,10 @@
 import React from "react";
 import { Panel } from "primereact/panel";
-import UserService from "../../../services/UserService";
-import DataService from "../../../services/DataService";
+import UserService from "../../services/UserService";
+import DataService from "../../services/DataService";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import PasswordDTO from "../../../services/dtos/PasswordDTO";
+import PasswordDTO from "../../services/dtos/PasswordDTO";
 
 export default class Settings extends React.Component {
   constructor(props) {

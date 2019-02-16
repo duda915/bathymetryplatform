@@ -5,7 +5,7 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { ContextMenu } from 'primereact/contextmenu';
-import DataService from '../../../services/DataService';
+import DataService from '../../services/DataService';
 import { resolve } from 'path';
 
 
