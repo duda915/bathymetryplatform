@@ -111,6 +111,8 @@ export default class API {
       return axios.get(url, this.authorization());
     };
 
+    rest.getEPSGCodes = () => axios.get(endpoints.epsg, this.authorization());
+
     return rest;
   }
 
