@@ -5,11 +5,16 @@ export const restBasicToken = "Basic " + btoa("bathymetry:bathymetry");
 
 export const endpoints = {
   token: `${restAPI}oauth/token`,
+
   data: `${restAPI}api/data`,
   userData: `${this.data}/user`,
   downloadData: `${this.data}/download`,
   downloadSelectedData: `${this.downloadData}/selection`,
   countSelection: `${this.downloadSelectionData}/count`,
   boundingBox: `${this.data}/box`,
-  user: `${restAPI}api/user`
+
+  user: `${restAPI}api/user`,
+  registerUser: `${restAPI}api/register`,
+
+  epsg:`${restAPI}api/epsg`,
 };

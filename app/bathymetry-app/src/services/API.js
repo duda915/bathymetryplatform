@@ -112,6 +112,14 @@ export default class API {
     return rest;
   }
 
+  geoServerAPI() {
+    let geoServer = {};
+    
+    geoServer.getFeatureInfo = url => axios.get(url);
+
+    return geoServer;
+  }
+
   authorization() {
     const cookies = new Cookies();
     if (cookies.get("access_token")) {
