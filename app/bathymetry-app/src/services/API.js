@@ -1,20 +1,13 @@
 import { endpoints, restBasicToken } from "./ServiceMetaData";
 import axios from "axios";
 import Cookies from "universal-cookie";
-
-// axios.interceptors.response.use(
-//   config => {
-//     const cookies = new Cookies();
-//     if (cookies.get("access_token")) {
-//       config.headers.authorization = cookies.get("access_token");
-//     }
-
-//     return config;
-//   },
-//   error => Promise.reject(error)
-// );
+import { registerInterceptor } from "./RefreshTokenInterceptor";
 
 export default class API {
+  constructor() {
+    registerInterceptor();
+  }
+
   restUser() {
     let rest = {};
     rest.getUser = () => axios.get(endpoints.user, this.authorization());

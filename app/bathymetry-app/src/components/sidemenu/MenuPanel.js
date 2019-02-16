@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { HashRouter } from "react-router-dom";
-import UserService from "../../services/UserService";
 import MenuButton from "./menubutton/MenuButton";
 import MenuButtonOnClick from "./menubutton/MenuButtonOnClick";
 import "./MenuPanel.scss";
@@ -14,7 +13,6 @@ class MenuPanel extends Component {
     this.state = {};
 
     this.api = new API();
-    this.userService = new UserService();
   }
 
   componentWillMount() {
