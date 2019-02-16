@@ -5,37 +5,36 @@ import MenuButton from "./menubutton/MenuButton";
 import MenuButtonOnClick from "./menubutton/MenuButtonOnClick";
 import "./MenuPanel.scss";
 import Tools from "./menutoolbar/Tools";
+import API from "../../services/API";
 
 class MenuPanel extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      menuItems: []
-    };
+    this.state = {};
 
+    this.api = new API();
     this.userService = new UserService();
-
-    this.changeStyle = this.changeStyle.bind(this);
   }
 
   componentWillMount() {
     this.checkUser();
   }
 
-  changeStyle() {
+  changeStyle = () => {
     this.props.changeStyle();
-  }
+  };
 
-  checkUser() {
-    this.userService.getUser().then(response => {
-      if (response.data.username === "guest") {
-        this.setState({
-          guest: true
-        });
-      }
-    });
-  }
+  checkUser = () => {
+    this.api
+      .restUser()
+      .getUser()
+      .then(response =>
+        response.data.username === "guest"
+          ? this.setState({ guest: true })
+          : null
+      );
+  };
 
   render() {
     return (
@@ -50,12 +49,9 @@ class MenuPanel extends Component {
               toggleLayer={this.props.toggleLayer}
               zoomToLayer={this.props.zoomToLayer}
             />
-            {/* <ToggleButton offLabel="Style" onLabel="Style"
-                            checked={this.state.toggleStyleButton} onChange={this.changeStyle} onIcon='pi pi-eye' offIcon='pi pi-eye' /> */}
           </div>
 
           <div className="p-col-12 p-col-align-center">
-            {/* <Menu model={this.state.menuItems} className="menu" /> */}
             <HashRouter>
               <div className="router-container menu-begin">
                 <div className="menu-top">
