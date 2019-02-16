@@ -1,3 +1,4 @@
+import downloadjs from "downloadjs";
 import { platformModifierKeyOnly } from "ol/events/condition.js";
 import { boundingExtent } from "ol/extent.js";
 import { DragBox } from "ol/interaction.js";
@@ -11,11 +12,10 @@ import View from "ol/View";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import React, { Component } from "react";
-import DataService from "../../services/DataService";
+import API from "../../services/API";
 import BoundingBoxDTO from "../../services/dtos/BoundingBoxDTO";
 import CoordinateDTO from "../../services/dtos/CoordinateDTO";
-import GeoServerService from "../../services/GeoServerService";
-import ServiceMeta from "../../services/ServiceMeta";
+import { geoServerAPI } from "../../services/ServiceMetaData";
 
 export default class MapComponent extends Component {
   constructor(props) {
@@ -31,12 +31,8 @@ export default class MapComponent extends Component {
     this.olGenerateGetFeatureInfoFunction = this.olGenerateGetFeatureInfoFunction.bind(
       this
     );
-    this.hideDialog = this.hideDialog.bind(this);
-    this.downloadAccept = this.downloadAccept.bind(this);
 
-    this.serviceMeta = new ServiceMeta();
-    this.dataService = new DataService();
-    this.geoServerService = new GeoServerService();
+    this.api = new API();
 
     this.state = {
       downloadDialog: false,
@@ -117,25 +113,32 @@ export default class MapComponent extends Component {
         const layersIds = this.getCol(this.props.layers, "id");
 
         this.props.loadingService(true);
-        this.dataService
-          .getSelectionDataSetCount(layersIds, box)
+
+        this.api
+          .restData()
+          .countSelectedDataSets(layersIds, box)
           .then(response => {
             if (response.data.response === "0") {
               this.props.messageService(
                 "info",
                 "No data",
-                "No data found within polygon"
+                "no data found withing polygon"
               );
             } else {
-              this.setState(
-                { selectionRecords: response.data.response },
-                callback => {
-                  this.setState({ downloadDialog: true });
-                }
-              );
+              this.setState({
+                selectionRecords: response.data.response,
+                downloadDialog: true
+              });
             }
           })
-          .finally(e => this.props.loadingService(false));
+          .catch(() =>
+            this.props.messageService(
+              "error",
+              "Error",
+              "failed to query service"
+            )
+          )
+          .finally(() => this.props.loadingService(false));
       }.bind(this)
     );
     this.map.addInteraction(dragBox);
@@ -147,19 +150,27 @@ export default class MapComponent extends Component {
     this.map.render();
   }
 
-  downloadAccept() {
+  downloadAccept = () => {
     const layersIds = this.getCol(this.props.layers, "id");
 
     this.props.loadingService(true);
     this.setState({ downloadDialog: false, selectionRecords: 0 });
-    this.dataService
-      .downloadSelectedDataSets(layersIds, this.state.box)
-      .finally(e => this.props.loadingService(false));
-  }
 
-  hideDialog() {
+    this.api
+      .restData()
+      .downloadSelectedDataSets(layersIds, this.state.box)
+      .then(response =>
+        downloadjs(response.data, "bathymetry_selection.csv", "text/plain")
+      )
+      .catch(() =>
+        this.props.messageService("error", "Error", "failed to download data")
+      )
+      .finally(() => this.props.loadingService(false));
+  };
+
+  hideDialog = () => {
     this.setState({ downloadDialog: false, selectionRecords: 0 });
-  }
+  };
 
   loadLayers(layers) {
     if (layers.length === 0) {
@@ -181,57 +192,86 @@ export default class MapComponent extends Component {
     };
 
     this.wmsSource = new TileWMS({
-      url: this.serviceMeta.getGeoServerAddress(),
+      url: geoServerAPI,
       params: wmsParams,
       serverType: "geoserver",
       transition: 0,
       projection: "EPSG:3857"
     });
 
-    this.dataService.getLayerBoundingBox(layers[0]).then(response => {
-      const upperLeft = response.data.upperLeftVertex;
-      const lowerRight = response.data.lowerRightVertex;
-      const xCenter = (upperLeft.x + lowerRight.x) / 2;
-      const yCenter = (upperLeft.y + lowerRight.y) / 2;
+    this.api
+      .restData()
+      .getLayerBoundingBox(layers[0])
+      .then(response => {
+        const upperLeft = response.data.upperLeftVertex;
+        const lowerRight = response.data.lowerRightVertex;
+        const xCenter = (upperLeft.x + lowerRight.x) / 2;
+        const yCenter = (upperLeft.y + lowerRight.y) / 2;
 
-      const coord = [xCenter, yCenter];
-      const reprojected = transform(coord, "EPSG:4326", "EPSG:3857");
+        const coord = [xCenter, yCenter];
+        const reprojected = transform(coord, "EPSG:4326", "EPSG:3857");
 
-      this.olView = new View({
-        projection: "EPSG:3857",
-        center: reprojected,
-        zoom: 10
-      });
+        this.olView = new View({
+          projection: "EPSG:3857",
+          center: reprojected,
+          zoom: 10
+        });
 
-      this.map.setView(this.olView);
+        this.map.setView(this.olView);
 
-      const coordExtentUL = [upperLeft.x, upperLeft.y];
-      const coordExtentLR = [lowerRight.x, lowerRight.y];
+        const coordExtentUL = [upperLeft.x, upperLeft.y];
+        const coordExtentLR = [lowerRight.x, lowerRight.y];
 
-      const reprojectedUL = transform(coordExtentUL, "EPSG:4326", "EPSG:3857");
-      const reprojectedLR = transform(coordExtentLR, "EPSG:4326", "EPSG:3857");
+        const reprojectedUL = transform(
+          coordExtentUL,
+          "EPSG:4326",
+          "EPSG:3857"
+        );
+        const reprojectedLR = transform(
+          coordExtentLR,
+          "EPSG:4326",
+          "EPSG:3857"
+        );
 
-      const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
-      this.map.getView().fit(ext);
+        const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
+        this.map.getView().fit(ext);
 
-      const olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
-      this.map.on("singleclick", olOnClickFunction);
-    });
+        const olOnClickFunction = this.olGenerateGetFeatureInfoFunction;
+        this.map.on("singleclick", olOnClickFunction);
+      })
+      .catch(() =>
+        this.props.messageService(
+          "error",
+          "Error",
+          "cannot get layer bounding box"
+        )
+      );
   }
 
   zoomToLayer(layer) {
-    this.dataService.getLayerBoundingBox(layer).then(response => {
-      const upperLeft = response.data.upperLeftVertex;
-      const lowerRight = response.data.lowerRightVertex;
-      const coordExtentUL = [upperLeft.x, upperLeft.y];
-      const coordExtentLR = [lowerRight.x, lowerRight.y];
+    this.api
+      .restData()
+      .getLayerBoundingBox(layer)
+      .then(response => {
+        const upperLeft = response.data.upperLeftVertex;
+        const lowerRight = response.data.lowerRightVertex;
+        const coordExtentUL = [upperLeft.x, upperLeft.y];
+        const coordExtentLR = [lowerRight.x, lowerRight.y];
 
-      const reprojectedUL = transform(coordExtentUL, "EPSG:4326", "EPSG:3857");
-      const reprojectedLR = transform(coordExtentLR, "EPSG:4326", "EPSG:3857");
+        const reprojectedUL = transform(
+          coordExtentUL,
+          "EPSG:4326",
+          "EPSG:3857"
+        );
+        const reprojectedLR = transform(
+          coordExtentLR,
+          "EPSG:4326",
+          "EPSG:3857"
+        );
 
-      const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
-      this.map.getView().fit(ext);
-    });
+        const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
+        this.map.getView().fit(ext);
+      });
   }
 
   loadLayer(layer) {
@@ -242,7 +282,7 @@ export default class MapComponent extends Component {
     };
 
     const wmsSource = new TileWMS({
-      url: this.serviceMeta.getGeoServerAddress(),
+      url: geoServerAPI,
       params: wmsParams,
       serverType: "geoserver",
       transition: 0,
@@ -266,16 +306,19 @@ export default class MapComponent extends Component {
       { INFO_FORMAT: "application/json" }
     );
     if (url) {
-      this.geoServerService.geoserverGetFeatureInfo(url).then(response => {
-        let features = response.data.features;
+      this.api
+        .geoServerAPI()
+        .getFeatureInfo(url)
+        .then(response => {
+          let features = response.data.features;
 
-        if (features.length === 0) {
-          return;
-        }
+          if (features.length === 0) {
+            return;
+          }
 
-        let info = "measurement: " + features[0].properties.GRAY_INDEX;
-        this.props.messageService("info", "Point", info);
-      });
+          let info = "measurement: " + features[0].properties.GRAY_INDEX;
+          this.props.messageService("info", "Point", info);
+        });
     }
   }
 

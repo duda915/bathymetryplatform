@@ -9,12 +9,12 @@ export const endpoints = {
   data: `${restAPI}api/data`,
   userData: `${restAPI}api/data/user`,
   downloadData: `${restAPI}api/data/download`,
-  downloadSelectedData: `${restAPI}api/data/selection`,
-  countSelection: `${restAPI}api/data/selection/count`,
+  downloadSelectedData: `${restAPI}api/data/download/selection`,
+  countSelection: `${restAPI}api/data/download/selection/count`,
   boundingBox: `${restAPI}api/data/box`,
 
   user: `${restAPI}api/user`,
   registerUser: `${restAPI}api/register`,
 
-  epsg:`${restAPI}api/epsg`,
+  epsg: `${restAPI}api/epsg`
 };
