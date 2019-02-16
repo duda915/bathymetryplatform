@@ -3,37 +3,25 @@ import { default as TileLayer } from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS.js";
 import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
-import CSSTransition from "react-transition-group/CSSTransition";
-import ServiceMeta from "../services/ServiceMeta";
-import UserService from "../services/UserService";
+import { geoServerAPI } from "../services/ServiceMetaData";
 import DataComponent from "./datachooser/DataComponent";
 import DataManager from "./datamanager/DataManager";
-import MapComponent from "./map/MapComponent";
-import Settings from "./usersettings/Settings";
 import "./MainWindow.css";
+import MapComponent from "./map/MapComponent";
 import MenuPanel from "./sidemenu/MenuPanel";
+import Settings from "./usersettings/Settings";
 
 class MainWindow extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      username: "",
-      menuVisible: true,
       selectedLayers: [],
       layerStyle: "primarystyle",
       selectedLayersGroup: this.buildLayersGroup()
     };
 
-    this.togglePanel = this.togglePanel.bind(this);
-
     this.mapReference = React.createRef();
-    this.userService = new UserService();
-    this.serviceMeta = new ServiceMeta();
-
-    this.setSelectedLayers = this.setSelectedLayers.bind(this);
-    this.changeLayerStyle = this.changeLayerStyle.bind(this);
-    this.toggleLayer = this.toggleLayer.bind(this);
   }
 
   buildLayersGroup() {
@@ -43,28 +31,6 @@ class MainWindow extends Component {
     });
 
     return layersGroup;
-  }
-
-  componentDidMount() {
-    this.fetchUsername();
-  }
-
-  fetchUsername() {
-    this.userService
-      .getUser()
-      .then(response => this.setState({ username: response.data }));
-  }
-
-  togglePanel() {
-    this.setState({
-      menuVisible: !this.state.menuVisible
-    });
-  }
-
-  tryMapSizeUpdate() {
-    if (this.mapReference.current != null) {
-      this.mapReference.current.updateMapSize();
-    }
   }
 
   zoomToLayer = layerId => {
@@ -79,7 +45,7 @@ class MainWindow extends Component {
     }
   }
 
-  setSelectedLayers(ids) {
+  setSelectedLayers = ids => {
     const layersGroup = this.buildLayersGroup();
     ids.forEach(element => {
       const newLayer = this.createLayer(element.id);
@@ -89,7 +55,7 @@ class MainWindow extends Component {
       selectedLayers: ids,
       selectedLayersGroup: layersGroup
     });
-  }
+  };
 
   createLayer(layer) {
     const wmsParams = {
@@ -99,7 +65,7 @@ class MainWindow extends Component {
     };
 
     const wmsSource = new TileWMS({
-      url: this.serviceMeta.getGeoServerAddress(),
+      url: geoServerAPI,
       params: wmsParams,
       serverType: "geoserver",
       transition: 0,
@@ -114,7 +80,7 @@ class MainWindow extends Component {
     return newLayer;
   }
 
-  toggleLayer(layer, visible) {
+  toggleLayer = (layer, visible) => {
     this.state.selectedLayersGroup.getLayers().forEach(l => {
       if (l.get("title") === layer) {
         l.setVisible(visible);
@@ -130,9 +96,9 @@ class MainWindow extends Component {
         return sl;
       })
     });
-  }
+  };
 
-  changeLayerStyle() {
+  changeLayerStyle = () => {
     let nextStyle;
     if (this.state.layerStyle === "primarystyle") {
       nextStyle = "secondarystyle";
@@ -147,28 +113,19 @@ class MainWindow extends Component {
         layer.getSource().updateParams(params);
       });
     });
-  }
+  };
 
   render() {
     return (
       <div className="mainWindow">
         <div className="p-grid p-nogutter">
-          <CSSTransition
-            in={this.state.menuVisible}
-            appear={true}
-            timeout={500}
-            classNames="menuslide"
-            onEntered={() => this.tryMapSizeUpdate()}
-            onExited={() => this.tryMapSizeUpdate()}
-          >
-            <MenuPanel
-              changeStyle={this.changeLayerStyle}
-              signOut={this.props.signOut}
-              selectedLayers={this.state.selectedLayers}
-              toggleLayer={this.toggleLayer}
-              zoomToLayer={this.zoomToLayer}
-            />
-          </CSSTransition>
+          <MenuPanel
+            changeStyle={this.changeLayerStyle}
+            signOut={this.props.signOut}
+            selectedLayers={this.state.selectedLayers}
+            toggleLayer={this.toggleLayer}
+            zoomToLayer={this.zoomToLayer}
+          />
           <div className="p-col main-window">
             <div className="p-grid p-nogutter">
               <Router>

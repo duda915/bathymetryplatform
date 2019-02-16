@@ -11,7 +11,7 @@ export class Layer extends React.Component {
     };
   }
 
-  onLayerCheckBox = e => {
+  onLayerCheckBox = () => {
     this.setState({
       checked: !this.state.checked
     });

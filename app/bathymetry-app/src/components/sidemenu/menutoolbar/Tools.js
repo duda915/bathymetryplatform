@@ -1,11 +1,11 @@
 import React from "react";
 import { Toolbar } from "primereact/toolbar";
-import UserService from "../../../services/UserService";
-import "./Tools.scss";
 import { Button } from "primereact/button";
 import { ScrollPanel } from "primereact/scrollpanel";
 
 import { Layer } from "../layerswitcher/Layer";
+import API from "../../../services/API";
+import "./Tools.scss";
 
 export default class Tools extends React.Component {
   constructor(props) {
@@ -16,7 +16,7 @@ export default class Tools extends React.Component {
       showLayers: true
     };
 
-    this.userService = new UserService();
+    this.api = new API();
   }
 
   componentDidMount() {
@@ -24,9 +24,13 @@ export default class Tools extends React.Component {
   }
 
   fetchUsername() {
-    this.userService
+    this.api
+      .restUser()
       .getUser()
-      .then(response => this.setState({ username: response.data.username }));
+      .then(response => this.setState({ username: response.data.username }))
+      .catch(() =>
+        this.props.messageService("error", "Error", "failed to fetch username")
+      );
   }
 
   render() {
