@@ -1,24 +1,24 @@
 .menuslide-init {
-    width: 250px;
-    transition: width .5s;
+  width: 250px;
+  transition: width 0.5s;
 }
 .menuslide-enter {
-    width: 250px;
+  width: 250px;
 }
 .menuslide-enter.menuslide-enter-active {
-    width: 250px;
+  width: 250px;
 }
 .menuslide-enter-done {
-    width: 250px;
+  width: 250px;
 }
 
 .menuslide-exit {
-    width: 0px;
+  width: 0px;
 }
 
 .menuslide-exit.menuslide-exit-active {
-    width: 0px;
+  width: 0px;
 }
 .menuslide-exit-done {
-    width: 0px;
+  width: 0px;
 }
