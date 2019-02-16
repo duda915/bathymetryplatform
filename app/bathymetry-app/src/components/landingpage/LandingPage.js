@@ -1,14 +1,14 @@
+import { Button } from "primereact/button";
 import { ToggleButton } from "primereact/togglebutton";
 import React, { Component } from "react";
-import "./LandingPage.scss";
+import Cookies from "universal-cookie";
+import API from "../../services/API";
 import { LandingPageHeader } from "./layout/LandingPageHeader";
+import { VerticalSpacer } from "./layout/VerticalSpacer";
 import { LoginForm } from "./login/LoginForm";
 import { RegisterForm } from "./register/RegisterForm";
-import UserService from "../../services/UserService";
-import { Button } from "primereact/button";
+import "./LandingPage.scss";
 
-import API from "../../services/API";
-import Cookies from "universal-cookie";
 
 export default class LandingPage extends Component {
   constructor(props) {
@@ -58,7 +58,7 @@ export default class LandingPage extends Component {
       .finally(this.props.loadingService(false));
   };
 
-  saveTokens(response) {
+  saveTokens = (response) => {
     const cookies = new Cookies();
 
     const accessTokenExpireDate = new Date();
@@ -83,6 +83,7 @@ export default class LandingPage extends Component {
       <div className="loginControl">
         <div className="p-grid p-nogutter p-fluid">
           <LandingPageHeader />
+          
           <div className="p-col-4" />
           <div className="p-col-4">
             {this.state.register ? (
@@ -94,14 +95,15 @@ export default class LandingPage extends Component {
             ) : (
               <LoginForm
                 signIn={this.props.signIn}
+                saveTokens={this.saveTokens}
                 messageService={this.props.messageService}
                 loadingService={this.props.loadingService}
               />
             )}
           </div>
-          <div className="p-col-4" />
-          <div className="p-col-12" style={{ height: "20px" }} />
 
+          <VerticalSpacer />
+          
           <div className="p-col-4" />
           <div className="p-col-4">
             <ToggleButton
@@ -113,15 +115,13 @@ export default class LandingPage extends Component {
               onChange={e => this.toggleRegisterForm(e.value)}
             />
           </div>
-          <div className="p-col-4" />
 
-          <div className="p-col-12" style={{ height: "20px" }} />
+          <VerticalSpacer />
 
           <div className="p-col-4" />
           <div className="p-col-4">
             <Button label="Login as guest" onClick={this.loginAsGuest} />
           </div>
-          <div className="p-col-4" />
         </div>
       </div>
     );
