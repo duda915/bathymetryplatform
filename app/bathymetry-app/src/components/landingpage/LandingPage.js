@@ -1,9 +1,9 @@
 import { ToggleButton } from "primereact/togglebutton";
 import React, { Component } from 'react';
 import './LandingPage.scss';
-import { LandingPageHeader } from './LandingPageHeader';
-import { LoginForm } from './LoginForm';
-import { RegisterForm } from './RegisterForm';
+import { LandingPageHeader } from './layout/LandingPageHeader';
+import { LoginForm } from './login/LoginForm';
+import { RegisterForm } from './register/RegisterForm';
 import UserService from "../../services/UserService";
 import { Button } from "primereact/button";
 

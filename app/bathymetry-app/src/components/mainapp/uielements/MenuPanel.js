@@ -59,7 +59,7 @@ class MenuPanel extends Component {
             <HashRouter>
               <div className="router-container menu-begin">
                 <div className="menu-top">
-                  <div className="menu-header"></div>
+                  <div className="menu-header">Menu</div>
                 </div>
                 <MenuButton to="/" label="Map" icon="pi pi-map-marker" />
                 <MenuButton

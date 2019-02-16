@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import LandingPage from './components/login/LandingPage';
+import LandingPage from './components/landingpage/LandingPage';
 import 'primereact/resources/primereact.min.css';
 import './theme/PrimeReactTheme.scss';
 import 'primeflex/primeflex.css';

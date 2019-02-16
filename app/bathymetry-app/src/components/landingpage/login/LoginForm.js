@@ -3,7 +3,7 @@ import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
 import { Password } from "primereact/password";
 import React from "react";
-import UserService from "../../services/UserService";
+import UserService from "../../../services/UserService";
 
 export class LoginForm extends React.Component {
   constructor(props) {
