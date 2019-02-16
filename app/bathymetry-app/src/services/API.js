@@ -114,7 +114,7 @@ export default class API {
 
   geoServerAPI() {
     let geoServer = {};
-    
+
     geoServer.getFeatureInfo = url => axios.get(url);
 
     return geoServer;
