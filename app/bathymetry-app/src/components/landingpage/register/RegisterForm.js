@@ -53,9 +53,9 @@ export class RegisterForm extends Component {
           )
         )
         .finally(() => this.props.loadingService(false));
+    } else {
+      this.props.messageService("warn", "Error", "passwords are not the same");
     }
-
-    this.props.messageService("warn", "Error", "passwords are not the same");
   };
 
   checkIfPasswordsMatch() {
