@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.user.registration;
 
+import com.mdud.bathymetryplatform.exception.MethodArgumentNotValidExceptionHandler;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
@@ -14,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,7 +45,7 @@ public class RegistrationControllerTest {
     public void before() {
         applicationUserDTO = new ApplicationUserDTO("user", "user", "testmail@gmail.com");
         applicationUser = new ApplicationUser(applicationUserDTO);
-        mockMvc = MockMvcBuilders.standaloneSetup(registrationController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(registrationController).setControllerAdvice(MethodArgumentNotValidExceptionHandler.class).build();
         endpoint = "/api/register";
     }
 
@@ -66,40 +67,16 @@ public class RegistrationControllerTest {
 
     @Test
     public void registerAccount_RegisterInvalidUsernameAccount_ShouldThrowException() throws Exception {
-        ApplicationUserDTO invalidAccount = new ApplicationUserDTO("", "asd", "testmail@gmail.com");
+        ApplicationUserDTO invalidAccount = new ApplicationUserDTO("", "", "testmail");
 
         String json = JSONUtil.convertObjectToJsonString(invalidAccount);
         mockMvc.perform(post(endpoint)
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-    }
-
-
-    @Test
-    public void registerAccount_RegisterInvalidPasswordAccount_ShouldThrowException() throws Exception {
-        ApplicationUserDTO invalidAccount = new ApplicationUserDTO("asd", "", "testmail@gmail.com");
-
-        String json = JSONUtil.convertObjectToJsonString(invalidAccount);
-        mockMvc.perform(post(endpoint)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
-    }
-
-
-    @Test
-    public void registerAccount_RegisterEmailAccount_ShouldThrowException() throws Exception {
-        ApplicationUserDTO invalidAccount = new ApplicationUserDTO("asd", "asd", "testmail");
-
-        String json = JSONUtil.convertObjectToJsonString(invalidAccount);
-        mockMvc.perform(post(endpoint)
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json))
-                .andDo(print())
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string(allOf(containsString("username must not"),
+                        containsString("password must not"),
+                        containsString("email must"))));
     }
 
     @Test
