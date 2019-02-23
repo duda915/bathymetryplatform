@@ -1,8 +1,10 @@
-package com.mdud.bathymetryplatform.user;
+package com.mdud.bathymetryplatform.integration.user;
 
 import com.mdud.bathymetryplatform.exception.UserAlreadyExistsException;
 import com.mdud.bathymetryplatform.exception.UserException;
 import com.mdud.bathymetryplatform.exception.UserNotFoundException;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
+import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import org.junit.Test;
 import org.junit.runner.RunWith;

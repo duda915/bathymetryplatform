@@ -1,9 +1,12 @@
-package com.mdud.bathymetryplatform.user.registration;
+package com.mdud.bathymetryplatform.integration.user.registration;
 
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import com.mdud.bathymetryplatform.user.registration.RegistrationException;
+import com.mdud.bathymetryplatform.user.registration.RegistrationRepository;
+import com.mdud.bathymetryplatform.user.registration.RegistrationToken;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;

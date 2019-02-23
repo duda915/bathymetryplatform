@@ -4,6 +4,6 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 
-interface RegistrationRepository extends CrudRepository<RegistrationToken, Long> {
+public interface RegistrationRepository extends CrudRepository<RegistrationToken, Long> {
     Optional<RegistrationToken> findByToken(String token);
 }

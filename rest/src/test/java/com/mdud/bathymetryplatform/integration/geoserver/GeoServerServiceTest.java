@@ -1,5 +1,6 @@
-package com.mdud.bathymetryplatform.geoserver;
+package com.mdud.bathymetryplatform.integration.geoserver;
 
+import com.mdud.bathymetryplatform.geoserver.GeoServerService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

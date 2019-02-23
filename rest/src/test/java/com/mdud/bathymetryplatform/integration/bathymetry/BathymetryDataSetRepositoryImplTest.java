@@ -1,5 +1,7 @@
-package com.mdud.bathymetryplatform.bathymetry;
+package com.mdud.bathymetryplatform.integration.bathymetry;
 
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSetRepository;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointRepository;

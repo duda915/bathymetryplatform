@@ -1,13 +1,16 @@
-package com.mdud.bathymetryplatform.bathymetry;
+package com.mdud.bathymetryplatform.integration.bathymetry;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSet;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSetDTO;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSetRepository;
+import com.mdud.bathymetryplatform.bathymetry.BathymetryDataSetService;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
-import com.mdud.bathymetryplatform.user.token.TokenTestHelper;
+import com.mdud.bathymetryplatform.integration.user.token.TokenTestHelper;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
 import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -25,15 +28,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
-import org.springframework.http.codec.multipart.Part;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.mock.web.MockPart;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

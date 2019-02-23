@@ -1,5 +1,7 @@
-package com.mdud.bathymetryplatform.user;
+package com.mdud.bathymetryplatform.integration.user;
 
+import com.mdud.bathymetryplatform.user.ApplicationUser;
+import com.mdud.bathymetryplatform.user.ApplicationUserRepository;
 import com.mdud.bathymetryplatform.user.userauthority.UserAuthority;
 import org.junit.Test;
 import org.junit.runner.RunWith;

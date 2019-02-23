@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.user.token;
+package com.mdud.bathymetryplatform.integration.user.token;
 
 import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

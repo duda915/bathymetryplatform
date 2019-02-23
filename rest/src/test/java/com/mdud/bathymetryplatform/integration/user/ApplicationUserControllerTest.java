@@ -1,10 +1,12 @@
-package com.mdud.bathymetryplatform.user;
+package com.mdud.bathymetryplatform.integration.user;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.mdud.bathymetryplatform.exception.AccessDeniedException;
 import com.mdud.bathymetryplatform.exception.UserNotFoundException;
+import com.mdud.bathymetryplatform.user.ApplicationUser;
+import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
+import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import com.mdud.bathymetryplatform.user.PasswordDTO;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
-import com.mdud.bathymetryplatform.user.token.TokenTestHelper;
+import com.mdud.bathymetryplatform.integration.user.token.TokenTestHelper;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,18 +14,10 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.security.Principal;
-import java.util.HashSet;
 
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
