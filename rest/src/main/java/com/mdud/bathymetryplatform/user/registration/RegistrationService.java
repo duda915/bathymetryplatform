@@ -8,31 +8,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.Valid;
+import java.util.Optional;
 
 @Service
 public class RegistrationService {
     private final RegistrationRepository registrationRepository;
     private final ApplicationUserService applicationUserService;
+    private final MailService mailService;
 
     @Autowired
-    public RegistrationService(RegistrationRepository registrationRepository, ApplicationUserService applicationUserService) {
+    public RegistrationService(RegistrationRepository registrationRepository, ApplicationUserService applicationUserService, MailService mailService) {
         this.registrationRepository = registrationRepository;
         this.applicationUserService = applicationUserService;
+        this.mailService = mailService;
     }
 
     @Transactional
     public RegistrationToken registerUser(ApplicationUserDTO applicationUserDTO){
-        if(applicationUserDTO.getEmail().isEmpty() || applicationUserDTO.getEmail() == null) {
-            throw new RegistrationException("email is empty");
-        }
-
         ApplicationUser applicationUser = applicationUserService.addNewUser(applicationUserDTO.getUsername(),
                 applicationUserDTO.getPassword(), applicationUserDTO.getEmail());
-        RegistrationToken registrationToken = new RegistrationToken(applicationUser);
-        return registrationRepository.save(registrationToken);
 
-        //TODO send token to email
+        RegistrationToken registrationToken = registrationRepository.save(new RegistrationToken(applicationUser));
+        mailService.sendActivationLink(registrationToken);
+
+        return registrationToken;
     }
 
     @Transactional

@@ -32,7 +32,7 @@ public class RegistrationServiceTest {
 
     @Test
     public void registerUser_RegisterUser_ShouldRegisterUser(){
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "test");
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "test@email.com");
         RegistrationToken registrationToken = registrationService.registerUser(applicationUserDTO);
 
         assertFalse(registrationToken.getApplicationUser().isActive());
@@ -40,7 +40,7 @@ public class RegistrationServiceTest {
 
     @Test
     public void activateUser_RegisterAndActivateUserUsingToken_ShouldActivateUser() {
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "test");
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "test@email.com");
         RegistrationToken registrationToken = registrationService.registerUser(applicationUserDTO);
         registrationService.activateUser(registrationToken.getToken());
 

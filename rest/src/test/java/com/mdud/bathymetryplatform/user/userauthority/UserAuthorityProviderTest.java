@@ -1,4 +1,4 @@
-package com.mdud.bathymetryplatform.integration.user.userauthority;
+package com.mdud.bathymetryplatform.user.userauthority;
 
 import com.mdud.bathymetryplatform.user.authority.Authorities;
 import com.mdud.bathymetryplatform.user.authority.Authority;
