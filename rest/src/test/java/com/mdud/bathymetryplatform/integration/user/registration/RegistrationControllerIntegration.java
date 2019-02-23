@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class RegistrationControllerTest {
+public class RegistrationControllerIntegration {
     @Autowired
     private MockMvc mockMvc;
 
@@ -41,17 +41,7 @@ public class RegistrationControllerTest {
     private final String registerAPI = "/api/register";
 
     @Test
-    public void registerAccount_SendInvalidEmailAccount_ShouldReturn400() throws Exception {
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "email");
-
-        String json = JSONUtil.convertObjectToJsonString(applicationUserDTO);
-        mockMvc.perform(post(registerAPI)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)).andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    public void registerAccount_SendValidAccountEmailAccount_ShouldRegisterAccount() throws Exception {
+    public void registerAccount() throws Exception {
         ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "email2@email.com");
 
         String json = JSONUtil.convertObjectToJsonString(applicationUserDTO);
@@ -66,7 +56,7 @@ public class RegistrationControllerTest {
     }
 
     @Test
-    public void activateAccount_RegisterAndActivateAccount_ShouldActivateNewAccount() throws Exception {
+    public void activateAccount_RegisterAndActivateAccount() throws Exception {
         ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("test", "test", "email2@email.com");
 
         String json = JSONUtil.convertObjectToJsonString(applicationUserDTO);
