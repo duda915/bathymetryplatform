@@ -47,6 +47,17 @@ public class ApplicationUser {
         this.userAuthorities = userAuthorities;
     }
 
+    public ApplicationUser(ApplicationUserDTO applicationUserDTO) {
+        this.username = applicationUserDTO.getUsername();
+        this.setPassword(applicationUserDTO.getPassword());
+        this.email = applicationUserDTO.getEmail();
+    }
+
+    public ApplicationUser(ApplicationUserDTO applicationUserDTO, Set<UserAuthority> userAuthorities) {
+        this(applicationUserDTO);
+        this.userAuthorities = userAuthorities;
+    }
+
     public void setPassword(String password) {
         this.password = PASSWORD_ENCODER.encode(password);
     }

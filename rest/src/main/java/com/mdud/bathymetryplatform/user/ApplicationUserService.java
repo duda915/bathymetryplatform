@@ -69,6 +69,17 @@ public class ApplicationUserService {
         return applicationUserRepository.save(applicationUser);
     }
 
+    public ApplicationUser addNewUser(ApplicationUserDTO applicationUserDTO) {
+        UserAuthority readAuthority = userAuthorityProvider.getUserAuthority(Authorities.READ);
+        UserAuthority writeAuthority = userAuthorityProvider.getUserAuthority(Authorities.WRITE);
+        Set<UserAuthority> userAuthoritySet = new HashSet<>();
+        userAuthoritySet.add(readAuthority);
+        userAuthoritySet.add(writeAuthority);
+
+        ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO, userAuthoritySet);
+        return applicationUserRepository.save(applicationUser);
+    }
+
     public ApplicationUser changeUserPassword(String username, String newPassword) {
         throwIfUserNotExists(username);
 

@@ -4,6 +4,7 @@ import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -12,6 +13,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -33,16 +35,18 @@ public class RegistrationServiceTest {
     @Test
     public void registerUser_AddUserGenerateTokenAndSendMail() {
         ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("user", "user", "user");
-        ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO.getUsername(), applicationUserDTO.getPassword(), null);
+        ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO);
         RegistrationToken registrationToken = new RegistrationToken(applicationUser);
 
         when(registrationRepository.save(any(RegistrationToken.class))).thenReturn(registrationToken);
 
         RegistrationToken newToken = registrationService.registerUser(applicationUserDTO);
 
+        assertEquals(registrationToken, newToken);
+
         verify(registrationRepository, times(1)).save(any(RegistrationToken.class));
         verify(mailService, times(1)).sendActivationLink(registrationToken);
-        verify(applicationUserService, times(1)).addNewUser(applicationUserDTO.getUsername(), applicationUserDTO.getPassword(), applicationUserDTO.getEmail());
+        verify(applicationUserService, times(1)).addNewUser(applicationUserDTO);
     }
 
     @Test

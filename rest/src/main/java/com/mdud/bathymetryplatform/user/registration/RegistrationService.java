@@ -25,8 +25,7 @@ public class RegistrationService {
 
     @Transactional
     public RegistrationToken registerUser(ApplicationUserDTO applicationUserDTO){
-        ApplicationUser applicationUser = applicationUserService.addNewUser(applicationUserDTO.getUsername(),
-                applicationUserDTO.getPassword(), applicationUserDTO.getEmail());
+        ApplicationUser applicationUser = applicationUserService.addNewUser(applicationUserDTO);
 
         RegistrationToken registrationToken = registrationRepository.save(new RegistrationToken(applicationUser));
         mailService.sendActivationLink(registrationToken);
