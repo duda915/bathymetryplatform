@@ -65,12 +65,6 @@ public class BathymetryDataSetService {
         getDataSet(id);
     }
 
-    private void throwIfExists(Long id) {
-        if(bathymetryDataSetRepository.findById(id).orElse(null) != null) {
-            throw new ResourceAlreadyExistsException("dataset already exist");
-        }
-    }
-
     public BathymetryDataSet addDataSet(String username, BathymetryDataSet bathymetryDataSet) {
         ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
         if(applicationUser.getUserAuthorities().stream().noneMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName().equals(Authorities.WRITE))) {
@@ -81,7 +75,6 @@ public class BathymetryDataSetService {
         return getDataSet(bathymetryDataSet.getId());
     }
 
-    // TODO implement parser using proj.4!
     public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet, int epsg, byte[] file) {
         BathymetryDataParser bathymetryDataParser = null;
         bathymetryDataParser = new BathymetryDataParser(epsg);
