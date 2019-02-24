@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.user;
 
+import com.mdud.bathymetryplatform.exception.MethodArgumentNotValidExceptionHandler;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,7 +36,8 @@ public class ApplicationUserControllerTest {
 
     @Before
     public void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(applicationUserController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(applicationUserController)
+                .setControllerAdvice(MethodArgumentNotValidExceptionHandler.class).build();
     }
 
     @Test
@@ -52,7 +55,7 @@ public class ApplicationUserControllerTest {
     }
 
     @Test
-    public void changeUserPassword() throws Exception {
+    public void changeUserPassword_ProvideValidPassword_ShouldChangePassword() throws Exception {
         ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("user", "user", "");
         ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO);
         when(applicationUserService.getApplicationUser("user")).thenReturn(applicationUser);
@@ -70,5 +73,19 @@ public class ApplicationUserControllerTest {
         verify(applicationUserService, times(1)).changeUserPassword("user", "newpass");
     }
 
+    @Test
+    public void changeUserPassword_ProvideInvalidPassword_ShouldThrowException() throws Exception {
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("user", "user", "");
+        ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO);
+        when(applicationUserService.getApplicationUser("user")).thenReturn(applicationUser);
 
+        Principal principal = () -> "user";
+        PasswordDTO passwordDTO = new PasswordDTO("");
+        String json = JSONUtil.convertObjectToJsonString(passwordDTO);
+        mockMvc.perform(put(endpoint).principal(principal)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(json))
+                .andExpect(content().string(containsString("newPassword must not")))
+                .andExpect(status().isBadRequest());
+    }
 }
