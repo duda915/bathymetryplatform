@@ -54,22 +54,10 @@ public class ApplicationUserService {
         getApplicationUser(username);
     }
 
-    public ApplicationUser addNewUser(String username, String password, String email) {
-        throwIfUserExists(username);
-        throwIfEmailExists(email);
-
-        UserAuthority readAuthority = userAuthorityProvider.getUserAuthority(Authorities.READ);
-        UserAuthority writeAuthority = userAuthorityProvider.getUserAuthority(Authorities.WRITE);
-        Set<UserAuthority> userAuthoritySet = new HashSet<>();
-        userAuthoritySet.add(readAuthority);
-        userAuthoritySet.add(writeAuthority);
-
-        ApplicationUser applicationUser = new ApplicationUser(username, password, userAuthoritySet);
-        applicationUser.setEmail(email);
-        return applicationUserRepository.save(applicationUser);
-    }
-
     public ApplicationUser addNewUser(ApplicationUserDTO applicationUserDTO) {
+        throwIfUserExists(applicationUserDTO.getUsername());
+        throwIfEmailExists(applicationUserDTO.getEmail());
+
         UserAuthority readAuthority = userAuthorityProvider.getUserAuthority(Authorities.READ);
         UserAuthority writeAuthority = userAuthorityProvider.getUserAuthority(Authorities.WRITE);
         Set<UserAuthority> userAuthoritySet = new HashSet<>();
@@ -94,52 +82,17 @@ public class ApplicationUserService {
         return applicationUserRepository.save(applicationUser);
     }
 
-    public ApplicationUser addNewAuthority(String username, Authorities authority) {
-        throwIfUserNotExists(username);
-
-        ApplicationUser applicationUser = getApplicationUser(username);
-        UserAuthority newAuthority = userAuthorityProvider.getUserAuthority(authority);
-
-        if(applicationUser.getUserAuthorities().stream().anyMatch(userAuthority -> userAuthority.getAuthority() == newAuthority.getAuthority())) {
-            throw new UserException("user own this authority already");
-        }
-
-        applicationUser.getUserAuthorities().add(newAuthority);
-        return applicationUserRepository.save(applicationUser);
-    }
-
-    public ApplicationUser removeUserAuthority(String username, Authorities authority) {
-        throwIfUserNotExists(username);
-
-        ApplicationUser applicationUser = getApplicationUser(username);
-        UserAuthority removeAuthority = userAuthorityProvider.getUserAuthority(authority);
-
-        if(!applicationUser.getUserAuthorities().stream().anyMatch(userAuthority -> userAuthority.getAuthority() == removeAuthority.getAuthority())) {
-            throw new UserException("user do not have this authority");
-        }
-
-        applicationUser.getUserAuthorities().removeIf(userAuthority -> userAuthority.getAuthority() == removeAuthority.getAuthority());
-
-        return applicationUserRepository.save(applicationUser);
-    }
-
-    public void removeUser(String username) {
-        throwIfUserNotExists(username);
-        ApplicationUser applicationUser = getApplicationUser(username);
-        applicationUserRepository.delete(applicationUser);
-    }
-
     public boolean checkUserAuthority(String username, Authorities authority) {
         return getApplicationUser(username).getUserAuthorities()
                 .stream().anyMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName() == authority);
     }
 
-    public void activateUser(String username) {
+    public ApplicationUser activateUser(String username) {
         throwIfUserNotExists(username);
 
         ApplicationUser applicationUser = getApplicationUser(username);
         applicationUser.setActive(true);
-        applicationUserRepository.save(applicationUser);
+        return applicationUserRepository.save(applicationUser);
     }
 
 }
