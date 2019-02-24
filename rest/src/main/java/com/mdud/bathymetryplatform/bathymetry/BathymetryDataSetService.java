@@ -56,17 +56,7 @@ public class BathymetryDataSetService {
         return bathymetryPointRepository.findAllWithinGeometry(id, geometry).orElse(new ArrayList<>());
     }
 
-    public Integer countAllBathymetryPointsWithinGeometry(Long id, BoxRectangle boxRectangle) {
-        Geometry geometry = boxRectangle.buildGeometry(boxRectangle);
-        return bathymetryPointRepository.findAllWithinGeometry(id, geometry).orElse(new ArrayList<>()).size();
-    }
-
-    private void throwIfNotExists(Long id) {
-        getDataSet(id);
-    }
-
     public void removeDataSet(String username, Long id) {
-        throwIfNotExists(id);
         BathymetryDataSet bathymetryDataSet = getDataSet(id);
         ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
         if (bathymetryDataSet.getApplicationUser().equals(applicationUser) || applicationUser.getUserAuthorities().stream().anyMatch(userAuthority ->
