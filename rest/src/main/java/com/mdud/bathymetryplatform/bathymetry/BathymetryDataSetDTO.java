@@ -3,6 +3,7 @@ package com.mdud.bathymetryplatform.bathymetry;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotEmpty;
@@ -11,6 +12,7 @@ import java.sql.Date;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class BathymetryDataSetDTO {
     private ApplicationUser applicationUser;
 

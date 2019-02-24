@@ -1,16 +1,15 @@
 package com.mdud.bathymetryplatform.bathymetry;
 
 
+import com.mdud.bathymetryplatform.bathymetry.parser.BathymetryFileBuilder;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
-import com.mdud.bathymetryplatform.bathymetry.parser.BathymetryFileBuilder;
-import com.mdud.bathymetryplatform.gdal.GDALService;
-import com.mdud.bathymetryplatform.geoserver.GeoServerService;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
 import com.mdud.bathymetryplatform.controller.StringResponse;
+import com.mdud.bathymetryplatform.gdal.GDALService;
+import com.mdud.bathymetryplatform.geoserver.GeoServerService;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.authority.Authorities;
-import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import com.vividsolutions.jts.geom.Coordinate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -37,15 +36,14 @@ public class BathymetryDataSetController {
 
     private final BathymetryDataSetService bathymetryDataSetService;
     private final ApplicationUserService applicationUserService;
-    private final AppConfiguration appConfiguration;
     private final GDALService gdalService;
     private final GeoServerService geoServerService;
+
     @Autowired
     public BathymetryDataSetController(BathymetryDataSetService bathymetryDataSetService, ApplicationUserService applicationUserService,
-                                       AppConfiguration appConfiguration, GDALService gdalService, GeoServerService geoServerService) {
+                                       GDALService gdalService, GeoServerService geoServerService) {
         this.bathymetryDataSetService = bathymetryDataSetService;
         this.applicationUserService = applicationUserService;
-        this.appConfiguration = appConfiguration;
         this.gdalService = gdalService;
         this.geoServerService = geoServerService;
     }
@@ -59,7 +57,7 @@ public class BathymetryDataSetController {
     @GetMapping("/user")
     @Transactional
     public List<BathymetryDataSet> getUserDataSets(Principal principal) {
-        if(applicationUserService.checkUserAuthority(principal.getName(), Authorities.ADMIN)) {
+        if (applicationUserService.checkUserAuthority(principal.getName(), Authorities.ADMIN)) {
             return bathymetryDataSetService.getAllDataSets();
         } else {
             return bathymetryDataSetService.getDataSetsByUser(principal.getName());
@@ -77,7 +75,9 @@ public class BathymetryDataSetController {
 
         File rasterFile = gdalService.createRaster(bathymetryDataSet.getId());
         geoServerService.addCoverageStore(rasterFile);
-
+        if(rasterFile != null) {
+            rasterFile.delete();
+        }
 
         return new ResourceIdResponse(bathymetryDataSet.getId(), "data successfully uploaded");
     }
@@ -103,7 +103,7 @@ public class BathymetryDataSetController {
         return createFileResponseEntity(file);
     }
 
-    @PostMapping(value = "/download/selection",  produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/download/selection", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @Transactional
     public ResponseEntity<byte[]> downloadDataSetsBySelection(@RequestParam("id") Long[] ids, @RequestBody BoxRectangle boxRectangle) {
         BathymetryFileBuilder bathymetryFileBuilder = new BathymetryFileBuilder();
