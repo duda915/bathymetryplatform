@@ -4,6 +4,7 @@ import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,4 +89,15 @@ public class BathymetryDataSetServiceTest {
         bathymetryDataSetService.addDataSet(bathymetryDataSet);
         verify(bathymetryDataSetRepository, times(1)).nativeSave(bathymetryDataSet);
     }
+
+    @Test
+    public void addData() {
+        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("user", "user", "user");
+        ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO);
+        BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(applicationUser, 4326, "newdata",
+                SQLDateBuilder.now(), "me");
+        
+
+    }
+
 }

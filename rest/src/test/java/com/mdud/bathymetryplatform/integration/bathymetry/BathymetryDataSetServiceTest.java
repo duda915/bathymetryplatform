@@ -148,7 +148,7 @@ public class BathymetryDataSetServiceTest {
 
         BathymetryDataSet newDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet, 32634, file);
 
-        assertEquals(3036, newDataSet.getMeasurements().size());
+        assertEquals(240, newDataSet.getMeasurements().size());
     }
 
     @Test(expected = DataParsingException.class)
