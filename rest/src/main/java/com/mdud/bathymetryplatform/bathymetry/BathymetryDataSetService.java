@@ -81,7 +81,7 @@ public class BathymetryDataSetService {
             throw new DataParsingException("invalid file");
         }
 
-        if(bathymetryPoints == null) {
+        if (bathymetryPoints == null) {
             throw new DataParsingException("data format not recognized");
         }
 
@@ -91,12 +91,11 @@ public class BathymetryDataSetService {
     }
 
 
-
     public void removeDataSet(String username, Long id) {
         throwIfNotExists(id);
         BathymetryDataSet bathymetryDataSet = getDataSet(id);
         ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
-        if(bathymetryDataSet.getApplicationUser().equals(applicationUser) || applicationUser.getUserAuthorities().stream().anyMatch(userAuthority ->
+        if (bathymetryDataSet.getApplicationUser().equals(applicationUser) || applicationUser.getUserAuthorities().stream().anyMatch(userAuthority ->
                 userAuthority.getAuthority().getAuthorityName() == Authorities.ADMIN)) {
             bathymetryDataSetRepository.deleteById(id);
         } else {
@@ -119,6 +118,14 @@ public class BathymetryDataSetService {
         }
 
         return addDataSet(bathymetryDataSet, epsg, fileBytes);
+    }
+
+    public BathymetryDataSet addData(BathymetryDataSetDTO bathymetryDataSetDTO, byte[] file) {
+        BathymetryDataParser bathymetryDataParser = new BathymetryDataParser(bathymetryDataSetDTO.getEpsgCode());
+        List<BathymetryPoint> bathymetryPoints = bathymetryDataParser.parseFile(file);
+
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(bathymetryDataSetDTO, bathymetryPoints);
+        return bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
     }
 }
 

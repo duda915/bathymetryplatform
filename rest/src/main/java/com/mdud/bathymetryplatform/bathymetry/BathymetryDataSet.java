@@ -48,5 +48,13 @@ public class BathymetryDataSet {
         this.dataOwner = dataOwner;
         this.measurements = measurements;
     }
+
+    public BathymetryDataSet(BathymetryDataSetDTO bathymetryDataSetDTO, List<BathymetryPoint> measurements) {
+        this.applicationUser = bathymetryDataSetDTO.getApplicationUser();
+        this.name = bathymetryDataSetDTO.getName();
+        this.measurementDate = bathymetryDataSetDTO.getMeasurementDate();
+        this.dataOwner = bathymetryDataSetDTO.getDataOwner();
+        this.measurements = measurements;
+    }
 }
 

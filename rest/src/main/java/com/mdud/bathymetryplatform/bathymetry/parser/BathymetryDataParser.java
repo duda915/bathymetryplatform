@@ -103,12 +103,18 @@ public class BathymetryDataParser {
             measures.add(new BathymetryPoint(headerCheck));
         } catch (NumberFormatException ignored) {}
 
-        for(int i = 1; i < lines.length; i++) {
-            BathymetryPointDTO measureDTO = parsePoint(lines[i]);
-            if(measureDTO == null)
-                continue;
-            measures.add(new BathymetryPoint(measureDTO));
+        try {
+            for(int i = 1; i < lines.length; i++) {
+                BathymetryPointDTO measureDTO = parsePoint(lines[i]);
+                if(measureDTO == null)
+                    continue;
+                measures.add(new BathymetryPoint(measureDTO));
+            }
+
+            return measures;
+        } catch (NumberFormatException e) {
+            throw new DataParsingException("failed to read file");
         }
-        return measures;
+
     }
 }
