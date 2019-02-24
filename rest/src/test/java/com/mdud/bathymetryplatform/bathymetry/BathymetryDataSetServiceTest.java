@@ -4,6 +4,7 @@ import com.mdud.bathymetryplatform.exception.ResourceNotFoundException;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -29,6 +30,15 @@ public class BathymetryDataSetServiceTest {
 
     @Mock
     private ApplicationUserService applicationUserService;
+
+    private ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("", "", "");
+    private ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO);
+
+    @Before
+    public void setup() {
+        applicationUserDTO = new ApplicationUserDTO("", "", "");
+        applicationUser = new ApplicationUser(applicationUserDTO);
+    }
 
     @Test
     public void getDataSet_GetExistentDataSet_ShouldReturnDataset() {
@@ -58,9 +68,6 @@ public class BathymetryDataSetServiceTest {
 
     @Test
     public void getDataSetsByUser() {
-        ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("", "", "");
-        ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO);
-
         when(bathymetryDataSetRepository.findAllByApplicationUser(applicationUser)).thenReturn(Optional.of(new ArrayList<>()));
         when(applicationUserService.getApplicationUser("")).thenReturn(applicationUser);
 
@@ -70,4 +77,15 @@ public class BathymetryDataSetServiceTest {
         verify(applicationUserService, times(1)).getApplicationUser("");
     }
 
+    @Test
+    public void addDataSet() {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet();
+        bathymetryDataSet.setId(1L);
+
+        when(bathymetryDataSetRepository.nativeSave(bathymetryDataSet)).thenReturn(bathymetryDataSet);
+        when(bathymetryDataSetRepository.findById(1L)).thenReturn(Optional.of(bathymetryDataSet));
+
+        bathymetryDataSetService.addDataSet(bathymetryDataSet);
+        verify(bathymetryDataSetRepository, times(1)).nativeSave(bathymetryDataSet);
+    }
 }

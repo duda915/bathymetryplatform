@@ -72,16 +72,9 @@ public class BathymetryDataSetServiceTest {
     @Test
     public void getDataSetsByUser_GetUserDataSets_ShouldReturnDataSetsList() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet);
 
         assertEquals(5, bathymetryDataSet.getMeasurements().size());
-    }
-
-    @Test(expected = AccessDeniedException.class)
-    public void addDataSet_TryToAddDataWithReadOnlyAuthorityUser_ShouldThrowAccessDeniedException() {
-        ApplicationUser readUser = applicationUserService.getApplicationUser("guest");
-        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(readUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSetService.addDataSet(readUser.getUsername(), bathymetryDataSet);
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -97,7 +90,7 @@ public class BathymetryDataSetServiceTest {
     @Test
     public void removeDataSet_RemoveExistentDataSet_ShouldRemoveAllData() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet);
 
         bathymetryDataSetService.removeDataSet("write", bathymetryDataSet.getId());
 
@@ -109,16 +102,16 @@ public class BathymetryDataSetServiceTest {
     @Test(expected = AccessDeniedException.class)
     public void removeDataSet_RemoveOtherUserDataSet_ShouldThrowAccessDeniedException() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet);
         bathymetryDataSetService.removeDataSet("guest", bathymetryDataSet.getId());
     }
 
     @Test
     public void getAllDataSets_AddTwoDataSets_ShouldReturnAllDataSets() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet);
         bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet);
 
         int count = bathymetryDataSetService.getAllDataSets().size();
         assertEquals(2, count);
@@ -127,7 +120,7 @@ public class BathymetryDataSetServiceTest {
     @Test
     public void getAllBathymetryPointsWithinGeometry_AddDataSet_ShouldReturnPointsInsideRectangle() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet);
         BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
 
         List<BathymetryPoint> bathymetryPoints = bathymetryDataSetService.getAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), boxRectangle);
@@ -138,7 +131,7 @@ public class BathymetryDataSetServiceTest {
     @Test
     public void countAllBathymetryPointsWithinGeometry_AddDataSet_ShouldReturnPointsCountInsideRectangle() {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(writeUser, "test", SQLDateBuilder.now(), "owner", bathymetryPoints);
-        bathymetryDataSet = bathymetryDataSetService.addDataSet(writeUser.getUsername(), bathymetryDataSet);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSet);
         BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(2.5, 4.5), new Coordinate(4.5, 2.5));
 
         int act = bathymetryDataSetService.countAllBathymetryPointsWithinGeometry(bathymetryDataSet.getId(), boxRectangle);

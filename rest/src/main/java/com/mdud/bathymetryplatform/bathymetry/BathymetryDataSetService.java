@@ -65,21 +65,16 @@ public class BathymetryDataSetService {
         getDataSet(id);
     }
 
-    public BathymetryDataSet addDataSet(String username, BathymetryDataSet bathymetryDataSet) {
-        ApplicationUser applicationUser = applicationUserService.getApplicationUser(username);
-        if(applicationUser.getUserAuthorities().stream().noneMatch(userAuthority -> userAuthority.getAuthority().getAuthorityName().equals(Authorities.WRITE))) {
-            throw new AccessDeniedException("adding resource require write authority");
-        }
-
+    public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet) {
         bathymetryDataSet = bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
         return getDataSet(bathymetryDataSet.getId());
     }
 
     public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet, int epsg, byte[] file) {
-        BathymetryDataParser bathymetryDataParser = null;
+        BathymetryDataParser bathymetryDataParser;
         bathymetryDataParser = new BathymetryDataParser(epsg);
 
-        List<BathymetryPoint> bathymetryPoints = null;
+        List<BathymetryPoint> bathymetryPoints;
         try {
             bathymetryPoints = bathymetryDataParser.parseFile(file);
         } catch (NumberFormatException e) {
@@ -91,9 +86,11 @@ public class BathymetryDataSetService {
         }
 
         bathymetryDataSet.setMeasurements(bathymetryPoints);
-        return addDataSet(bathymetryDataSet.getApplicationUser().getUsername(), bathymetryDataSet);
+        return addDataSet(bathymetryDataSet);
 
     }
+
+
 
     public void removeDataSet(String username, Long id) {
         throwIfNotExists(id);
