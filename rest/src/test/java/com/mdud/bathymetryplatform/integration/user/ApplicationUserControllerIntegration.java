@@ -1,12 +1,9 @@
 package com.mdud.bathymetryplatform.integration.user;
 
-import com.mdud.bathymetryplatform.exception.UserNotFoundException;
+import com.mdud.bathymetryplatform.integration.user.token.TokenTestHelper;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
-import com.mdud.bathymetryplatform.user.ApplicationUserDTO;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.user.PasswordDTO;
-import com.mdud.bathymetryplatform.user.authority.Authorities;
-import com.mdud.bathymetryplatform.integration.user.token.TokenTestHelper;
 import com.mdud.bathymetryplatform.utility.JSONUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,9 +16,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
