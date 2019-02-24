@@ -65,32 +65,6 @@ public class BathymetryDataSetService {
         getDataSet(id);
     }
 
-    public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet) {
-        bathymetryDataSet = bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
-        return getDataSet(bathymetryDataSet.getId());
-    }
-
-    public BathymetryDataSet addDataSet(BathymetryDataSet bathymetryDataSet, int epsg, byte[] file) {
-        BathymetryDataParser bathymetryDataParser;
-        bathymetryDataParser = new BathymetryDataParser(epsg);
-
-        List<BathymetryPoint> bathymetryPoints;
-        try {
-            bathymetryPoints = bathymetryDataParser.parseFile(file);
-        } catch (NumberFormatException e) {
-            throw new DataParsingException("invalid file");
-        }
-
-        if (bathymetryPoints == null) {
-            throw new DataParsingException("data format not recognized");
-        }
-
-        bathymetryDataSet.setMeasurements(bathymetryPoints);
-        return addDataSet(bathymetryDataSet);
-
-    }
-
-
     public void removeDataSet(String username, Long id) {
         throwIfNotExists(id);
         BathymetryDataSet bathymetryDataSet = getDataSet(id);
@@ -103,24 +77,7 @@ public class BathymetryDataSetService {
         }
     }
 
-    public BathymetryDataSet addDataSetFromDTO(BathymetryDataSetDTO bathymetryDataSetDTO, MultipartFile file) {
-        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(bathymetryDataSetDTO.getApplicationUser(),
-                bathymetryDataSetDTO.getName(),
-                bathymetryDataSetDTO.getMeasurementDate(),
-                bathymetryDataSetDTO.getDataOwner(), new ArrayList<>());
-        int epsg = bathymetryDataSetDTO.getEpsgCode();
-
-        byte[] fileBytes;
-        try {
-            fileBytes = file.getBytes();
-        } catch (IOException e) {
-            throw new ResourceAddException("failed to read file");
-        }
-
-        return addDataSet(bathymetryDataSet, epsg, fileBytes);
-    }
-
-    public BathymetryDataSet addData(BathymetryDataSetDTO bathymetryDataSetDTO, byte[] file) {
+    public BathymetryDataSet addDataSet(BathymetryDataSetDTO bathymetryDataSetDTO, byte[] file) {
         BathymetryDataParser bathymetryDataParser = new BathymetryDataParser(bathymetryDataSetDTO.getEpsgCode());
         List<BathymetryPoint> bathymetryPoints = bathymetryDataParser.parseFile(file);
 

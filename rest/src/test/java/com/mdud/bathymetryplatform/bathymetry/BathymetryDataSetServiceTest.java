@@ -12,8 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -93,18 +91,6 @@ public class BathymetryDataSetServiceTest {
     }
 
     @Test
-    public void addDataSet() {
-        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet();
-        bathymetryDataSet.setId(1L);
-
-        when(bathymetryDataSetRepository.nativeSave(bathymetryDataSet)).thenReturn(bathymetryDataSet);
-        when(bathymetryDataSetRepository.findById(1L)).thenReturn(Optional.of(bathymetryDataSet));
-
-        bathymetryDataSetService.addDataSet(bathymetryDataSet);
-        verify(bathymetryDataSetRepository, times(1)).nativeSave(bathymetryDataSet);
-    }
-
-    @Test
     public void addData_AddValidData_ShouldAddData() throws IOException {
         ApplicationUserDTO applicationUserDTO = new ApplicationUserDTO("user", "user", "user");
         ApplicationUser applicationUser = new ApplicationUser(applicationUserDTO);
@@ -115,7 +101,7 @@ public class BathymetryDataSetServiceTest {
         when(bathymetryDataSetRepository.nativeSave(any(BathymetryDataSet.class)))
                 .thenAnswer((Answer<BathymetryDataSet>) answer -> answer.getArgument(0));
 
-        BathymetryDataSet bathymetryDataSet = bathymetryDataSetService.addData(bathymetryDataSetDTO, file);
+        BathymetryDataSet bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSetDTO, file);
 
         assertEquals(240, bathymetryDataSet.getMeasurements().size());
         verify(bathymetryDataSetRepository, times(1)).nativeSave(bathymetryDataSet);
@@ -129,6 +115,6 @@ public class BathymetryDataSetServiceTest {
                 SQLDateBuilder.now(), "me");
         byte[] file = IOUtils.toByteArray(invalidDataResource.getURI());
 
-        bathymetryDataSetService.addData(bathymetryDataSetDTO, file);
+        bathymetryDataSetService.addDataSet(bathymetryDataSetDTO, file);
     }
 }

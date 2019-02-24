@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.File;
+import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
@@ -68,11 +69,11 @@ public class BathymetryDataSetController {
     @PreAuthorize("hasAuthority('WRITE')")
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.APPLICATION_JSON_UTF8_VALUE})
     public ResourceIdResponse addDataSet(Principal principal, @RequestPart("file") MultipartFile file,
-                                         @Valid @RequestPart("data") BathymetryDataSetDTO bathymetryDataSetDTO) {
+                                         @Valid @RequestPart("data") BathymetryDataSetDTO bathymetryDataSetDTO) throws IOException {
         bathymetryDataSetDTO.setApplicationUser(applicationUserService.getApplicationUser(principal.getName()));
         BathymetryDataSet bathymetryDataSet;
 
-        bathymetryDataSet = bathymetryDataSetService.addDataSetFromDTO(bathymetryDataSetDTO, file);
+        bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSetDTO, file.getBytes());
 
         File rasterFile = gdalService.createRaster(bathymetryDataSet.getId());
         geoServerService.addCoverageStore(rasterFile);
