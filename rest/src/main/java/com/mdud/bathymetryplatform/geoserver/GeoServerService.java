@@ -117,14 +117,10 @@ public class GeoServerService {
         Arrays.asList(ids).forEach(id ->
                 boxes.add(getCoverageStoreBoundingBox(id)));
 
-        boxes.forEach(box -> logger.info(box.toString()));
-
-        BoxRectangle boxRectangle = buildBoxFromBoxes(boxes);
-        logger.info(boxRectangle.toString());
-        return boxRectangle;
+        return buildBoxFromBoxes(boxes);
     }
 
-    public BoxRectangle buildBoxFromBoxes(List<BoxRectangle> boxes) {
+    BoxRectangle buildBoxFromBoxes(List<BoxRectangle> boxes) {
         double maxX = filterBoxListForDouble(boxes,
                 Comparator.comparingDouble(box -> box.getLowerRightVertex().x),
                 val -> val.getLowerRightVertex().x);
