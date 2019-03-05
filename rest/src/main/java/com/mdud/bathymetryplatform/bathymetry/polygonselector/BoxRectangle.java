@@ -7,7 +7,9 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @EqualsAndHashCode
 @NoArgsConstructor
 public class BoxRectangle implements GeometryAdapter<BoxRectangle>{

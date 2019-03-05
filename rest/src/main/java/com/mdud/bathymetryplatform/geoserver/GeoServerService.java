@@ -113,26 +113,32 @@ public class GeoServerService {
 
     public BoxRectangle getCoverageStoresBoundingBox(Long[] ids) {
         List<BoxRectangle> boxes = new ArrayList<>();
-        Arrays.asList(ids).forEach(id -> boxes.add(getCoverageStoreBoundingBox(id)));
 
-        return buildBoxFromBoxes(boxes);
+        Arrays.asList(ids).forEach(id ->
+                boxes.add(getCoverageStoreBoundingBox(id)));
+
+        boxes.forEach(box -> logger.info(box.toString()));
+
+        BoxRectangle boxRectangle = buildBoxFromBoxes(boxes);
+        logger.info(boxRectangle.toString());
+        return boxRectangle;
     }
 
-    private BoxRectangle buildBoxFromBoxes(List<BoxRectangle> boxes) {
+    public BoxRectangle buildBoxFromBoxes(List<BoxRectangle> boxes) {
         double maxX = filterBoxListForDouble(boxes,
-                (box1, box2) -> (int) (box1.getLowerRightVertex().x - box2.getLowerRightVertex().x),
+                Comparator.comparingDouble(box -> box.getLowerRightVertex().x),
                 val -> val.getLowerRightVertex().x);
 
         double minX = filterBoxListForDouble(boxes,
-                (box1, box2) -> (int) (box2.getUpperLeftVertex().x - box1.getUpperLeftVertex().x)
-                , val -> val.getUpperLeftVertex().x );
+                (box1, box2) -> Double.compare(box2.getUpperLeftVertex().x, box1.getUpperLeftVertex().x)
+                , val -> val.getUpperLeftVertex().x);
 
         double maxY = filterBoxListForDouble(boxes,
-                (box1, box2) -> (int) (box1.getUpperLeftVertex().y - box2.getUpperLeftVertex().y),
+                Comparator.comparingDouble(box -> box.getUpperLeftVertex().y),
                 val -> val.getUpperLeftVertex().y);
 
         double minY = filterBoxListForDouble(boxes,
-                (box1, box2) -> (int) (box2.getLowerRightVertex().y - box1.getLowerRightVertex().y),
+                (box1, box2) -> Double.compare(box2.getLowerRightVertex().y, box1.getLowerRightVertex().y),
                 val -> val.getLowerRightVertex().y);
 
         return new BoxRectangle(new Coordinate(minX, maxY), new Coordinate(maxX, minY));
