@@ -78,7 +78,7 @@ public class BathymetryDataSetControllerIntegration {
         ApplicationUser applicationUser = applicationUserService.getApplicationUser("admin");
 
         List<BathymetryPoint> bathymetryPointList = new ArrayList<>();
-        Arrays.asList(1,2,3,4,5).forEach(number -> bathymetryPointList.add(new BathymetryPointBuilder()
+        Arrays.asList(1, 2, 3, 4, 5).forEach(number -> bathymetryPointList.add(new BathymetryPointBuilder()
                 .point(number, number)
                 .depth(5)
                 .buildPoint()
@@ -155,7 +155,7 @@ public class BathymetryDataSetControllerIntegration {
         ResourceIdResponse resourceIdResponse = addTestDataSet();
 
         mockMvc.perform(get(dataAPI + "/download")
-                        .param("id", String.valueOf(resourceIdResponse.getId()))
+                .param("id", String.valueOf(resourceIdResponse.getId()))
                 .header("Authorization", adminHeader))
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -223,6 +223,17 @@ public class BathymetryDataSetControllerIntegration {
                 .andExpect(status().isOk()).andDo(print());
     }
 
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    public void getDataSetsBoundingBox_GetBoundingBoxFromGeoServer_ShouldReturnBoundingBox() throws Exception {
+        ResourceIdResponse resourceIdResponse = addTestDataSet();
+        mockMvc.perform(get(dataAPI + "/globalbox")
+                .param("ids", resourceIdResponse.getId().toString())
+                .header("Authorization", adminHeader))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
     private void clearDataSetAfterNonTransactionalTest(Long id) throws Exception {
         mockMvc.perform(delete(dataAPI)
                 .header("Authorization", adminHeader)
@@ -233,6 +244,5 @@ public class BathymetryDataSetControllerIntegration {
     private void assertNotEmpty(String actual) {
         Assert.assertNotEquals("", actual);
     }
-
 
 }

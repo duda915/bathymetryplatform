@@ -141,6 +141,11 @@ public class BathymetryDataSetController {
         return geoServerService.getCoverageStoreBoundingBox(id);
     }
 
+    @GetMapping("/globalbox")
+    public BoxRectangle getDataSetsBoundBox(@RequestParam("ids") Long[] ids) {
+        return geoServerService.getCoverageStoresBoundingBox(ids);
+    }
+
     private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("content-disposition", "attachment; filename=" + "results.txt");

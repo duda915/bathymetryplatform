@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -18,7 +17,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Base64;
+import java.util.*;
+import java.util.function.Function;
 
 @Service
 public class GeoServerService {
@@ -83,9 +83,9 @@ public class GeoServerService {
 
 
     public Coordinate getCoverageStoreCenter(Long id) {
-        BoxRectangle boundingBox =getCoverageStoreBoundingBox(id);
-        double x = (boundingBox.getUpperLeftVertex().x + boundingBox.getLowerRightVertex().x)/2;
-        double y = (boundingBox.getUpperLeftVertex().y + boundingBox.getLowerRightVertex().y)/2;
+        BoxRectangle boundingBox = getCoverageStoreBoundingBox(id);
+        double x = (boundingBox.getUpperLeftVertex().x + boundingBox.getLowerRightVertex().x) / 2;
+        double y = (boundingBox.getUpperLeftVertex().y + boundingBox.getLowerRightVertex().y) / 2;
         return new Coordinate(x, y);
     }
 
@@ -109,6 +109,40 @@ public class GeoServerService {
         Coordinate upperLeft = new Coordinate(boundingBoxNode.get("minx").asDouble(), boundingBoxNode.get("maxy").asDouble());
         Coordinate lowerRight = new Coordinate(boundingBoxNode.get("maxx").asDouble(), boundingBoxNode.get("miny").asDouble());
         return new BoxRectangle(upperLeft, lowerRight);
+    }
+
+    public BoxRectangle getCoverageStoresBoundingBox(Long[] ids) {
+        List<BoxRectangle> boxes = new ArrayList<>();
+        Arrays.asList(ids).forEach(id -> boxes.add(getCoverageStoreBoundingBox(id)));
+
+        return buildBoxFromBoxes(boxes);
+    }
+
+    private BoxRectangle buildBoxFromBoxes(List<BoxRectangle> boxes) {
+        double maxX = filterBoxListForDouble(boxes,
+                (box1, box2) -> (int) (box1.getLowerRightVertex().x - box2.getLowerRightVertex().x),
+                val -> val.getLowerRightVertex().x);
+
+        double minX = filterBoxListForDouble(boxes,
+                (box1, box2) -> (int) (box2.getUpperLeftVertex().x - box1.getUpperLeftVertex().x)
+                , val -> val.getUpperLeftVertex().x );
+
+        double maxY = filterBoxListForDouble(boxes,
+                (box1, box2) -> (int) (box1.getUpperLeftVertex().y - box2.getUpperLeftVertex().y),
+                val -> val.getUpperLeftVertex().y);
+
+        double minY = filterBoxListForDouble(boxes,
+                (box1, box2) -> (int) (box2.getLowerRightVertex().y - box1.getLowerRightVertex().y),
+                val -> val.getLowerRightVertex().y);
+
+        return new BoxRectangle(new Coordinate(minX, maxY), new Coordinate(maxX, minY));
+    }
+
+    private Double filterBoxListForDouble(List<BoxRectangle> boxes, Comparator<BoxRectangle> boxRectangleComparator,
+                                          Function<BoxRectangle, Double> boxMapFunction) {
+
+        return boxes.stream().max(boxRectangleComparator)
+                .map(boxMapFunction).orElseThrow(IllegalArgumentException::new);
     }
 
     public boolean checkIfWorkspaceExists() {
@@ -140,7 +174,7 @@ public class GeoServerService {
                     HttpMethod.GET, request, String.class);
             return true;
         } catch (HttpClientErrorException e) {
-            if(e.getStatusCode() != HttpStatus.NOT_FOUND) {
+            if (e.getStatusCode() != HttpStatus.NOT_FOUND) {
                 e.printStackTrace();
                 throw new GeoServerException("geoserver resource check error");
             }

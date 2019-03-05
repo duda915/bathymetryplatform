@@ -268,4 +268,17 @@ public class BathymetryDataSetControllerTest {
 
         verify(geoServerService, times(1)).getCoverageStoreBoundingBox(1L);
     }
+
+    @Test
+    public void getDataSetsBoundingBox() throws Exception {
+        Long[] ids = {2L, 3L};
+        when(geoServerService.getCoverageStoresBoundingBox(ids)).thenReturn(new BoxRectangle());
+
+        mockMvc.perform(get(endpoint + "/globalbox")
+                .param("ids", "2")
+                .param("ids", "3"))
+                .andExpect(status().isOk());
+
+        verify(geoServerService, times(1)).getCoverageStoresBoundingBox(ids);
+    }
 }
