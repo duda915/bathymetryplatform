@@ -63,11 +63,17 @@ export default class Tools extends React.Component {
                 icon="pi pi-eye"
               />
               <Button
+                style={{ marginRight: "10px" }}
                 className="p-button tools-button flat-button"
                 onClick={e =>
                   this.setState({ showLayers: !this.state.showLayers })
                 }
                 icon="pi pi-image"
+              />
+              <Button
+                className="p-button tools-button flat-button"
+                onClick={this.props.zoomFit}
+                icon="pi pi-search"
               />
             </div>
           </Toolbar>

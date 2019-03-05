@@ -39,6 +39,12 @@ class MainWindow extends Component {
     }
   };
 
+  zoomFit = () => {
+    if (this.mapReference.current != null) {
+      this.mapReference.current.zoomFit();
+    }
+  };
+
   tryMapUpdate() {
     if (this.mapReference.current != null) {
       this.mapReference.current.updateLayerGroup();
@@ -125,6 +131,7 @@ class MainWindow extends Component {
             selectedLayers={this.state.selectedLayers}
             toggleLayer={this.toggleLayer}
             zoomToLayer={this.zoomToLayer}
+            zoomFit={this.zoomFit}
           />
           <div className="p-col main-window">
             <div className="p-grid p-nogutter">

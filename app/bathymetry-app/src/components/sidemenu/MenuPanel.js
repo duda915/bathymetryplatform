@@ -46,6 +46,7 @@ class MenuPanel extends Component {
               selectedLayers={this.props.selectedLayers}
               toggleLayer={this.props.toggleLayer}
               zoomToLayer={this.props.zoomToLayer}
+              zoomFit={this.props.zoomFit}
             />
           </div>
 
