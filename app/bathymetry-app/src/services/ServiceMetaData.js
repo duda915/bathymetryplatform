@@ -12,6 +12,7 @@ export const endpoints = {
   downloadSelectedData: `${restAPI}api/data/download/selection`,
   countSelection: `${restAPI}api/data/download/selection/count`,
   boundingBox: `${restAPI}api/data/box`,
+  multipleLayersBoundingBox: `${restAPI}api/data/globalbox`,
 
   user: `${restAPI}api/user`,
   registerUser: `${restAPI}api/register`,

@@ -201,7 +201,7 @@ export default class MapComponent extends Component {
 
     this.api
       .restData()
-      .getLayerBoundingBox(layers[0])
+      .getActiveLayersBoundingBox(layers)
       .then(response => {
         const upperLeft = response.data.upperLeftVertex;
         const lowerRight = response.data.lowerRightVertex;

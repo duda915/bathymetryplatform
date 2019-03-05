@@ -104,6 +104,15 @@ export default class API {
       return axios.get(url, this.authorization());
     };
 
+    rest.getActiveLayersBoundingBox = ids => {
+      const url = new URL(endpoints.multipleLayersBoundingBox);
+      const searchParams = new URLSearchParams();
+      ids.forEach(id => searchParams.append("ids", id));
+      url.search = searchParams;
+
+      return axios.get(url, this.authorization());
+    };
+
     rest.getEPSGCodes = () => axios.get(endpoints.epsg, this.authorization());
 
     return rest;
