@@ -1,0 +1,82 @@
+version: '3.5'
+services:
+  devandtestdbcontainer:
+    container_name: devandtestdb
+    image: mdillon/postgis
+    ports:
+      - "5433:5432"
+    networks: 
+      - bathymetrynetwork
+    environment:
+      - POSTGRES_USER=bathymetry
+      - POSTGRES_PASSWORD=bathymetry
+      - POSTGRES_DBNAME=bathymetry
+      - ALLOW_IP_RANGE=<*>
+
+  postgiscontainer:
+    container_name: postgis
+    image: mdillon/postgis
+    ports:
+      - "5432:5432"
+    networks:
+      - bathymetrynetwork
+    environment:
+      - POSTGRES_USER=bathymetry
+      - POSTGRES_PASSWORD=bathymetry
+      - POSTGRES_DBNAME=bathymetry
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  geoservercontainer:
+    container_name: geoserver
+    build: ./geoserver
+    ports:
+      - "8081:8080"
+    networks:
+      - bathymetrynetwork
+    volumes:
+      - geodata:/opt/geoserver/data_dir
+  
+  epsgcontainer:
+    container_name: epsg
+    image: mdud/postgresql-epsg:1.0
+    ports:
+      - "5434:5432"
+    networks: 
+      - bathymetrynetwork
+  
+  nodecontainer:
+    container_name: node
+    build: ./node
+    ports:
+      - "80:3000"
+    networks:
+      - bathymetrynetwork
+    depends_on: 
+      - restcontainer
+    volumes:
+      - ./node:/app
+    command: serve -l 3000 -s /app/build
+
+  restcontainer:
+    container_name: rest
+    build: ./rest
+    ports:
+      - "8082:8080"
+    networks:
+      - bathymetrynetwork
+    depends_on: 
+      - geoservercontainer
+      - postgiscontainer
+    volumes:
+      - ./rest:/app
+    command: java -jar -Dspring.profiles.active=production /app/App.jar
+
+networks:
+  bathymetrynetwork:
+    driver: bridge
+    name: bathymetrynet
+
+volumes:
+  dbdata:
+  geodata:

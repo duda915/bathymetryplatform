@@ -1,0 +1,9 @@
+FROM postgres:9.6
+COPY EPSG_Tables.sql /
+COPY data/ /var/lib/postgresql/data
+ENV POSTGRES_USER=epsg
+ENV POSTGRES_PASSWORD=epsg
+ENV POSTGRES_DBNAME=epsg
+ENV ALLOW_IP_RANGE=<*>
+
+EXPOSE 5432
