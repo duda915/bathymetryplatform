@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class EPSGCodeControllerIntegration {
+public class EPSGCodeControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

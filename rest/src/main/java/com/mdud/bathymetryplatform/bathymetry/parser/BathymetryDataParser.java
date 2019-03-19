@@ -28,7 +28,6 @@ public class BathymetryDataParser {
     private CoordinateReferenceSystem targetCRS;
     private MathTransform transform;
     private GeometryFactory geometryFactory;
-    private com.vividsolutions.jts.geom.GeometryFactory targetGeometryFactory;
 
     public BathymetryDataParser(int sourceEPSG) {
         this.sourceEPSG = sourceEPSG;
@@ -41,8 +40,6 @@ public class BathymetryDataParser {
             targetCRS = CRS.decode("EPSG:4326");
             transform = CRS.findMathTransform(sourceCRS, targetCRS);
             geometryFactory = new GeometryFactory(new PrecisionModel(), sourceEPSG);
-            targetGeometryFactory =
-                    new com.vividsolutions.jts.geom.GeometryFactory(new com.vividsolutions.jts.geom.PrecisionModel(), 4326);
         } catch (FactoryException e) {
             throw new DataParsingException("wrong epsg code");
         }
@@ -53,6 +50,7 @@ public class BathymetryDataParser {
 
         ParsedPoint parsedPoint = optionalParsedPoint.orElseThrow(() -> new DataParsingException("not a point"));
         ParsedPoint transformedPoint = transformCoordinates(parsedPoint);
+
         return new BathymetryPointBuilder()
                 .point((float) transformedPoint.x, (float) transformedPoint.y)
                 .depth(transformedPoint.depth)

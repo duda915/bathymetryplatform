@@ -47,9 +47,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
-public class BathymetryDataSetControllerIntegration {
+public class BathymetryDataSetControllerIntegrationTest {
 
-    private Logger logger = LoggerFactory.getLogger(BathymetryDataSetControllerIntegration.class);
+    private Logger logger = LoggerFactory.getLogger(BathymetryDataSetControllerIntegrationTest.class);
 
     @Autowired
     private ApplicationUserService applicationUserService;
