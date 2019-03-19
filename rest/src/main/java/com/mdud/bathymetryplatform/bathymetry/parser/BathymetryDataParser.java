@@ -1,6 +1,7 @@
 package com.mdud.bathymetryplatform.bathymetry.parser;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointDTO;
 import com.mdud.bathymetryplatform.exception.DataParsingException;
 import org.geotools.geometry.jts.JTS;
@@ -17,9 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class BathymetryDataParser {
     private final Logger logger = LoggerFactory.getLogger(BathymetryDataParser.class);
@@ -31,13 +30,12 @@ public class BathymetryDataParser {
     private GeometryFactory geometryFactory;
     private com.vividsolutions.jts.geom.GeometryFactory targetGeometryFactory;
 
-    public BathymetryDataParser(int sourceEPSG)  {
+    public BathymetryDataParser(int sourceEPSG) {
         this.sourceEPSG = sourceEPSG;
         initParser();
     }
 
-    private void initParser()
-    {
+    private void initParser() {
         try {
             sourceCRS = CRS.decode("EPSG:" + sourceEPSG);
             targetCRS = CRS.decode("EPSG:4326");
@@ -50,39 +48,52 @@ public class BathymetryDataParser {
         }
     }
 
-    public BathymetryPointDTO parsePoint(String lineData) {
-        String elements[] = lineData.replaceAll("\\s+", " ").split(" ");
+    public BathymetryPoint parsePoint(String lineData) {
+        Optional<ParsedPoint> optionalParsedPoint = parseLine(lineData);
+
+        ParsedPoint parsedPoint = optionalParsedPoint.orElseThrow(() -> new DataParsingException("not a point"));
+        ParsedPoint transformedPoint = transformCoordinates(parsedPoint);
+        return new BathymetryPointBuilder()
+                .point((float) transformedPoint.x, (float) transformedPoint.y)
+                .depth(transformedPoint.depth)
+                .buildPoint();
+    }
+
+    private Optional<ParsedPoint> parseLine(String lineData) {
+        String[] elements = lineData.replaceAll("\\s+", " ").split(" ");
 
         List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
-        elementsList.removeAll(Arrays.asList(""));
+        elementsList.removeAll(Collections.singletonList(""));
 
-        if(elementsList.size() == 0) {
-            return null;
+        ParsedPoint parsedPoint;
+
+        if (elementsList.size() == 0) {
+            parsedPoint = null;
+        } else {
+            double x = Double.valueOf(elementsList.get(0));
+            double y = Double.valueOf(elementsList.get(1));
+            double depth = Double.valueOf(elementsList.get(2));
+            parsedPoint = new ParsedPoint(x, y, depth);
         }
 
-        //0 - x, 1 - y 2 - z
-        Double x = Double.valueOf(elementsList.get(0));
-        Double y = Double.valueOf(elementsList.get(1));
+        return Optional.ofNullable(parsedPoint);
+    }
 
-        Geometry geometry = geometryFactory.createPoint(new Coordinate(x, y));
+    private ParsedPoint transformCoordinates(ParsedPoint parsedPoint) {
+        Geometry geometry = geometryFactory.createPoint(new Coordinate(parsedPoint.x, parsedPoint.y));
         Point point = null;
         try {
             point = (Point) JTS.transform(geometry, transform);
         } catch (TransformException e) {
             e.printStackTrace();
+            throw new DataParsingException("failed to transform coordinates");
         }
 
-        com.vividsolutions.jts.geom.Coordinate pointCoords;
-        if(sourceEPSG == 4326) {
-            pointCoords = new com.vividsolutions.jts.geom.Coordinate(point.getX(), point.getY());
+        if(sourceEPSG != 4326) {
+            return new ParsedPoint(point.getY(), point.getX(), parsedPoint.depth);
         } else {
-            pointCoords = new com.vividsolutions.jts.geom.Coordinate(point.getY(), point.getX());
+            return new ParsedPoint(point.getX(), point.getY(), parsedPoint.depth);
         }
-        com.vividsolutions.jts.geom.Point targetPoint =
-                targetGeometryFactory.createPoint(pointCoords);
-        Double depth = Double.valueOf(elementsList.get(2));
-
-        return new BathymetryPointDTO(targetPoint, depth);
     }
 
     public List<BathymetryPoint> parseFile(MultipartFile file) {
@@ -99,16 +110,17 @@ public class BathymetryDataParser {
         List<BathymetryPoint> measures = new ArrayList<>();
 
         try {
-            BathymetryPointDTO headerCheck = parsePoint(lines[0]);
-            measures.add(new BathymetryPoint(headerCheck));
-        } catch (NumberFormatException ignored) {}
+            BathymetryPoint headerCheck = parsePoint(lines[0]);
+            measures.add(headerCheck);
+        } catch (NumberFormatException ignored) {
+        }
 
         try {
-            for(int i = 1; i < lines.length; i++) {
-                BathymetryPointDTO measureDTO = parsePoint(lines[i]);
-                if(measureDTO == null)
+            for (int i = 1; i < lines.length; i++) {
+                BathymetryPoint measure = parsePoint(lines[i]);
+                if (measure == null)
                     continue;
-                measures.add(new BathymetryPoint(measureDTO));
+                measures.add(measure);
             }
 
             return measures;
@@ -117,4 +129,18 @@ public class BathymetryDataParser {
         }
 
     }
+
+    private class ParsedPoint {
+        double x;
+        double y;
+        double depth;
+
+        ParsedPoint(double x, double y, double depth) {
+            this.x = x;
+            this.y = y;
+            this.depth = depth;
+        }
+    }
+
 }
+
