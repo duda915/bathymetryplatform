@@ -50,7 +50,7 @@ public class BathymetryDataParser {
         }
     }
 
-    private BathymetryPointDTO parsePoint(String lineData) {
+    public BathymetryPointDTO parsePoint(String lineData) {
         String elements[] = lineData.replaceAll("\\s+", " ").split(" ");
 
         List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
