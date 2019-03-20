@@ -10,12 +10,12 @@ import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class MailServiceTest {
 
     @InjectMocks
@@ -27,15 +27,12 @@ public class MailServiceTest {
     @Spy
     private IPService ipService = new IPService();
 
-    @Mock
-    private AppConfiguration appConfiguration;
-
     @Test
     public void sendActivationLink_ShouldSendMail() {
         ApplicationUser applicationUser = new ApplicationUser();
         RegistrationToken registrationToken = new RegistrationToken(applicationUser);
-        mailService.sendActivationLink(registrationToken);
 
+        mailService.sendActivationLink(registrationToken);
         verify(javaMailSender, times(1)).send(any(SimpleMailMessage.class));
     }
 
