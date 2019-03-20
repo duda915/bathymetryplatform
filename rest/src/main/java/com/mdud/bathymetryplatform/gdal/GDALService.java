@@ -1,5 +1,6 @@
 package com.mdud.bathymetryplatform.gdal;
 
+import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.exception.GDALException;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import org.apache.commons.io.IOUtils;
@@ -8,8 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 
 @Service
@@ -17,10 +21,13 @@ public class GDALService {
     private final Logger logger = LoggerFactory.getLogger(GDALService.class);
 
     private AppConfiguration appConfiguration;
+    private String columnName;
+    private String tableName;
 
-    @Autowired
     public GDALService(AppConfiguration appConfiguration) {
         this.appConfiguration = appConfiguration;
+        this.columnName = getColumnName();
+        this.tableName = getTableName();
     }
 
     public File createRaster(Long metaId) throws GDALException {
@@ -34,7 +41,7 @@ public class GDALService {
             Process process = processBuilder.start();
             int result = process.waitFor();
 
-            if(result != 0) {
+            if (result != 0) {
                 logger.error(new String(IOUtils.toByteArray(process.getInputStream())));
                 logger.error("GDAL error, check gdal installation and gdal sql configuration in application.properties");
                 throw new GDALException("GDAL terminated with non zero result");
@@ -59,8 +66,8 @@ public class GDALService {
     private StringBuilder buildCommandQuery(Long metaId) {
         StringBuilder commandQuery = new StringBuilder();
         commandQuery.append("-sql").append(" \"");
-        commandQuery.append("SELECT * FROM ").append(appConfiguration.getGDALPointTable()).append(" ");
-        commandQuery.append("WHERE ").append(appConfiguration.getGDALMetaColumn()).append(" ");
+        commandQuery.append("SELECT * FROM ").append(tableName).append(" ");
+        commandQuery.append("WHERE ").append(columnName).append(" ");
         commandQuery.append("= ").append(metaId).append("\"");
         return commandQuery;
     }
@@ -74,5 +81,21 @@ public class GDALService {
         commandSource.append("user=").append(appConfiguration.getDBUsername()).append(" ");
         commandSource.append("password=").append(appConfiguration.getDBPassword()).append("\"");
         return commandSource;
+    }
+
+    private String getColumnName() {
+        try {
+            Field field = BathymetryPoint.class.getDeclaredField("bathymetryId");
+            Column column = field.getAnnotation(Column.class);
+            return column.name();
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException("no such field exception");
+        }
+    }
+
+    private String getTableName() {
+        Class clazz = BathymetryPoint.class;
+        Table table = (Table) clazz.getAnnotation(Table.class);
+        return table.name();
     }
 }

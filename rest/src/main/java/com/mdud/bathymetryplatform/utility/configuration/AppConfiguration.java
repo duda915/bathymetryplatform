@@ -5,8 +5,6 @@ public interface AppConfiguration {
     String getServerPort();
 
     String getGDALTargetLocation();
-    String getGDALMetaColumn();
-    String getGDALPointTable();
 
     String getDBHost();
     String getDBPort();
