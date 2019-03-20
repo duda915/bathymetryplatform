@@ -31,7 +31,7 @@ public class AppConfigurationImpl implements AppConfiguration {
     @Value("${bathymetry.gdal.pointtable}")
     private String gdalPointTable;
 
-    @Value("bathymetry.server.port")
+    @Value("${bathymetry.server.port}")
     private String port;
 
     @Override
