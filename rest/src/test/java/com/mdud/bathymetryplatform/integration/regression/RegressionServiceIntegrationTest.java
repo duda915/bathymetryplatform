@@ -2,6 +2,7 @@ package com.mdud.bathymetryplatform.integration.regression;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
+import com.mdud.bathymetryplatform.regression.RegressionException;
 import com.mdud.bathymetryplatform.regression.RegressionService;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfigurationImpl;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -33,10 +34,16 @@ public class RegressionServiceIntegrationTest {
 
     @Test
     public void getResults() {
-        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(18.4, 55.0), new Coordinate(18.5,54.8));
+        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(18.0, 55.0), new Coordinate(19.5,54.2));
         List<BathymetryPoint> list = regressionService.getResults(boxRectangle);
 
         list.forEach(System.out::println);
         Assert.assertFalse(list.size() == 0);
+    }
+
+    @Test(expected = RegressionException.class)
+    public void getResults_OutOfBounds_ShouldThrowException() {
+        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(12.0, 55.0), new Coordinate(19.5,54.2));
+        regressionService.getResults(boxRectangle);
     }
 }
