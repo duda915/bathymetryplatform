@@ -27,6 +27,9 @@ public class MailServiceTest {
     @Spy
     private IPService ipService = new IPService();
 
+    @Mock
+    private AppConfiguration appConfiguration;
+
     @Test
     public void sendActivationLink_ShouldSendMail() {
         ApplicationUser applicationUser = new ApplicationUser();

@@ -31,6 +31,14 @@ public class AppConfigurationImpl implements AppConfiguration {
     @Value("${bathymetry.gdal.pointtable}")
     private String gdalPointTable;
 
+    @Value("bathymetry.server.port")
+    private String port;
+
+    @Override
+    public String getServerPort() {
+        return port;
+    }
+
     @Override
     public String getGDALTargetLocation() {
         return gdalTargetLocation;
