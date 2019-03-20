@@ -17,4 +17,6 @@ public interface AppConfiguration {
     String getGeoServerPassword();
     String getGeoServerWorkspaceName();
     String getGeoServerCoverageStoresPath();
+
+    String getRegressionServiceUrl();
 }

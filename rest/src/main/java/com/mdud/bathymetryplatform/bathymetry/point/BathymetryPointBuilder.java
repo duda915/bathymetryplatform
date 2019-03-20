@@ -14,7 +14,7 @@ public class BathymetryPointBuilder {
         geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
     }
 
-    public BathymetryPointBuilder point(float x, float y) {
+    public BathymetryPointBuilder point(double x, double y) {
         point = geometryFactory.createPoint(new Coordinate(x, y));
         return this;
     }

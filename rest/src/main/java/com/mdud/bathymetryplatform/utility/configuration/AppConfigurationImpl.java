@@ -28,6 +28,9 @@ public class AppConfigurationImpl implements AppConfiguration {
     @Value("${bathymetry.server.port}")
     private String port;
 
+    @Value("${bathymetry.regression.url}")
+    private String regressionUrl;
+
     @Override
     public String getServerPort() {
         return port;
@@ -103,5 +106,10 @@ public class AppConfigurationImpl implements AppConfiguration {
     public String getGeoServerCoverageStoresPath() {
         return geoServerHost + "rest/workspaces/" + geoServerWorkspaceName
                 + "/coveragestores/";
+    }
+
+    @Override
+    public String getRegressionServiceUrl() {
+        return regressionUrl;
     }
 }
