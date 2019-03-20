@@ -27,15 +27,15 @@ public class RegressionServiceIntegrationTest {
     @Test
     public void boundsInit() {
         System.out.println(regressionService.getBounds());
-        Assert.assertEquals(17.95, regressionService.getBounds().getUpperLeftVertex().x, 0.01);
-        Assert.assertEquals(54.02, regressionService.getBounds().getUpperLeftVertex().y, 0.01);
-        Assert.assertEquals(19.58, regressionService.getBounds().getLowerRightVertex().x, 0.01);
-        Assert.assertEquals(55.03, regressionService.getBounds().getLowerRightVertex().y, 0.01);
+        Assert.assertEquals(17.95, regressionService.getBounds().getUpperLeftVertex().x, 0.15);
+        Assert.assertEquals(55.03, regressionService.getBounds().getUpperLeftVertex().y, 0.15);
+        Assert.assertEquals(19.58, regressionService.getBounds().getLowerRightVertex().x, 0.15);
+        Assert.assertEquals(54.02, regressionService.getBounds().getLowerRightVertex().y, 0.15);
     }
 
     @Test
     public void getResults() {
-        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(18.0, 55.0), new Coordinate(19.5,54.2));
+        BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(18.1, 54.9), new Coordinate(19.4,54.2));
         List<BathymetryPoint> list = regressionService.getResults(boxRectangle);
 
         list.forEach(System.out::println);

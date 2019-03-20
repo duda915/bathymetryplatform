@@ -69,6 +69,11 @@ public class RegressionController {
         return createFileResponseEntity(bathymetryFileBuilder.buildFile().getBytes());
     }
 
+    @GetMapping("/bounds")
+    public BoxRectangle getBounds() {
+        return regressionService.getBounds();
+    }
+
     private ResponseEntity<byte[]> createFileResponseEntity(byte[] outFile) {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.add("content-disposition", "attachment; filename=" + "regressionresults.txt");

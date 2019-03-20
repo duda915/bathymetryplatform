@@ -1,23 +1,15 @@
 package com.mdud.bathymetryplatform.regression;
 
-import com.mdud.bathymetryplatform.bathymetry.parser.BathymetryDataParser;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.utility.configuration.AppConfiguration;
 import com.vividsolutions.jts.geom.Coordinate;
-import org.geotools.geometry.Envelope2D;
-import org.geotools.referencing.CRS;
-import org.opengis.geometry.BoundingBox;
-import org.opengis.referencing.FactoryException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,12 +70,18 @@ public class RegressionService {
         Coordinate upperLeft = null;
         Coordinate lowerRight = null;
         if (bounds != null) {
-            upperLeft = new Coordinate(Double.valueOf(bounds[0]) + 0.1, Double.valueOf(bounds[1]) - 0.1);
-            lowerRight = new Coordinate(Double.valueOf(bounds[2]) - 0.1, Double.valueOf(bounds[3]) + 0.1);
+            upperLeft = new Coordinate(Double.valueOf(bounds[0]), Double.valueOf(bounds[3]));
+            lowerRight = new Coordinate(Double.valueOf(bounds[2]), Double.valueOf(bounds[1]));
         }
 
         upperLeft = RegressionCoordTransformer.transformFrom32634(upperLeft);
         lowerRight = RegressionCoordTransformer.transformFrom32634(lowerRight);
+
+        upperLeft.x = upperLeft.x + 0.1;
+        upperLeft.y = upperLeft.y - 0.1;
+
+        lowerRight.x = lowerRight.x - 0.1;
+        lowerRight.y = lowerRight.y + 0.1;
 
         this.bounds = new BoxRectangle(upperLeft, lowerRight);
     }
