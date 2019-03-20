@@ -72,6 +72,12 @@ services:
       - ./rest:/app
     command: java -jar -Dspring.profiles.active=production /app/App.jar
 
+  regressioncontainer:
+    container_name: regression
+    image: lukaszciesielski/first_regression:firsttry
+    ports:
+      - "5000:5000"
+
 networks:
   bathymetrynetwork:
     driver: bridge
