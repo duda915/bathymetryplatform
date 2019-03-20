@@ -60,10 +60,11 @@ public class RegressionService {
     }
 
     private StringBuilder buildQuery(Coordinate upperLeft, Coordinate lowerRight) {
-        // TODO resolution logic
+        int xRes = (int) ((lowerRight.x - upperLeft.x) / 50);
+        int yRes = (int) ((upperLeft.y - lowerRight.y) / 50);
         StringBuilder regressionServiceQuery = new StringBuilder();
         regressionServiceQuery.append(appConfiguration.getRegressionServiceUrl());
-        regressionServiceQuery.append("/depthArea?xresolution=1000&yresolution=1000");
+        regressionServiceQuery.append("/depthArea?xresolution=").append(xRes).append("&yresolution=").append(yRes);
         regressionServiceQuery.append("&x1=").append(upperLeft.x);
         regressionServiceQuery.append("&y1=").append(lowerRight.y);
         regressionServiceQuery.append("&x2=").append(lowerRight.x);
