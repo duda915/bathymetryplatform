@@ -7,6 +7,8 @@ import com.mdud.bathymetryplatform.bathymetry.parser.BathymetryFileBuilder;
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
 import com.mdud.bathymetryplatform.bathymetry.polygonselector.BoxRectangle;
 import com.mdud.bathymetryplatform.controller.ResourceIdResponse;
+import com.mdud.bathymetryplatform.gdal.GDALService;
+import com.mdud.bathymetryplatform.geoserver.GeoServerService;
 import com.mdud.bathymetryplatform.user.ApplicationUser;
 import com.mdud.bathymetryplatform.user.ApplicationUserService;
 import com.mdud.bathymetryplatform.utility.SQLDateBuilder;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.security.Principal;
 import java.util.List;
 
@@ -26,11 +29,17 @@ public class RegressionController {
     private final RegressionService regressionService;
     private final BathymetryDataSetService bathymetryDataSetService;
     private final ApplicationUserService applicationUserService;
+    private final GDALService gdalService;
+    private final GeoServerService geoServerService;
 
-    public RegressionController(RegressionService regressionService, BathymetryDataSetService bathymetryDataSetService, ApplicationUserService applicationUserService) {
+    public RegressionController(RegressionService regressionService, BathymetryDataSetService bathymetryDataSetService,
+                                ApplicationUserService applicationUserService, GDALService gdalService,
+                                GeoServerService geoServerService) {
         this.regressionService = regressionService;
         this.bathymetryDataSetService = bathymetryDataSetService;
         this.applicationUserService = applicationUserService;
+        this.gdalService = gdalService;
+        this.geoServerService = geoServerService;
     }
 
     @PreAuthorize("hasAuthority('WRITE')")
@@ -42,6 +51,12 @@ public class RegressionController {
                  + boxRectangle.getUpperLeftVertex().toString(),
                 SQLDateBuilder.now(), "RegressionService");
         BathymetryDataSet bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSetDTO, pointList);
+        File raster = gdalService.createRaster(bathymetryDataSet.getId());
+        geoServerService.addCoverageStore(raster);
+        if(raster != null) {
+            raster.delete();
+        }
+
         return new ResourceIdResponse(bathymetryDataSet.getId(), "results published");
     }
 
