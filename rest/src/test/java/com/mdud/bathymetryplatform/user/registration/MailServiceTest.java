@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -23,6 +24,9 @@ public class MailServiceTest {
     @Mock
     private JavaMailSender javaMailSender;
 
+    @Spy
+    private IPService ipService = new IPService();
+
     @Mock
     private AppConfiguration appConfiguration;
 
@@ -34,5 +38,6 @@ public class MailServiceTest {
 
         verify(javaMailSender, times(1)).send(any(SimpleMailMessage.class));
     }
+
 
 }

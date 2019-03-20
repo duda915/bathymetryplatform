@@ -1,7 +1,6 @@
 package com.mdud.bathymetryplatform.bathymetry.parser;
 
 import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPoint;
-import com.mdud.bathymetryplatform.bathymetry.point.BathymetryPointBuilder;
 import com.mdud.bathymetryplatform.exception.DataParsingException;
 import org.junit.Test;
 

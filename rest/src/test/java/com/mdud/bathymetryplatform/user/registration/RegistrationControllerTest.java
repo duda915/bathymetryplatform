@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,8 +32,8 @@ public class RegistrationControllerTest {
     @Mock
     private RegistrationService registrationService;
 
-    @Mock
-    private AppConfiguration appConfiguration;
+    @Spy
+    private IPService ipService = new IPService();
 
     private MockMvc mockMvc;
 
@@ -82,12 +83,12 @@ public class RegistrationControllerTest {
     @Test
     public void activateAccount_ActivateAccountWithExistingToken_ShouldActivateAccountAndRedirect() throws Exception {
         RegistrationToken registrationToken = new RegistrationToken();
-        when(appConfiguration.getServerIPAddress()).thenReturn("localhost");
+        String redirectIp = ipService.getExternalIp();
 
         mockMvc.perform(get(endpoint)
                 .param("token", registrationToken.getToken()))
                 .andExpect(status().isFound())
-                .andExpect(redirectedUrl("http://localhost:3000"));
+                .andExpect(redirectedUrl("http://" + redirectIp));
 
         verify(registrationService, times(1)).activateUser(registrationToken.getToken());
     }

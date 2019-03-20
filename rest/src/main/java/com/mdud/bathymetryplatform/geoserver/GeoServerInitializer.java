@@ -51,7 +51,7 @@ public class GeoServerInitializer extends AbstractInitializer {
 
         } catch (GeoServerException e) {
             SpringApplication.exit(applicationContext, () -> 1);
-            System.out.println("geoserver is not running");
+            logger.error("geoserver is not running");
         }
     }
 
