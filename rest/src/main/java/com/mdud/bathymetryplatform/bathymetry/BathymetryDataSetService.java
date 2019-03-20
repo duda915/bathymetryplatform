@@ -74,5 +74,10 @@ public class BathymetryDataSetService {
         BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(bathymetryDataSetDTO, bathymetryPoints);
         return bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
     }
+
+    public BathymetryDataSet addDataSet(BathymetryDataSetDTO bathymetryDataSetDTO, List<BathymetryPoint> bathymetryPoints) {
+        BathymetryDataSet bathymetryDataSet = new BathymetryDataSet(bathymetryDataSetDTO, bathymetryPoints);
+        return bathymetryDataSetRepository.nativeSave(bathymetryDataSet);
+    }
 }
 

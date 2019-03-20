@@ -48,10 +48,12 @@ public class RegressionService {
 
         List<BathymetryPoint> bathymetryPoints = new ArrayList<>();
 
-        response.getBody().getRegressionPointResponseList().forEach(point ->
-                bathymetryPoints.add(new BathymetryPointBuilder()
-                        .point(point.getX(), point.getY())
-                        .depth(point.getDepth()).buildPoint())
+        response.getBody().getRegressionPointResponseList().forEach(point -> {
+                    Coordinate coord = RegressionCoordTransformer.transformFrom32634(new Coordinate(point.getX(), point.getY()));
+                    bathymetryPoints.add(new BathymetryPointBuilder()
+                            .point(coord.x, coord.y)
+                            .depth(point.getDepth()).buildPoint());
+                }
         );
 
         return bathymetryPoints;
@@ -83,26 +85,6 @@ public class RegressionService {
         lowerRight = RegressionCoordTransformer.transformFrom32634(lowerRight);
 
         this.bounds = new BoxRectangle(upperLeft, lowerRight);
-    }
-
-    private byte[] buildFileForParser(String[] bounds) {
-        StringBuilder builder = new StringBuilder();
-
-        builder.append(bounds[0]);
-        builder.append(" ");
-        builder.append(bounds[1]);
-        builder.append(" ");
-        builder.append("0");
-        builder.append("\n");
-
-        builder.append(bounds[2]);
-        builder.append(" ");
-        builder.append(bounds[3]);
-        builder.append(" ");
-        builder.append("0");
-        builder.append("\n");
-
-        return builder.toString().getBytes();
     }
 
     public BoxRectangle getBounds() {

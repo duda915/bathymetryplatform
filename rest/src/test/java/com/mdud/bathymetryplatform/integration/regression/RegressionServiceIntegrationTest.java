@@ -36,7 +36,7 @@ public class RegressionServiceIntegrationTest {
         BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(18.4, 55.0), new Coordinate(18.5,54.8));
         List<BathymetryPoint> list = regressionService.getResults(boxRectangle);
 
+        list.forEach(System.out::println);
         Assert.assertFalse(list.size() == 0);
     }
-
 }
