@@ -45,10 +45,9 @@ public class BathymetryDataParser {
         }
     }
 
-    public BathymetryPoint parsePoint(String lineData) {
-        Optional<ParsedPoint> optionalParsedPoint = parseLine(lineData);
+    BathymetryPoint parsePoint(String lineData) {
+        ParsedPoint parsedPoint = parseLine(lineData).orElseThrow(() -> new DataParsingException("line contains invalid point"));
 
-        ParsedPoint parsedPoint = optionalParsedPoint.orElseThrow(() -> new DataParsingException("not a point"));
         ParsedPoint transformedPoint = transformCoordinates(parsedPoint);
 
         return new BathymetryPointBuilder()
@@ -63,15 +62,15 @@ public class BathymetryDataParser {
         List<String> elementsList = new ArrayList<>(Arrays.asList(elements));
         elementsList.removeAll(Collections.singletonList(""));
 
-        ParsedPoint parsedPoint;
+        ParsedPoint parsedPoint = null;
 
-        if (elementsList.size() == 0) {
-            parsedPoint = null;
-        } else {
+        try {
             double x = Double.valueOf(elementsList.get(0));
             double y = Double.valueOf(elementsList.get(1));
             double depth = Double.valueOf(elementsList.get(2));
+
             parsedPoint = new ParsedPoint(x, y, depth);
+        } catch (Exception ignored) {
         }
 
         return Optional.ofNullable(parsedPoint);
@@ -79,7 +78,8 @@ public class BathymetryDataParser {
 
     private ParsedPoint transformCoordinates(ParsedPoint parsedPoint) {
         Geometry geometry = geometryFactory.createPoint(new Coordinate(parsedPoint.x, parsedPoint.y));
-        Point point = null;
+        Point point;
+
         try {
             point = (Point) JTS.transform(geometry, transform);
         } catch (TransformException e) {
@@ -87,45 +87,40 @@ public class BathymetryDataParser {
             throw new DataParsingException("failed to transform coordinates");
         }
 
-        if(sourceEPSG != 4326) {
+        if (sourceEPSG != 4326) {
             return new ParsedPoint(point.getY(), point.getX(), parsedPoint.depth);
         } else {
             return new ParsedPoint(point.getX(), point.getY(), parsedPoint.depth);
         }
     }
 
-    public List<BathymetryPoint> parseFile(MultipartFile file) {
-        try {
-            return parseFile(file.getBytes());
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new DataParsingException("cannot read file");
-        }
-    }
-
     public List<BathymetryPoint> parseFile(byte[] bytes) {
-        String[] lines = new String(bytes, StandardCharsets.UTF_8).split("\n");
+        String[] l = new String(bytes, StandardCharsets.UTF_8).split("\n");
+        ArrayList<String> lines = new ArrayList<>(Arrays.asList(l));
+
         List<BathymetryPoint> measures = new ArrayList<>();
 
         try {
-            BathymetryPoint headerCheck = parsePoint(lines[0]);
+            BathymetryPoint headerCheck = parsePoint(lines.remove(0));
             measures.add(headerCheck);
-        } catch (NumberFormatException ignored) {
+        } catch (DataParsingException ignored) {
         }
 
-        try {
-            for (int i = 1; i < lines.length; i++) {
-                BathymetryPoint measure = parsePoint(lines[i]);
-                if (measure == null)
-                    continue;
-                measures.add(measure);
-            }
+        lines.forEach(line -> {
+            BathymetryPoint measure = parsePoint(line);
+            measures.add(measure);
+        });
 
-            return measures;
-        } catch (NumberFormatException e) {
+        validatePoints(measures);
+
+        return measures;
+
+    }
+
+    private void validatePoints(List<BathymetryPoint> measures) {
+        if(measures.size() == 0) {
             throw new DataParsingException("failed to read file");
         }
-
     }
 
     private class ParsedPoint {
