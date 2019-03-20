@@ -26,6 +26,7 @@ public class RegressionServiceIntegrationTest {
 
     @Test
     public void boundsInit() {
+        System.out.println(regressionService.getBounds());
         Assert.assertEquals(17.95, regressionService.getBounds().getUpperLeftVertex().x, 0.01);
         Assert.assertEquals(54.02, regressionService.getBounds().getUpperLeftVertex().y, 0.01);
         Assert.assertEquals(19.58, regressionService.getBounds().getLowerRightVertex().x, 0.01);

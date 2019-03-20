@@ -78,8 +78,8 @@ public class RegressionService {
         Coordinate upperLeft = null;
         Coordinate lowerRight = null;
         if (bounds != null) {
-            upperLeft = new Coordinate(Double.valueOf(bounds[0]), Double.valueOf(bounds[1]));
-            lowerRight = new Coordinate(Double.valueOf(bounds[2]), Double.valueOf(bounds[3]));
+            upperLeft = new Coordinate(Double.valueOf(bounds[0]) + 0.1, Double.valueOf(bounds[1]) - 0.1);
+            lowerRight = new Coordinate(Double.valueOf(bounds[2]) - 0.1, Double.valueOf(bounds[3]) + 0.1);
         }
 
         upperLeft = RegressionCoordTransformer.transformFrom32634(upperLeft);
