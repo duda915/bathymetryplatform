@@ -57,10 +57,13 @@ class MainWindow extends Component {
       const newLayer = this.createLayer(element.id);
       layersGroup.getLayers().push(newLayer);
     });
-    this.setState({
-      selectedLayers: ids,
-      selectedLayersGroup: layersGroup
-    });
+    this.setState(
+      {
+        selectedLayers: ids,
+        selectedLayersGroup: layersGroup
+      },
+      () => this.tryMapUpdate()
+    );
   };
 
   createLayer(layer) {
@@ -112,7 +115,7 @@ class MainWindow extends Component {
       nextStyle = "primarystyle";
     }
 
-    this.setState({ layerStyle: nextStyle }, (callback) => {
+    this.setState({ layerStyle: nextStyle }, callback => {
       this.state.selectedLayersGroup.getLayers().forEach(layer => {
         const params = layer.getSource().getParams();
         params.STYLES = this.state.layerStyle;
@@ -122,9 +125,11 @@ class MainWindow extends Component {
   };
 
   setRegressionMode = () => {
-    console.log("test");
-  } 
-  
+    if (this.mapReference.current != null) {
+      this.setSelectedLayers([]);
+      this.mapReference.current.turnRegressionMode();
+    }
+  };
 
   render() {
     return (
@@ -138,7 +143,7 @@ class MainWindow extends Component {
             zoomToLayer={this.zoomToLayer}
             zoomFit={this.zoomFit}
             setRegressionMode={this.setRegressionMode}
-    />
+          />
           <div className="p-col main-window">
             <div className="p-grid p-nogutter">
               <Router>

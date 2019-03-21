@@ -1,8 +1,12 @@
 import downloadjs from "downloadjs";
 import { platformModifierKeyOnly } from "ol/events/condition.js";
-import { boundingExtent } from "ol/extent.js";
+import { boundingExtent, containsExtent } from "ol/extent.js";
 import { DragBox } from "ol/interaction.js";
 import LayerGroup from "ol/layer/Group";
+import * as Polygon from "ol/geom/Polygon";
+import Feature from "ol/Feature";
+import { default as VectorSource } from "ol/source/Vector";
+import { default as VectorLayer } from "ol/layer/Vector";
 import { default as LayerTile, default as TileLayer } from "ol/layer/Tile";
 import Map from "ol/Map";
 import { transform, transformExtent } from "ol/proj.js";
@@ -122,7 +126,7 @@ export default class MapComponent extends Component {
               this.props.messageService(
                 "info",
                 "No data",
-                "no data found withing polygon"
+                "no data found within polygon"
               );
             } else {
               this.setState({
@@ -274,10 +278,94 @@ export default class MapComponent extends Component {
       });
   }
 
+  addRegressionDragBoxInteraction = () => {
+    let dragBox = new DragBox({
+      condition: platformModifierKeyOnly
+    });
+
+    dragBox.on(
+      "boxend",
+      function() {
+        let extent = dragBox.getGeometry().getExtent();
+        let transformed = transformExtent(extent, "EPSG:3857", "EPSG:4326");
+        const upperLeftCoord = new CoordinateDTO(
+          transformed[0],
+          transformed[3]
+        );
+        const lowerLeftCoord = new CoordinateDTO(
+          transformed[2],
+          transformed[1]
+        );
+        const box = new BoundingBoxDTO(upperLeftCoord, lowerLeftCoord);
+        this.setState({ rbox: box });
+
+        if (containsExtent(this.state.regressionExtent, extent)) {
+          this.setState({
+            regressionDialog: true
+          });
+        }
+      }.bind(this)
+    );
+
+    this.map.addInteraction(dragBox);
+  };
+
+  zoomAndDrawRegressionBounds = () => {
+    this.api
+      .restData()
+      .getRegressionBounds()
+      .then(response => {
+        const upperLeft = response.data.upperLeftVertex;
+        const lowerRight = response.data.lowerRightVertex;
+        const coordExtentUL = [upperLeft.x, upperLeft.y];
+        const coordExtentLR = [lowerRight.x, lowerRight.y];
+
+        const reprojectedUL = transform(
+          coordExtentUL,
+          "EPSG:4326",
+          "EPSG:3857"
+        );
+        const reprojectedLR = transform(
+          coordExtentLR,
+          "EPSG:4326",
+          "EPSG:3857"
+        );
+
+        const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
+
+        this.setState({
+          regressionExtent: ext
+        });
+
+        const polygon = new Polygon.fromExtent(ext);
+        const feature = new Feature(polygon);
+        const vectorSource = new VectorSource();
+        vectorSource.addFeature(feature);
+
+        const vectorLayer = new VectorLayer({
+          source: vectorSource
+        });
+
+        this.map.getView().fit(ext);
+        this.map.addLayer(vectorLayer);
+      });
+  };
+
+  turnRegressionMode = () => {
+    this.props.messageService(
+      "info",
+      "Regression Service",
+      "Select area inside bounds to calculate bathymetry with neural network"
+    );
+    this.zoomAndDrawRegressionBounds();
+    this.map.un("singleclick", this.olGenerateGetFeatureInfoFunction);
+    this.addRegressionDragBoxInteraction();
+  };
+
   zoomFit = () => {
     const layers = this.getCol(this.props.layers, "id");
-    
-    if(layers.length === 0) {
+
+    if (layers.length === 0) {
       return;
     }
 
@@ -304,7 +392,7 @@ export default class MapComponent extends Component {
         const ext = new boundingExtent([reprojectedUL, reprojectedLR]);
         this.map.getView().fit(ext);
       });
-  }
+  };
 
   loadLayer(layer) {
     const wmsParams = {
@@ -348,7 +436,15 @@ export default class MapComponent extends Component {
             return;
           }
 
-          let info = "measurement: " + features[0].properties.GRAY_INDEX;
+          const transformedEvtCoords = transform(
+            evt.coordinate,
+            "EPSG:3857",
+            "EPSG:4326"
+          );
+
+          let info = `coords:   ${transformedEvtCoords[0]} ${transformedEvtCoords[1]}`
+
+          info += "\nmeasurement: " + features[0].properties.GRAY_INDEX;
           this.props.messageService("info", "Point", info);
         });
     }
@@ -364,6 +460,49 @@ export default class MapComponent extends Component {
     this.loadLayers(layersIds);
   }
 
+  hideRegressionDialog = () => {
+    this.setState({
+      regressionDialog: false
+    });
+  };
+
+  downloadRegression = () => {
+    this.props.loadingService(true);
+    this.api
+      .restData()
+      .downloadRegressionResults(this.state.rbox)
+      .then(response =>
+        downloadjs(response.data, "regressionData.csv", "text/plain")
+      )
+      .catch(() =>
+        this.props.messageService("error", "Error", "failed to download data")
+      )
+      .finally(() => this.props.loadingService(false));
+  };
+
+  publishRegression = () => {
+    this.props.loadingService(true);
+    this.api
+      .restData()
+      .publishRegressionResults(this.state.rbox)
+      .then(() =>
+        this.props.messageService(
+          "success",
+          "Success",
+          "data published successfully"
+        )
+      )
+      .catch(error =>
+        this.props.messageService("error", "Error", error.response.data.message)
+      )
+      .finally(() => {
+        this.props.loadingService(false);
+        this.setState({
+          regressionDialog: false
+        });
+      });
+  };
+
   render() {
     const dialogFooter = (
       <div>
@@ -373,6 +512,21 @@ export default class MapComponent extends Component {
           onClick={this.downloadAccept}
         />
         <Button label="Cancel" icon="pi pi-times" onClick={this.hideDialog} />
+      </div>
+    );
+
+    const regressionFooter = (
+      <div>
+        <Button
+          label="Publish"
+          icon="pi pi-check"
+          onClick={this.publishRegression}
+        />
+        <Button
+          label="Download"
+          icon="pi pi-download"
+          onClick={this.downloadRegression}
+        />
       </div>
     );
 
@@ -387,6 +541,17 @@ export default class MapComponent extends Component {
           onHide={this.hideDialog}
         >
           Found {this.state.selectionRecords} records.
+        </Dialog>
+        <Dialog
+          header="Regression Service"
+          footer={regressionFooter}
+          visible={this.state.regressionDialog}
+          width="350px"
+          modal={true}
+          onHide={this.hideRegressionDialog}
+        >
+          Regression Service will publish bathymetry data raster with resolution
+          based on selection size.
         </Dialog>
         <div id="map" style={{ height: "100%" }} />
       </div>
