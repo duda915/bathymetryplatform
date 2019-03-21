@@ -68,6 +68,7 @@ services:
     depends_on: 
       - geoservercontainer
       - postgiscontainer
+      - regressioncontainer
     volumes:
       - ./rest:/app
     command: java -jar -Dspring.profiles.active=production /app/App.jar

@@ -16,18 +16,16 @@ import java.util.List;
 @Service
 public class RegressionService {
 
-    private BoxRectangle bounds;
     private AppConfiguration appConfiguration;
     private RestTemplate restTemplate;
 
     public RegressionService(AppConfiguration appConfiguration) {
         this.appConfiguration = appConfiguration;
         this.restTemplate = new RestTemplate();
-        initBounds();
     }
 
     public List<BathymetryPoint> getResults(BoxRectangle boxRectangle) {
-        if (!bounds.buildGeometry(bounds).contains(boxRectangle.buildGeometry(boxRectangle))) {
+        if (!getBounds().buildGeometry(getBounds()).contains(boxRectangle.buildGeometry(boxRectangle))) {
             throw new RegressionException("out of bounds");
         }
 
@@ -64,7 +62,7 @@ public class RegressionService {
         return regressionServiceQuery;
     }
 
-    private void initBounds() {
+    public BoxRectangle getBounds() {
         String[] bounds = restTemplate.getForObject(appConfiguration.getRegressionServiceUrl() + "/bounds", String[].class);
 
         Coordinate upperLeft = null;
@@ -83,10 +81,7 @@ public class RegressionService {
         lowerRight.x = lowerRight.x - 0.1;
         lowerRight.y = lowerRight.y + 0.1;
 
-        this.bounds = new BoxRectangle(upperLeft, lowerRight);
+        return new BoxRectangle(upperLeft, lowerRight);
     }
 
-    public BoxRectangle getBounds() {
-        return bounds;
-    }
 }
