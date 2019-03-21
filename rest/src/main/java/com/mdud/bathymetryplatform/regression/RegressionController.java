@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @CrossOrigin
@@ -47,9 +49,14 @@ public class RegressionController {
     public ResourceIdResponse publishResults(Principal principal, @RequestBody BoxRectangle boxRectangle) {
         List<BathymetryPoint> pointList = regressionService.getResults(boxRectangle);
         ApplicationUser applicationUser = applicationUserService.getApplicationUser(principal.getName());
-        BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(applicationUser, 4326, "Regression: " + boxRectangle.getLowerRightVertex().toString()
-                 + boxRectangle.getUpperLeftVertex().toString(),
-                SQLDateBuilder.now(), "RegressionService");
+
+        Date date = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        String time = calendar.get(Calendar.HOUR_OF_DAY) + ":" + calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND);
+
+        BathymetryDataSetDTO bathymetryDataSetDTO = new BathymetryDataSetDTO(applicationUser, 4326, "Regression - " + time,
+                SQLDateBuilder.now(), "RegressionService: " + principal.getName());
         BathymetryDataSet bathymetryDataSet = bathymetryDataSetService.addDataSet(bathymetryDataSetDTO, pointList);
         File raster = gdalService.createRaster(bathymetryDataSet.getId());
         geoServerService.addCoverageStore(raster);

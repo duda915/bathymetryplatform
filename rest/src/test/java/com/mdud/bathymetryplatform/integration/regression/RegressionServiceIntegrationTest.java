@@ -47,4 +47,5 @@ public class RegressionServiceIntegrationTest {
         BoxRectangle boxRectangle = new BoxRectangle(new Coordinate(12.0, 55.0), new Coordinate(19.5,54.2));
         regressionService.getResults(boxRectangle);
     }
+
 }
