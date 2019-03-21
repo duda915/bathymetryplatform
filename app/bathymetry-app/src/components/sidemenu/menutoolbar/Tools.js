@@ -51,19 +51,19 @@ export default class Tools extends React.Component {
           <Toolbar className="tools-toolbar">
             <div className="p-toolbar-group-left">
               <Button
-                style={{ marginRight: "10px" }}
+                style={{ marginRight: "5px" }}
                 className="p-button tools-button flat-button"
                 onClick={this.props.signOut}
                 icon="pi pi-sign-out"
               />
               <Button
-                style={{ marginRight: "10px" }}
+                style={{ marginRight: "5px" }}
                 className="p-button tools-button flat-button"
                 onClick={this.props.changeStyle}
                 icon="pi pi-eye"
               />
               <Button
-                style={{ marginRight: "10px" }}
+                style={{ marginRight: "5px" }}
                 className="p-button tools-button flat-button"
                 onClick={e =>
                   this.setState({ showLayers: !this.state.showLayers })
@@ -74,6 +74,12 @@ export default class Tools extends React.Component {
                 className="p-button tools-button flat-button"
                 onClick={this.props.zoomFit}
                 icon="pi pi-search"
+              />
+              <Button
+                style={{ marginLeft: "5px" }}
+                className="p-button tools-button flat-button"
+                onClick={this.props.setRegressionMode}
+                icon="pi pi-bookmark"
               />
             </div>
           </Toolbar>

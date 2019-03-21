@@ -115,6 +115,11 @@ export default class API {
 
     rest.getEPSGCodes = () => axios.get(endpoints.epsg, this.authorization());
 
+    rest.getRegressionBounds = () => axios.get(endpoints.regressionBounds, this.authorization());
+
+    rest.publishRegressionResults = box => axios.post(endpoints.regressionPublish, box, this.authorization());
+    rest.downloadRegressionResults = box => axios.post(endpoints.regressionDownload, box, this.authorization()); 
+
     return rest;
   }
 

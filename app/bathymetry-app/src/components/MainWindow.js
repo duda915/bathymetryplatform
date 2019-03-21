@@ -112,7 +112,7 @@ class MainWindow extends Component {
       nextStyle = "primarystyle";
     }
 
-    this.setState({ layerStyle: nextStyle }, callback => {
+    this.setState({ layerStyle: nextStyle }, (callback) => {
       this.state.selectedLayersGroup.getLayers().forEach(layer => {
         const params = layer.getSource().getParams();
         params.STYLES = this.state.layerStyle;
@@ -120,6 +120,11 @@ class MainWindow extends Component {
       });
     });
   };
+
+  setRegressionMode = () => {
+    console.log("test");
+  } 
+  
 
   render() {
     return (
@@ -132,7 +137,8 @@ class MainWindow extends Component {
             toggleLayer={this.toggleLayer}
             zoomToLayer={this.zoomToLayer}
             zoomFit={this.zoomFit}
-          />
+            setRegressionMode={this.setRegressionMode}
+    />
           <div className="p-col main-window">
             <div className="p-grid p-nogutter">
               <Router>

@@ -17,5 +17,9 @@ export const endpoints = {
   user: `${restAPI}api/user`,
   registerUser: `${restAPI}api/register`,
 
-  epsg: `${restAPI}api/epsg`
+  epsg: `${restAPI}api/epsg`,
+  
+  regressionBounds: `${restAPI}api/regression/bounds`,
+  regressionPublish: `${restAPI}api/regression/publish`,
+  regressionDownload: `${restAPI}api/regression/download`
 };
