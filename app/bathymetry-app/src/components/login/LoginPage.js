@@ -27,13 +27,11 @@ export default class LandingPage extends Component {
   tryLogin = () => {
     const cookies = new Cookies();
     if (cookies.get("access_token")) {
-      this.props.loadingService(true);
       this.api
         .restUser()
         .getUser()
         .then(() => this.props.signIn())
         .catch(() => console.log("auto login not possible"))
-        .finally(() => this.props.loadingService(false));
     }
   };
 

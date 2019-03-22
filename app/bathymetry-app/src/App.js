@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Cookies from "universal-cookie";
 import { Growl } from "primereact/growl";
 
-import LoadingComponent from "./components/utility/LoadingComponent";
 import LoginPage from "./components/login/LoginPage";
 import AppWrapper from "./components/app/AppWrapper";
 
@@ -27,7 +26,6 @@ class App extends Component {
     this.signIn = this.signIn.bind(this);
     this.signOut = this.signOut.bind(this);
     this.showMessage = this.showMessage.bind(this);
-    this.showLoading = this.showLoading.bind(this);
   }
 
   changeLoginState(loginState) {
@@ -56,26 +54,19 @@ class App extends Component {
     });
   }
 
-  showLoading(boolean) {
-    this.progress.showLoading(boolean);
-  }
-
   render() {
     return (
       <div className="App">
         <LoadingSpinner />
         <Growl ref={ref => (this.growl = ref)} />
-        <LoadingComponent ref={ref => (this.progress = ref)} />
         {this.state.isLoggedIn ? (
           <AppWrapper
             messageService={this.showMessage}
-            loadingService={this.showLoading}
             signOut={this.signOut}
           />
         ) : (
           <LoginPage
             messageService={this.showMessage}
-            loadingService={this.showLoading}
             signIn={this.signIn}
           />
         )}
