@@ -2,13 +2,7 @@ import Cookies from "universal-cookie";
 
 export function getToken() {
   const cookies = new Cookies();
-  if (cookies.get("access_token")) {
-    this.api
-      .restUser()
-      .getUser()
-      .then(() => this.props.signIn())
-      .catch(() => console.log("auto login not possible"));
-  }
+  return cookies.get("access_token")
 }
 
 export function saveTokens(response) {

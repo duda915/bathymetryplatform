@@ -1,6 +1,5 @@
 import { ToggleButton } from "primereact/togglebutton";
 import React, { Component } from "react";
-import Cookies from "universal-cookie";
 import API from "../../services/API";
 import { LandingPageHeader } from "./layout/LandingPageHeader";
 import { VerticalSpacer } from "./layout/VerticalSpacer";
@@ -8,8 +7,9 @@ import { LoginForm } from "./login/LoginForm";
 import { RegisterForm } from "./register/RegisterForm";
 import "./LoginPage.scss";
 import LoginAsGuest from "./guest/LoginAsGuest";
+import { getToken } from "../../services/Token";
 
-export default class LandingPage extends Component {
+export default class LoginPage extends Component {
   constructor(props) {
     super(props);
 
@@ -25,8 +25,7 @@ export default class LandingPage extends Component {
   }
 
   tryLogin = () => {
-    const cookies = new Cookies();
-    if (cookies.get("access_token")) {
+    if (getToken()) {
       this.api
         .restUser()
         .getUser()
@@ -41,50 +40,15 @@ export default class LandingPage extends Component {
     });
   };
 
-  
-
-  saveTokens = response => {
-    const cookies = new Cookies();
-
-    const accessTokenExpireDate = new Date();
-    accessTokenExpireDate.setDate(
-      accessTokenExpireDate.getDate() + 60 * 60 * 1000
-    );
-    cookies.set("access_token", response.data.access_token, {
-      expires: accessTokenExpireDate
-    });
-
-    const refreshTokenExpireDate = new Date();
-    refreshTokenExpireDate.setDate(
-      refreshTokenExpireDate.getDate() + 24 * 60 * 60 * 1000
-    );
-    cookies.set("refresh_token", response.data.refresh_token, {
-      expires: refreshTokenExpireDate
-    });
-  };
-
   render() {
     return (
-      <div className="loginControl">
+      <div className="login-control">
         <div className="p-grid p-nogutter p-fluid">
           <LandingPageHeader />
 
           <div className="p-col-1 p-md-4" />
           <div className="p-col-10 p-md-4">
-            {this.state.register ? (
-              <RegisterForm
-                toggleRegisterForm={this.toggleRegisterForm}
-                messageService={this.props.messageService}
-                loadingService={this.props.loadingService}
-              />
-            ) : (
-              <LoginForm
-                signIn={this.props.signIn}
-                saveTokens={this.saveTokens}
-                messageService={this.props.messageService}
-                loadingService={this.props.loadingService}
-              />
-            )}
+            {this.state.register ? <RegisterForm /> : <LoginForm />}
           </div>
           <div className="p-col-1 p-md-4" />
 
