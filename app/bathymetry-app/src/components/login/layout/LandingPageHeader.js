@@ -1,10 +1,10 @@
 import React from "react";
 
-export function LandingPageHeader() {
+export function LoginPageHeader() {
   return (
     <>
       <div
-        className="p-col-12 logo"
+        className="p-col-12 login-page__header"
         style={{
           height: "15vh"
         }}

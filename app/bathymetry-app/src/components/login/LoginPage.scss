@@ -1,11 +1,11 @@
 @import '../../theme/AppTheme.scss';
 
-.login-control {
+.login-page {
     background-color: $disabled;
     height: 100vh;
 }
 
-.logo {
+.login-page__header {
     background-color: $primary;
     background-image: url('../../assets/logocolor.svg');
     background-position: center;

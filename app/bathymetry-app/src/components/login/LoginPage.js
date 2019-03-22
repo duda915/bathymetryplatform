@@ -1,7 +1,7 @@
 import { ToggleButton } from "primereact/togglebutton";
 import React, { Component } from "react";
 import API from "../../services/API";
-import { LandingPageHeader } from "./layout/LandingPageHeader";
+import { LoginPageHeader } from "./layout/LandingPageHeader";
 import { VerticalSpacer } from "./layout/VerticalSpacer";
 import { LoginForm } from "./login/LoginForm";
 import { RegisterForm } from "./register/RegisterForm";
@@ -42,9 +42,9 @@ export default class LoginPage extends Component {
 
   render() {
     return (
-      <div className="login-control">
+      <div className="login-page">
         <div className="p-grid p-nogutter p-fluid">
-          <LandingPageHeader />
+          <LoginPageHeader />
 
           <div className="p-col-1 p-md-4" />
           <div className="p-col-10 p-md-4">
