@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { ScrollPanel } from "primereact/scrollpanel";
 
 import { Layer } from "../layerswitcher/Layer";
-import API from "../../../services/API";
+import API from "../../../../services/API";
 import "./Tools.scss";
 
 export default class Tools extends React.Component {

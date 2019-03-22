@@ -7,7 +7,7 @@ import { LandingPageHeader } from "./layout/LandingPageHeader";
 import { VerticalSpacer } from "./layout/VerticalSpacer";
 import { LoginForm } from "./login/LoginForm";
 import { RegisterForm } from "./register/RegisterForm";
-import "./LandingPage.scss";
+import "./LoginPage.scss";
 
 export default class LandingPage extends Component {
   constructor(props) {

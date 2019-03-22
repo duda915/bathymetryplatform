@@ -2,7 +2,7 @@ import React from "react";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
-import API from "../../../services/API";
+import API from "../../../../services/API";
 
 export class ChangePassword extends React.Component {
   constructor(props) {

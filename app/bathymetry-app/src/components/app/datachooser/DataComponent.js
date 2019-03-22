@@ -5,7 +5,7 @@ import { ContextMenu } from "primereact/contextmenu";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
 import React, { Component } from "react";
-import API from "../../services/API";
+import API from "../../../services/API";
 
 export default class DataComponent extends Component {
   constructor(props) {

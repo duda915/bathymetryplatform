@@ -3,7 +3,7 @@ import React, { Component } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ContextMenu } from "primereact/contextmenu";
-import API from "../../services/API";
+import API from "../../../services/API";
 
 export default class DataManager extends Component {
   constructor(props) {

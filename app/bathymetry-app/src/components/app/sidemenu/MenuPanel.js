@@ -4,7 +4,7 @@ import MenuButton from "./menubutton/MenuButton";
 import MenuButtonOnClick from "./menubutton/MenuButtonOnClick";
 import "./MenuPanel.scss";
 import Tools from "./menutoolbar/Tools";
-import API from "../../services/API";
+import API from "../../../services/API";
 
 class MenuPanel extends Component {
   constructor(props) {

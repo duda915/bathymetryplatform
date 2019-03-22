@@ -3,7 +3,7 @@ import { default as TileLayer } from "ol/layer/Tile";
 import TileWMS from "ol/source/TileWMS.js";
 import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
-import { geoServerAPI } from "../services/ServiceMetaData";
+import { geoServerAPI } from "../../services/ServiceMetaData";
 import DataComponent from "./datachooser/DataComponent";
 import DataManager from "./datamanager/DataManager";
 import "./MainWindow.css";
@@ -11,7 +11,7 @@ import MapComponent from "./map/MapComponent";
 import MenuPanel from "./sidemenu/MenuPanel";
 import Settings from "./usersettings/Settings";
 
-class MainWindow extends Component {
+class AppWrapper extends Component {
   constructor(props) {
     super(props);
 
@@ -197,4 +197,4 @@ class MainWindow extends Component {
   }
 }
 
-export default MainWindow;
+export default AppWrapper;

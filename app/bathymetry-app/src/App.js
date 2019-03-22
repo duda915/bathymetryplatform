@@ -1,5 +1,11 @@
 import React, { Component } from "react";
-import LandingPage from "./components/landingpage/LandingPage";
+import Cookies from "universal-cookie";
+import { Growl } from "primereact/growl";
+
+import LoadingComponent from "./components/utility/LoadingComponent";
+import LoginPage from "./components/login/LoginPage";
+import AppWrapper from "./components/app/AppWrapper";
+
 import "primereact/resources/primereact.min.css";
 import "./theme/PrimeReactTheme.scss";
 import "primeflex/primeflex.css";
@@ -7,10 +13,6 @@ import "primeicons/primeicons.css";
 import "ol-layerswitcher/src/ol-layerswitcher.css";
 import "./theme/Theme.css";
 import "./theme/Utility.css";
-import { Growl } from "primereact/growl";
-import LoadingComponent from "./components/utility/LoadingComponent";
-import MainWindow from "./components/MainWindow";
-import Cookies from "universal-cookie";
 
 class App extends Component {
   constructor(props) {
@@ -63,13 +65,13 @@ class App extends Component {
         <Growl ref={ref => (this.growl = ref)} />
         <LoadingComponent ref={ref => (this.progress = ref)} />
         {this.state.isLoggedIn ? (
-          <MainWindow
+          <AppWrapper
             messageService={this.showMessage}
             loadingService={this.showLoading}
             signOut={this.signOut}
           />
         ) : (
-          <LandingPage
+          <LoginPage
             messageService={this.showMessage}
             loadingService={this.showLoading}
             signIn={this.signIn}

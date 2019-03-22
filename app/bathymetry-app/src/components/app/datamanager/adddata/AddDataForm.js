@@ -5,7 +5,7 @@ import { FileUpload } from "primereact/fileupload";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
 import React from "react";
-import API from "../../../services/API";
+import API from "../../../../services/API";
 
 export class AddDataForm extends React.Component {
   constructor(props) {
