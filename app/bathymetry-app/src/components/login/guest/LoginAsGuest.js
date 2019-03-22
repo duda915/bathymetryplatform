@@ -25,7 +25,7 @@ export class LoginAsGuestComponent extends Component {
         saveTokens(response);
         this.props.setLoggedInState();
       })
-      .catch(error => this.props.message("error", "Error", error))
+      .catch(() => this.props.message("error", "Error", "failed to login"))
       .finally(() => this.props.spinner(false));
   };
 
