@@ -1,4 +1,3 @@
-import { Button } from "primereact/button";
 import { ToggleButton } from "primereact/togglebutton";
 import React, { Component } from "react";
 import Cookies from "universal-cookie";
@@ -8,6 +7,7 @@ import { VerticalSpacer } from "./layout/VerticalSpacer";
 import { LoginForm } from "./login/LoginForm";
 import { RegisterForm } from "./register/RegisterForm";
 import "./LoginPage.scss";
+import LoginAsGuest from "./guest/LoginAsGuest";
 
 export default class LandingPage extends Component {
   constructor(props) {
@@ -41,19 +41,7 @@ export default class LandingPage extends Component {
     });
   };
 
-  loginAsGuest = () => {
-    this.props.loadingService(true);
-
-    this.api
-      .restUser()
-      .loginUser("guest", "guest")
-      .then(response => {
-        this.saveTokens(response);
-        this.props.signIn();
-      })
-      .catch(error => this.props.messageService("error", "Error", error))
-      .finally(() => this.props.loadingService(false));
-  };
+  
 
   saveTokens = response => {
     const cookies = new Cookies();
@@ -119,7 +107,7 @@ export default class LandingPage extends Component {
 
           <div className="p-col-1 p-md-4" />
           <div className="p-col-10 p-md-4">
-            <Button label="Login as guest" onClick={this.loginAsGuest} />
+            <LoginAsGuest />
           </div>
           <div className="p-col-1 p-md-4" />
         </div>
