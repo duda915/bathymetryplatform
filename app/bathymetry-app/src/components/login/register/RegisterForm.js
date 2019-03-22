@@ -1,10 +1,9 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import { connect } from "react-redux";
-import { Panel } from "primereact/panel";
-import { InputText } from "primereact/inputtext";
-import { Password } from "primereact/password";
 import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { Panel } from "primereact/panel";
+import { Password } from "primereact/password";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
 import API from "../../../services/API";
 import { handleRequest } from "../../utility/requesthandler";
 
@@ -52,10 +51,7 @@ export default class RegisterForm extends Component {
   };
 
   checkIfPasswordsMatch() {
-    if (this.state.password !== this.state.confirmPassword) {
-      return false;
-    }
-    return true;
+    return this.state.password === this.state.confirmPassword;
   }
 
   render() {
