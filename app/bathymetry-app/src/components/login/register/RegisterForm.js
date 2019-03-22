@@ -132,7 +132,7 @@ export class RegisterForm extends Component {
               </div>
             </div>
 
-            <div className="p-col-4 p-offset-8">
+            <div className="p-col-12 p-md-4 p-md-offset-8">
               <Button type="submit" label="Register" />
             </div>
           </div>
