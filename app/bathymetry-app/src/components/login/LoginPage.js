@@ -31,7 +31,7 @@ export default class LandingPage extends Component {
         .restUser()
         .getUser()
         .then(() => this.props.signIn())
-        .catch(() => console.log("auto login not possible"))
+        .catch(() => console.log("auto login not possible"));
     }
   };
 
@@ -81,8 +81,8 @@ export default class LandingPage extends Component {
         <div className="p-grid p-nogutter p-fluid">
           <LandingPageHeader />
 
-          <div className="p-col-4" />
-          <div className="p-col-4">
+          <div className="p-col-1 p-md-4" />
+          <div className="p-col-10 p-md-4">
             {this.state.register ? (
               <RegisterForm
                 toggleRegisterForm={this.toggleRegisterForm}
@@ -98,11 +98,12 @@ export default class LandingPage extends Component {
               />
             )}
           </div>
+          <div className="p-col-1 p-md-4" />
 
           <VerticalSpacer />
 
-          <div className="p-col-4" />
-          <div className="p-col-4">
+          <div className="p-col-1 p-md-4" />
+          <div className="p-col-10 p-md-4">
             <ToggleButton
               offLabel="Register"
               onLabel="Register"
@@ -112,13 +113,15 @@ export default class LandingPage extends Component {
               onChange={e => this.toggleRegisterForm(e.value)}
             />
           </div>
+          <div className="p-col-1 p-md-4" />
 
           <VerticalSpacer />
 
-          <div className="p-col-4" />
-          <div className="p-col-4">
+          <div className="p-col-1 p-md-4" />
+          <div className="p-col-10 p-md-4">
             <Button label="Login as guest" onClick={this.loginAsGuest} />
           </div>
+          <div className="p-col-1 p-md-4" />
         </div>
       </div>
     );
