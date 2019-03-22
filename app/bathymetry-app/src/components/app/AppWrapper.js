@@ -4,9 +4,9 @@ import TileWMS from "ol/source/TileWMS.js";
 import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { geoServerAPI } from "../../services/ServiceMetaData";
+import "./AppWrapper.css";
 import DataComponent from "./datachooser/DataComponent";
 import DataManager from "./datamanager/DataManager";
-import "./MainWindow.css";
 import MapComponent from "./map/MapComponent";
 import MenuPanel from "./sidemenu/MenuPanel";
 import Settings from "./usersettings/Settings";
@@ -123,74 +123,72 @@ class AppWrapper extends Component {
 
   render() {
     return (
-      <div className="mainWindow">
+      <div>
         <div className="p-grid p-nogutter">
-          <MenuPanel
-            changeStyle={this.changeLayerStyle}
-            signOut={this.props.signOut}
-            selectedLayers={this.state.selectedLayers}
-            toggleLayer={this.toggleLayer}
-            zoomToLayer={this.zoomToLayer}
-            zoomFit={this.zoomFit}
-          />
-          <div className="p-col main-window">
-            <div className="p-grid p-nogutter">
-              <Router>
-                <div className="p-col-12" style={{ height: "calc(100vh)" }}>
-                  <Route
-                    exact
-                    path="/"
-                    render={() => {
-                      return (
-                        <MapComponent
-                          layerStyle={this.state.layerStyle}
-                          loadingService={this.props.loadingService}
-                          messageService={this.props.messageService}
-                          ref={this.mapReference}
-                          layers={this.state.selectedLayers}
-                          layersGroup={this.state.selectedLayersGroup}
-                        />
-                      );
-                    }}
-                  />
-                  <Route
-                    path="/select"
-                    render={() => {
-                      return (
-                        <DataComponent
-                          setSelectedLayers={this.setSelectedLayers}
-                          loadingService={this.props.loadingService}
-                          messageService={this.props.messageService}
-                        />
-                      );
-                    }}
-                  />
-                  <Route
-                    path="/mydata"
-                    render={() => {
-                      return (
-                        <DataManager
-                          loadingService={this.props.loadingService}
-                          messageService={this.props.messageService}
-                        />
-                      );
-                    }}
-                  />
-                  <Route
-                    path="/settings"
-                    render={() => {
-                      return (
-                        <Settings
-                          loadingService={this.props.loadingService}
-                          messageService={this.props.messageService}
-                        />
-                      );
-                    }}
-                  />
-                </div>
-              </Router>
-            </div>
+          <div className="p-col-12 p-lg-3">
+            <MenuPanel
+              changeStyle={this.changeLayerStyle}
+              signOut={this.props.signOut}
+              selectedLayers={this.state.selectedLayers}
+              toggleLayer={this.toggleLayer}
+              zoomToLayer={this.zoomToLayer}
+              zoomFit={this.zoomFit}
+            />
           </div>
+          <Router>
+            <div className="p-col-12 p-lg-9">
+              <Route
+                exact
+                path="/"
+                render={() => {
+                  return (
+                    <MapComponent
+                      layerStyle={this.state.layerStyle}
+                      loadingService={this.props.loadingService}
+                      messageService={this.props.messageService}
+                      ref={this.mapReference}
+                      layers={this.state.selectedLayers}
+                      layersGroup={this.state.selectedLayersGroup}
+                    />
+                  );
+                }}
+              />
+              <Route
+                path="/select"
+                render={() => {
+                  return (
+                    <DataComponent
+                      setSelectedLayers={this.setSelectedLayers}
+                      loadingService={this.props.loadingService}
+                      messageService={this.props.messageService}
+                    />
+                  );
+                }}
+              />
+              <Route
+                path="/mydata"
+                render={() => {
+                  return (
+                    <DataManager
+                      loadingService={this.props.loadingService}
+                      messageService={this.props.messageService}
+                    />
+                  );
+                }}
+              />
+              <Route
+                path="/settings"
+                render={() => {
+                  return (
+                    <Settings
+                      loadingService={this.props.loadingService}
+                      messageService={this.props.messageService}
+                    />
+                  );
+                }}
+              />
+            </div>
+          </Router>
         </div>
       </div>
     );

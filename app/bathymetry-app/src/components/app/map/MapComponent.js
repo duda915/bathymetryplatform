@@ -377,7 +377,7 @@ export default class MapComponent extends Component {
     );
 
     return (
-      <div className="mapComponent" style={{ height: "100%" }}>
+      <>
         <Dialog
           header="Download selection"
           footer={dialogFooter}
@@ -388,8 +388,8 @@ export default class MapComponent extends Component {
         >
           Found {this.state.selectionRecords} records.
         </Dialog>
-        <div id="map" style={{ height: "100%" }} />
-      </div>
+        <div id="map" style={{"height": "100%"}} />
+      </>
     );
   }
 }

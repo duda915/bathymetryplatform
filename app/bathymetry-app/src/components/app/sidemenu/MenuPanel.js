@@ -36,8 +36,7 @@ class MenuPanel extends Component {
 
   render() {
     return (
-      <div className="p-col-fixed menuslide-init menupanel">
-        <div className="p-grid p-nogutter">
+        <div className="p-grid p-nogutter menu-panel">
           <div className="p-col-12 brand" />
           <div className="p-col-12 " style={{ padding: "15px" }}>
             <Tools
@@ -92,7 +91,6 @@ class MenuPanel extends Component {
             </HashRouter>
           </div>
         </div>
-      </div>
     );
   }
 }
