@@ -1,11 +1,18 @@
+import React from "react";
+import PropTypes from "prop-types";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
 import { Password } from "primereact/password";
-import React from "react";
+import { connect } from "react-redux";
+import { toggleSpinner } from "../../utility/loading/SpinnerActions";
+import { showMessage } from "../../utility/messaging/MessageActions";
+import { changeLoginState } from "../LoginActions";
+import { saveTokens } from "../../../services/Token";
+
 import API from "../../../services/API";
 
-export class LoginForm extends React.Component {
+class LoginFormComponent extends React.Component {
   constructor(props) {
     super(props);
 
@@ -23,24 +30,24 @@ export class LoginForm extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.props.loadingService(true);
+    this.props.spinner(true);
 
     const api = new API();
     api
       .restUser()
       .loginUser(this.state.username, this.state.password)
       .then(response => {
-        this.props.saveTokens(response);
+        saveTokens(response);
         this.props.signIn();
       })
       .catch(error =>
-        this.props.messageService(
+        this.props.message(
           "error",
           "Error",
           error.response.data.error_description
         )
       )
-      .finally(() => this.props.loadingService(false));
+      .finally(() => this.props.spinner(false));
   };
 
   render() {
@@ -85,3 +92,29 @@ export class LoginForm extends React.Component {
     );
   }
 }
+
+LoginFormComponent.propTypes = {
+  spinner: PropTypes.func.isRequired,
+  message: PropTypes.func.isRequired,
+  signIn: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    spinner: show => dispatch(toggleSpinner(show)),
+    message: (severity, summary, detail) =>
+      dispatch(showMessage(severity, summary, detail)),
+    signIn: () => dispatch(changeLoginState(true))
+  };
+};
+
+const LoginForm = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(LoginFormComponent);
+
+export default LoginForm;

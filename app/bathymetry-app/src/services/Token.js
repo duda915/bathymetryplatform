@@ -7,7 +7,6 @@ export function getToken() {
 
 export function saveTokens(response) {
   const cookies = new Cookies();
-
   const accessTokenExpireDate = new Date();
   accessTokenExpireDate.setDate(
     accessTokenExpireDate.getDate() + 60 * 60 * 1000

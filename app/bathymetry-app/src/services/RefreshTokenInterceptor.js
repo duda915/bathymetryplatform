@@ -24,7 +24,7 @@ export function registerInterceptor() {
 
       const formData = new FormData();
       formData.set("grant_type", "refresh_token");
-      formData.set("refresh_token", this.cookie.get("refresh_token"));
+      formData.set("refresh_token", this.cookies.get("refresh_token"));
 
       axios
         .post(this.tokenEndpoint, formData, refreshTokenConfig)
@@ -33,17 +33,17 @@ export function registerInterceptor() {
           accessTokenExpireDate.setTime(
             accessTokenExpireDate.getTime() + 60 * 60 * 1000
           );
-          this.cookie.set("access_token", response.data.access_token, {
+          this.cookies.set("access_token", response.data.access_token, {
             path: "/",
             expires: accessTokenExpireDate
           });
           error.config.headers["Authorization"] =
-            "Bearer " + this.cookie.get("access_token");
+            "Bearer " + this.cookies.get("access_token");
           window.location.reload();
         })
         .catch(error => {
-          this.cookie.remove("refresh_token");
-          this.cookie.remove("access_token");
+          this.cookies.remove("refresh_token");
+          this.cookies.remove("access_token");
           window.location.reload();
         });
     }

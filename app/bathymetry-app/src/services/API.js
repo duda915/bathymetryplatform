@@ -5,7 +5,7 @@ import { registerInterceptor } from "./RefreshTokenInterceptor";
 
 export default class API {
   constructor() {
-    registerInterceptor();
+    // registerInterceptor();
   }
 
   restUser() {
