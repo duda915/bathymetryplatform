@@ -13,6 +13,7 @@ import "primeicons/primeicons.css";
 import "ol-layerswitcher/src/ol-layerswitcher.css";
 import "./theme/Theme.css";
 import "./theme/Utility.css";
+import LoadingSpinner from "./components/utility/loading/Spinner";
 
 class App extends Component {
   constructor(props) {
@@ -62,6 +63,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <LoadingSpinner />
         <Growl ref={ref => (this.growl = ref)} />
         <LoadingComponent ref={ref => (this.progress = ref)} />
         {this.state.isLoggedIn ? (

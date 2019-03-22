@@ -1,19 +1,22 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { ProgressSpinner } from "primereact/progressspinner";
+import "./Spinner.css";
 
-function LoadingSpinner(props) {
+function SpinnerComponent(props) {
   if (props.isLoading) {
     return (
       <div className="loading">
         <ProgressSpinner className="loading__spinner" />
       </div>
     );
+  } else {
+    return null;
   }
 }
 
-LoadingSpinner.propTypes = {
+SpinnerComponent.propTypes = {
   isLoading: PropTypes.bool.isRequired
 };
 
-export default LoadingSpinner;
+export default SpinnerComponent;
