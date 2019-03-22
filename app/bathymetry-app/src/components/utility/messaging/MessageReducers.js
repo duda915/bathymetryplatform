@@ -1,7 +1,13 @@
 import { SHOW_MESSAGE } from "./MessageActions";
 import { combineReducers } from "redux";
 
-function fetchMessage(state = {}, action) {
+const initialMessage = {
+  severity: "info",
+  summary: "",
+  detail: ""
+};
+
+function fetchMessage(state = initialMessage, action) {
   switch (action.type) {
     case SHOW_MESSAGE:
       return action.payload;
@@ -10,6 +16,6 @@ function fetchMessage(state = {}, action) {
   }
 }
 
-const messagging = combineReducers({fetchMessage});
+const messagging = combineReducers({ fetchMessage });
 
 export default messagging;
