@@ -13,6 +13,7 @@ import "ol-layerswitcher/src/ol-layerswitcher.css";
 import "./theme/Theme.css";
 import "./theme/Utility.css";
 import LoadingSpinner from "./components/utility/loading/Spinner";
+import Message from "./components/utility/messaging/Message";
 
 class App extends Component {
   constructor(props) {
@@ -58,6 +59,7 @@ class App extends Component {
     return (
       <div className="App">
         <LoadingSpinner />
+        <Message />
         <Growl ref={ref => (this.growl = ref)} />
         {this.state.isLoggedIn ? (
           <AppWrapper
@@ -65,10 +67,7 @@ class App extends Component {
             signOut={this.signOut}
           />
         ) : (
-          <LoginPage
-            messageService={this.showMessage}
-            signIn={this.signIn}
-          />
+          <LoginPage messageService={this.showMessage} signIn={this.signIn} />
         )}
       </div>
     );
