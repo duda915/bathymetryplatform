@@ -1,11 +1,14 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
 import { Panel } from "primereact/panel";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import API from "../../../services/API";
+import { handleRequest } from "../../utility/requesthandler";
 
-export class RegisterForm extends Component {
+export default class RegisterForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,8 +28,6 @@ export class RegisterForm extends Component {
   onSubmit = event => {
     event.preventDefault();
     if (this.checkIfPasswordsMatch()) {
-      this.props.loadingService(true);
-
       const newUser = {
         username: this.state.username,
         password: this.state.password,
@@ -34,27 +35,19 @@ export class RegisterForm extends Component {
       };
 
       const api = new API();
-      api
-        .restUser()
-        .registerUser(newUser)
-        .then(() => {
-          this.props.messageService(
-            "success",
-            "Success",
-            "account activation link has been sent to email"
-          );
-          this.props.toggleRegisterForm(false);
-        })
-        .catch(error =>
-          this.props.messageService(
-            "error",
-            "Error",
-            error.response.data.message
-          )
-        )
-        .finally(() => this.props.loadingService(false));
+
+      handleRequest({
+        requestPromise: api.restUser().registerUser(newUser),
+        onSuccess: () => this.props.toggleRegisterForm(false),
+        onSuccessMessage: () =>
+          "account activation link has been sent to email",
+        onErrorMessage: error => error.response.data.message
+      });
     } else {
-      this.props.messageService("warn", "Error", "passwords are not the same");
+      handleRequest({
+        requestPromise: Promise.reject(),
+        onErrorMessage: () => "passwords are not the same"
+      });
     }
   };
 
@@ -141,3 +134,7 @@ export class RegisterForm extends Component {
     );
   }
 }
+
+RegisterForm.propTypes = {
+  toggleRegisterForm: PropTypes.func.isRequired
+};

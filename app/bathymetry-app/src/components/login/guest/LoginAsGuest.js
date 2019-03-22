@@ -1,32 +1,24 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
 import { Button } from "primereact/button";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
 import { connect } from "react-redux";
-import { changeLoginState } from "../LoginActions";
-import { toggleSpinner } from "../../utility/loading/SpinnerActions";
-import { showMessage } from "../../utility/messaging/MessageActions";
-import { saveTokens } from "../../../services/Token";
 import API from "../../../services/API";
+import { saveTokens } from "../../../services/Token";
+import { handleRequest } from "../../utility/requesthandler";
+import { changeLoginState } from "../LoginActions";
 
 export class LoginAsGuestComponent extends Component {
-  constructor(props) {
-    super(props);
-
-    this.api = new API();
-  }
-
   loginAsGuest = () => {
-    this.props.spinner(true);
+    const api = new API();
 
-    this.api
-      .restUser()
-      .loginUser("guest", "guest")
-      .then(response => {
+    handleRequest({
+      requestPromise: api.restUser().loginUser("guest", "guest"),
+      onSuccess: response => {
         saveTokens(response);
         this.props.setLoggedInState();
-      })
-      .catch(() => this.props.message("error", "Error", "failed to login"))
-      .finally(() => this.props.spinner(false));
+      },
+      onErrorMessage: () => "failed to login"
+    });
   };
 
   render() {
@@ -39,9 +31,7 @@ export class LoginAsGuestComponent extends Component {
 }
 
 LoginAsGuestComponent.propTypes = {
-  setLoggedInState: PropTypes.func.isRequired,
-  message: PropTypes.func.isRequired,
-  spinner: PropTypes.func.isRequired
+  setLoggedInState: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => {
@@ -50,10 +40,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    setLoggedInState: () => dispatch(changeLoginState(true)),
-    spinner: show => dispatch(toggleSpinner(show)),
-    message: (severity, summary, detail) =>
-      dispatch(showMessage(severity, summary, detail))
+    setLoggedInState: () => dispatch(changeLoginState(true))
   };
 };
 

@@ -6,11 +6,12 @@ import API from "../../services/API";
 import { LoginPageHeader } from "./layout/LoginPageHeader";
 import { VerticalSpacer } from "./layout/VerticalSpacer";
 import LoginForm from "./login/LoginForm";
-import { RegisterForm } from "./register/RegisterForm";
+import RegisterForm from "./register/RegisterForm";
 import "./LoginPage.scss";
 import LoginAsGuest from "./guest/LoginAsGuest";
 import { getToken } from "../../services/Token";
 import { changeLoginState } from "./LoginActions";
+import { handleRequest } from "../utility/requesthandler";
 
 export class LoginPageComponent extends Component {
   constructor(props) {
@@ -19,8 +20,6 @@ export class LoginPageComponent extends Component {
     this.state = {
       register: false
     };
-
-    this.api = new API();
   }
 
   componentDidMount() {
@@ -28,12 +27,13 @@ export class LoginPageComponent extends Component {
   }
 
   tryLogin = () => {
+    const api = new API();
+
     if (getToken()) {
-      this.api
-        .restUser()
-        .getUser()
-        .then(() => this.props.signIn())
-        .catch(() => console.log("auto login not possible"));
+      handleRequest({
+        requestPromise: api.restUser().getUser(),
+        onSuccess: () => this.props.signIn(),
+      });
     }
   };
 
@@ -51,7 +51,11 @@ export class LoginPageComponent extends Component {
 
           <div className="p-col-1 p-md-4" />
           <div className="p-col-10 p-md-4">
-            {this.state.register ? <RegisterForm /> : <LoginForm />}
+            {this.state.register ? (
+              <RegisterForm toggleRegisterForm={this.toggleRegisterForm} />
+            ) : (
+              <LoginForm />
+            )}
           </div>
           <div className="p-col-1 p-md-4" />
 
