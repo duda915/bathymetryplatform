@@ -1,10 +1,8 @@
 import { platformModifierKeyOnly } from "ol/events/condition.js";
-import { boundingExtent } from "ol/extent.js";
 import { DragBox } from "ol/interaction.js";
 import LayerGroup from "ol/layer/Group";
 import { default as LayerTile, default as TileLayer } from "ol/layer/Tile";
 import Map from "ol/Map";
-import { transform, transformExtent } from "ol/proj.js";
 import SourceOSM from "ol/source/OSM";
 import View from "ol/View";
 

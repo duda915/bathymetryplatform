@@ -15,20 +15,56 @@ export default class ConnectedBathymetryMap {
     this._map = new BathymetryMap();
     this._style = "primarystyle";
     this._layers = bathymetryLayers;
-    this._layersInitializer();
+    this._initializeLayers();
+    this.zoomToFit();
   }
 
-  _layersInitializer() {
-    if (this._layers.length !== 0) {
+  _initializeLayers() {
+    if (this._getVisibleLayers().length !== 0) {
+      this._map.removeLayers();
       this._initBathymetryLayers();
       this._initOnClickFunction();
-      this.zoomToFit();
     }
   }
 
-  zoomToFit = () => {
+  toggleLayer = layerId => {
+    this._layers.forEach(layer => {
+      if (layer.id === layerId) {
+        layer.visible = !layer.visible;
+      }
+    });
+
+    this._initializeLayers();
+  };
+
+  toggleStyle = () => {
+    if(this._style === "primarystyle") {
+      this._style = "secondarystyle";
+    } else {
+      this._style = "primarystyle";
+    }
+
+    this._initializeLayers();
+  }
+
+  zoomToLayer = layerId => {
     const api = new API();
-    const layerIds = this._layers.map(layer => layer.id);
+    handleRequest({
+      requestPromise: api.restData().getLayerBoundingBox(layerId),
+      onSuccess: response => {
+        const extent = this._boxToExtentWithTransform(response.data);
+        this._map.zoomToExtent(extent);
+      }
+    });
+  };
+
+  zoomToFit = () => {
+    if (this._getVisibleLayers().length === 0) {
+      return;
+    }
+
+    const api = new API();
+    const layerIds = this._getVisibleLayers().map(layer => layer.id);
 
     handleRequest({
       requestPromise: api.restData().getActiveLayersBoundingBox(layerIds),
@@ -37,6 +73,10 @@ export default class ConnectedBathymetryMap {
         this._map.zoomToExtent(extent);
       }
     });
+  };
+
+  _getVisibleLayers = () => {
+    return this._layers.filter(layer => layer.visible);
   };
 
   _boxToExtentWithTransform({ upperLeftVertex, lowerRightVertex }) {
@@ -48,11 +88,9 @@ export default class ConnectedBathymetryMap {
   }
 
   _initBathymetryLayers = () => {
-    this._layers.forEach(layer => {
-      if (layer.visible) {
-        const wmsSource = this._buildWmsSource(`bathymetry:${layer.id}`);
-        this._map.addLayer(layer.id, wmsSource);
-      }
+    this._getVisibleLayers().forEach(layer => {
+      const wmsSource = this._buildWmsSource(`bathymetry:${layer.id}`);
+      this._map.addLayer(layer.id, wmsSource);
     });
   };
 
@@ -77,7 +115,7 @@ export default class ConnectedBathymetryMap {
 
   _getCombinedLayersParam = () => {
     let layersParam = "";
-    this._layers.forEach(layer => {
+    this._getVisibleLayers().forEach(layer => {
       layersParam += `bathymetry:${layer.id},`;
     });
     layersParam = layersParam.substring(0, layersParam.length - 1);
