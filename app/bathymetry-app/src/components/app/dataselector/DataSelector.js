@@ -5,7 +5,7 @@ import { ContextMenu } from "primereact/contextmenu";
 import { connect } from "react-redux";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
-import { addLayer, removeLayers } from "../map/MapActions";
+import { addLayers, removeLayers } from "../map/MapActions";
 import React, { Component } from "react";
 import API from "../../../services/API";
 
@@ -54,7 +54,7 @@ export class DataSelectorComponent extends Component {
     });
 
     this.props.removeLayers();
-    layers.forEach(layer => this.props.addLayerToMap(layer));
+    this.props.addLayersToMap(layers);
     window.location.hash = "/";
   };
 
@@ -142,7 +142,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     removeLayers: () => dispatch(removeLayers()),
-    addLayerToMap: layer => dispatch(addLayer(layer))
+    addLayersToMap: layers => dispatch(addLayers(layers))
   };
 };
 

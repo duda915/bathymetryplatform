@@ -24,7 +24,7 @@ export class MapComponent extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.command != null) {
+    if (prevProps.command !== this.props.command) {
       this.handleCommand();
     }
 
@@ -36,7 +36,6 @@ export class MapComponent extends Component {
   handleCommand() {
     const { commandType, commandPayload } = this.props.command;
     const api = new API();
-    this.props.emptyCommand();
 
     console.log(commandPayload);
 
@@ -48,7 +47,8 @@ export class MapComponent extends Component {
             return `lat: ${commandPayload.coordinate[0]} lon: ${
               commandPayload.coordinate[1]
             } Measurement ${response.data.features[0].properties.GRAY_INDEX}`;
-          }
+          },
+          onError: error => console.log(error)
         });
         return;
 
@@ -150,6 +150,5 @@ MapComponent.propTypes = {
       visible: PropTypes.bool.isRequired
     }).isRequired
   ),
-  command: PropTypes.object,
-  emptyCommand: PropTypes.func.isRequired
+  command: PropTypes.object
 };

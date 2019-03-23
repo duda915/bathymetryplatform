@@ -1,12 +1,12 @@
 import {
   SEND_MAP_COMMAND,
   TOGGLE_LAYER,
-  ADD_LAYER,
+  ADD_LAYERS,
   REMOVE_LAYERS
 } from "./MapActions";
 import { combineReducers } from "redux";
 
-function command(state = null, action) {
+function command(state = {}, action) {
   switch (action.type) {
     case SEND_MAP_COMMAND:
       return action.payload;
@@ -17,8 +17,8 @@ function command(state = null, action) {
 
 function layers(state = [], action) {
   switch (action.type) {
-    case ADD_LAYER:
-      return [...state, action.payload.layer];
+    case ADD_LAYERS:
+      return [...state, ...action.payload.layers];
     case REMOVE_LAYERS:
       return [];
     case TOGGLE_LAYER:

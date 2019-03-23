@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import { MapComponent } from "./MapComponent";
-import { sendMapCommand } from "./MapActions";
 
 const mapStateToProps = state => {
   return {
@@ -10,13 +9,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {
-    emptyCommand: () =>
-      sendMapCommand({
-        commandType: null,
-        commandPayload: null
-      })
-  };
+  return {};
 };
 
 const Map = connect(
