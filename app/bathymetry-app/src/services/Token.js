@@ -2,7 +2,7 @@ import Cookies from "universal-cookie";
 
 export function getToken() {
   const cookies = new Cookies();
-  return cookies.get("access_token")
+  return cookies.get("access_token");
 }
 
 export function saveTokens(response) {
@@ -22,4 +22,10 @@ export function saveTokens(response) {
   cookies.set("refresh_token", response.data.refresh_token, {
     expires: refreshTokenExpireDate
   });
+}
+
+export function removeTokens() {
+  const cookies = new Cookies();
+  cookies.remove("access_token");
+  cookies.remove("refresh_token");
 }

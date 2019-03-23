@@ -12,7 +12,6 @@ export default class Tools extends React.Component {
     super(props);
 
     this.state = {
-      username: "",
       showLayers: true
     };
 
@@ -92,14 +91,14 @@ export default class Tools extends React.Component {
               Layers
             </h6>
             <ScrollPanel style={{ height: "100px" }}>
-              {this.props.selectedLayers.map(layer => (
+              {/* {this.props.selectedLayers.map(layer => (
                 <Layer
                   key={layer.id}
                   layer={layer}
                   toggleLayer={this.props.toggleLayer}
                   zoomToLayer={this.props.zoomToLayer}
                 />
-              ))}
+              ))} */}
             </ScrollPanel>
           </div>
         ) : null}
