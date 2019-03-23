@@ -49,6 +49,10 @@ export class MapComponent extends Component {
         return;
 
       case Commands.HANDLE_DRAG_BOX:
+        if (this.map.getVisibleLayers().length === 0) {
+          return;
+        }
+        
         handleRequest({
           requestPromise: api
             .restData()
