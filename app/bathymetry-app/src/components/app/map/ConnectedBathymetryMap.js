@@ -3,18 +3,27 @@ import TileWMS from "ol/source/TileWMS.js";
 import { geoServerAPI } from "../../../services/ServiceMetaData";
 import { handleRequest } from "../../utility/requesthandler";
 import API from "../../../services/API";
+import { transformExtent } from "ol/proj";
+import CoordinateDTO from "../../../services/dtos/CoordinateDTO";
+import BoundingBoxDTO from "../../../services/dtos/BoundingBoxDTO";
 
 export default class ConnectedBathymetryMap {
   constructor(bathymetryLayers) {
     this._map = new BathymetryMap();
     this._style = "primarystyle";
-    this._layers = this._initLayersObject(bathymetryLayers);
-    this._initBathymetryLayers();
-    this._initOnClickFunction();
+    this._layers = bathymetryLayers;
+    this._layersInitializer();
+  }
+
+  _layersInitializer() {
+    if (this._layers.length !== 0) {
+      this._initBathymetryLayers();
+      this._initOnClickFunction();
+    }
   }
 
   _initBathymetryLayers = () => {
-    this._layers.foreach(layer => {
+    this._layers.forEach(layer => {
       if (layer.visible) {
         const wmsSource = this._buildWmsSource(`bathymetry:${layer.id}`);
         this._map.addLayer(layer.id, wmsSource);
@@ -23,10 +32,8 @@ export default class ConnectedBathymetryMap {
   };
 
   _initOnClickFunction = () => {
-    const resolution = this._map.getView().getResolution();
-
     let layersParam = "";
-    this._layers.foreach(layer => {
+    this._layers.forEach(layer => {
       layersParam += `bathymetry:${layer.id},`;
     });
     layersParam = layersParam.substring(0, layersParam.length - 1);
@@ -36,6 +43,8 @@ export default class ConnectedBathymetryMap {
     const api = new API();
 
     const onClickFun = evt => {
+      const resolution = this._map.getView().getResolution();
+
       const url = wmsSource.getGetFeatureInfoUrl(
         evt.coordinate,
         resolution,
@@ -59,6 +68,27 @@ export default class ConnectedBathymetryMap {
     this._map.addOnClickInteraction(onClickFun);
   };
 
+  _initDragBoxInteraction = () => {
+    const dragBoxFunction = dragBox => {
+      const dragBoxExtent = dragBox.getGeometry().getExtent();
+      const transformedExtent = transformExtent(
+        dragBoxExtent,
+        "EPSG:3857",
+        "EPSG:4326"
+      );
+
+      const upperLeft = new CoordinateDTO(
+        transformedExtent[0],
+        transformedExtent[3]
+      );
+      const lowerRight = new CoordinateDTO(
+        transformedExtent[2],
+        transformedExtent[1]
+      );
+      const box = new BoundingBoxDTO(upperLeft, lowerRight);
+    };
+  };
+
   _buildWmsSource = layersParam => {
     const wmsParams = {
       LAYERS: layersParam,
@@ -73,9 +103,5 @@ export default class ConnectedBathymetryMap {
       transition: 0,
       projection: "EPSG:3857"
     });
-  };
-
-  _initLayersObject = initLayers => {
-    return initLayers.foreach(layer => (layer.visible = true));
   };
 }

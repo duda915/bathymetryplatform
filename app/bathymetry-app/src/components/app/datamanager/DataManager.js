@@ -27,7 +27,6 @@ export default class DataManager extends Component {
   }
 
   fetchUserDataSets = () => {
-    this.props.loadingService(true);
 
     this.api
       .restData()
@@ -36,7 +35,6 @@ export default class DataManager extends Component {
       .catch(() =>
         this.messageService("error", "Error", "cannot fetch user datasets")
       )
-      .finally(() => this.props.loadingService(false));
   };
 
   deleteDataSet(dataSet) {

@@ -29,7 +29,6 @@ export default class DataComponent extends Component {
   }
 
   fetchDataSets() {
-    this.props.loadingService(true);
     this.api
       .restData()
       .getAllDataSets()
@@ -37,7 +36,6 @@ export default class DataComponent extends Component {
       .catch(() =>
         this.props.messageService("error", "Error", "cannot fetch datasets")
       )
-      .finally(() => this.props.loadingService(false));
   }
 
   showOnMap = () => {

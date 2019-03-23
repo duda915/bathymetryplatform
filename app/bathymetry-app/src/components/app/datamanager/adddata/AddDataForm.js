@@ -91,7 +91,6 @@ export class AddDataForm extends React.Component {
       epsgCode: this.state.crs
     };
 
-    this.props.loadingService(true);
 
     this.api
       .restData()
@@ -103,7 +102,6 @@ export class AddDataForm extends React.Component {
         this.props.messageService("error", "Error", error.response.data.message)
       )
       .finally(() => {
-        this.props.loadingService(false);
         this.props.fetchUserDataSets();
       });
   };

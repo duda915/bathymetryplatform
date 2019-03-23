@@ -16,12 +16,12 @@ import API from "../../../services/API";
 import BoundingBoxDTO from "../../../services/dtos/BoundingBoxDTO";
 import CoordinateDTO from "../../../services/dtos/CoordinateDTO";
 import { geoServerAPI } from "../../../services/ServiceMetaData";
+import ConnectedBathymetryMap from "./ConnectedBathymetryMap";
 
 export default class MapComponent extends Component {
   constructor(props) {
     super(props);
 
-    this.map = null;
     this.layer = null;
     this.wmsSource = null;
     this.olView = null;
@@ -34,6 +34,7 @@ export default class MapComponent extends Component {
 
     this.api = new API();
 
+
     this.state = {
       downloadDialog: false,
       selectionRecords: 0
@@ -41,12 +42,14 @@ export default class MapComponent extends Component {
   }
 
   componentDidMount() {
-    const layersIds = this.getCol(this.props.layers, "id");
-    this.initOpenLayers();
-    if (layersIds.length !== 0) {
-      this.loadLayers(layersIds);
-      this.setMapOnClickFunction(layersIds);
-    }
+    this.map = new ConnectedBathymetryMap(this.props.layers);
+
+    // const layersIds = this.getCol(this.props.layers, "id");
+    // this.initOpenLayers();
+    // if (layersIds.length !== 0) {
+    //   this.loadLayers(layersIds);
+    //   this.setMapOnClickFunction(layersIds);
+    // }
   }
 
   getCol(array, col) {
