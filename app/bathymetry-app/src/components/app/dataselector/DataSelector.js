@@ -2,12 +2,14 @@ import downloadjs from "downloadjs";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { ContextMenu } from "primereact/contextmenu";
+import { connect } from "react-redux";
 import { DataTable } from "primereact/datatable";
 import { InputText } from "primereact/inputtext";
+import { addLayer } from "../map/MapActions";
 import React, { Component } from "react";
 import API from "../../../services/API";
 
-export default class DataComponent extends Component {
+export class DataSelectorComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -35,7 +37,7 @@ export default class DataComponent extends Component {
       .then(response => this.setState({ data: response.data }))
       .catch(() =>
         this.props.messageService("error", "Error", "cannot fetch datasets")
-      )
+      );
   }
 
   showOnMap = () => {
@@ -44,14 +46,14 @@ export default class DataComponent extends Component {
       return;
     }
 
-    const ids = this.state.selection.map(value => {
+    const layers = this.state.selection.map(value => {
       return {
         id: value.id,
         visible: true
       };
     });
 
-    this.props.setSelectedLayers(ids);
+    layers.forEach(layer => this.props.addLayerToMap(layer));
     window.location.hash = "/";
   };
 
@@ -131,3 +133,20 @@ export default class DataComponent extends Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    addLayerToMap: layer => dispatch(addLayer(layer))
+  };
+};
+
+const DataSelector = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DataSelectorComponent);
+
+export default DataSelector;

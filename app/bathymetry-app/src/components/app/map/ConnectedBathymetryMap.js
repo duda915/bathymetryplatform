@@ -3,12 +3,13 @@ import TileWMS from "ol/source/TileWMS.js";
 import { geoServerAPI } from "../../../services/ServiceMetaData";
 import { handleRequest } from "../../utility/requesthandler";
 import API from "../../../services/API";
-import { transformExtent } from "ol/proj";
+import { transform, transformExtent } from "ol/proj";
 import CoordinateDTO from "../../../services/dtos/CoordinateDTO";
 import BoundingBoxDTO from "../../../services/dtos/BoundingBoxDTO";
-import { fetchFeatureInfo, registerDragBox } from "./MapActions";
+import { sendMapCommand } from "./MapActions";
 import { store } from "../../store";
 import { boundingExtent } from "ol/extent";
+import { Commands } from "./MapCommands";
 
 export default class ConnectedBathymetryMap {
   constructor(bathymetryLayers) {
@@ -20,10 +21,11 @@ export default class ConnectedBathymetryMap {
   }
 
   _initializeLayers() {
-    if (this._getVisibleLayers().length !== 0) {
+    if (this.getVisibleLayers().length !== 0) {
       this._map.removeLayers();
       this._initBathymetryLayers();
       this._initOnClickFunction();
+      this._initDragBoxInteraction();
     }
   }
 
@@ -38,14 +40,14 @@ export default class ConnectedBathymetryMap {
   };
 
   toggleStyle = () => {
-    if(this._style === "primarystyle") {
+    if (this._style === "primarystyle") {
       this._style = "secondarystyle";
     } else {
       this._style = "primarystyle";
     }
 
     this._initializeLayers();
-  }
+  };
 
   zoomToLayer = layerId => {
     const api = new API();
@@ -59,12 +61,12 @@ export default class ConnectedBathymetryMap {
   };
 
   zoomToFit = () => {
-    if (this._getVisibleLayers().length === 0) {
+    if (this.getVisibleLayers().length === 0) {
       return;
     }
 
     const api = new API();
-    const layerIds = this._getVisibleLayers().map(layer => layer.id);
+    const layerIds = this.getVisibleLayers().map(layer => layer.id);
 
     handleRequest({
       requestPromise: api.restData().getActiveLayersBoundingBox(layerIds),
@@ -75,7 +77,7 @@ export default class ConnectedBathymetryMap {
     });
   };
 
-  _getVisibleLayers = () => {
+  getVisibleLayers = () => {
     return this._layers.filter(layer => layer.visible);
   };
 
@@ -88,7 +90,7 @@ export default class ConnectedBathymetryMap {
   }
 
   _initBathymetryLayers = () => {
-    this._getVisibleLayers().forEach(layer => {
+    this.getVisibleLayers().forEach(layer => {
       const wmsSource = this._buildWmsSource(`bathymetry:${layer.id}`);
       this._map.addLayer(layer.id, wmsSource);
     });
@@ -107,7 +109,18 @@ export default class ConnectedBathymetryMap {
         "EPSG:3857",
         { INFO_FORMAT: "application/json" }
       );
-      store.dispatch(fetchFeatureInfo(url));
+
+      const coordinate = transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
+
+      store.dispatch(
+        sendMapCommand({
+          commandType: Commands.FETCH_FEATURE_INFO,
+          commandPayload: {
+            url,
+            coordinate
+          }
+        })
+      );
     };
 
     this._map.addOnClickInteraction(onClickFun);
@@ -115,7 +128,7 @@ export default class ConnectedBathymetryMap {
 
   _getCombinedLayersParam = () => {
     let layersParam = "";
-    this._getVisibleLayers().forEach(layer => {
+    this.getVisibleLayers().forEach(layer => {
       layersParam += `bathymetry:${layer.id},`;
     });
     layersParam = layersParam.substring(0, layersParam.length - 1);
@@ -141,7 +154,12 @@ export default class ConnectedBathymetryMap {
       );
       const box = new BoundingBoxDTO(upperLeft, lowerRight);
 
-      store.dispatch(registerDragBox(box));
+      store.dispatch(
+        sendMapCommand({
+          commandType: Commands.HANDLE_DRAG_BOX,
+          commandPayload: box
+        })
+      );
     };
 
     this._map.addDragBoxInteraction(dragBoxInteractionFunction);

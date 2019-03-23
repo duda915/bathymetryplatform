@@ -51,7 +51,9 @@ export class BathymetryMap {
       condition: platformModifierKeyOnly
     });
 
-    dragBox.on("boxend", dragBox => interaction(dragBox));
+    dragBox.on("boxend", () => {
+      interaction(dragBox);
+    });
 
     this._map.addInteraction(dragBox);
   };

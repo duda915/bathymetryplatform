@@ -5,11 +5,11 @@ import React, { Component } from "react";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { geoServerAPI } from "../../services/ServiceMetaData";
 import "./AppWrapper.css";
-import DataComponent from "./datachooser/DataComponent";
+import DataSelector from "./dataselector/DataSelector";
 import DataManager from "./datamanager/DataManager";
-import MapComponent from "./map/MapComponent";
 import MenuPanel from "./sidemenu/MenuPanel";
 import Settings from "./usersettings/Settings";
+import Map from "./map/Map";
 
 class AppWrapper extends Component {
   constructor(props) {
@@ -142,13 +142,11 @@ class AppWrapper extends Component {
                 path="/"
                 render={() => {
                   return (
-                    <MapComponent
+                    <Map
                       layerStyle={this.state.layerStyle}
                       loadingService={this.props.loadingService}
                       messageService={this.props.messageService}
                       ref={this.mapReference}
-                      layers={this.state.selectedLayers}
-                      layersGroup={this.state.selectedLayersGroup}
                     />
                   );
                 }}
@@ -157,7 +155,7 @@ class AppWrapper extends Component {
                 path="/select"
                 render={() => {
                   return (
-                    <DataComponent
+                    <DataSelector
                       setSelectedLayers={this.setSelectedLayers}
                       loadingService={this.props.loadingService}
                       messageService={this.props.messageService}
