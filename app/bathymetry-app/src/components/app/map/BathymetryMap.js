@@ -12,14 +12,14 @@ export class BathymetryMap {
     this._bathymetryLayers = this._initializers().initializeLayers();
     this._map = this._initializers().initializeMap();
   }
-  
+
   getView() {
     return this._view;
   }
 
   removeLayers = () => {
     this._bathymetryLayers.getLayers().clear();
-  }
+  };
 
   toggleLayer = (name, visibility) => {
     this._bathymetryLayers.getLayers().forEach(layer => {
