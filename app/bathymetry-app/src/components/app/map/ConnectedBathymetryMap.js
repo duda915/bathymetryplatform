@@ -25,11 +25,9 @@ export default class ConnectedBathymetryMap {
   }
 
   _initializeLayers() {
-    if (this.getVisibleLayers().length !== 0) {
       this._initBathymetryLayers();
       this._initOnClickInteraction();
       this._initDragBoxInteraction();
-    }
   }
 
   setLayers = layers => {
@@ -125,8 +123,6 @@ export default class ConnectedBathymetryMap {
         "EPSG:3857",
         { INFO_FORMAT: "application/json" }
       );
-
-      console.log(url);
 
       const coordinate = transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
 

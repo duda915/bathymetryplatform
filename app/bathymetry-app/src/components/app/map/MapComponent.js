@@ -20,7 +20,6 @@ export class MapComponent extends Component {
 
   componentDidMount() {
     this.map = new ConnectedBathymetryMap(this.props.layers);
-    console.log("mount");
   }
 
   componentDidUpdate(prevProps) {
@@ -37,8 +36,6 @@ export class MapComponent extends Component {
     const { commandType, commandPayload } = this.props.command;
     const api = new API();
 
-    console.log(commandPayload);
-
     switch (commandType) {
       case Commands.FETCH_FEATURE_INFO:
         handleRequest({
@@ -47,8 +44,7 @@ export class MapComponent extends Component {
             return `lat: ${commandPayload.coordinate[0]} lon: ${
               commandPayload.coordinate[1]
             } Measurement ${response.data.features[0].properties.GRAY_INDEX}`;
-          },
-          onError: error => console.log(error)
+          }
         });
         return;
 
