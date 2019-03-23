@@ -29,6 +29,11 @@ export default class ConnectedBathymetryMap {
     }
   }
 
+  setLayers = layers => {
+    this._layers = layers;
+    this._initializeLayers();
+  }
+
   toggleLayer = layerId => {
     this._layers.forEach(layer => {
       if (layer.id === layerId) {

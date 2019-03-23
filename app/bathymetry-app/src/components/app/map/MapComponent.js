@@ -22,6 +22,10 @@ export class MapComponent extends Component {
     if (prevProps.command !== this.props.command) {
       this.handleCommand();
     }
+
+    if(prevProps.layers !== this.props.layers) {
+      this.map.setLayers(this.props.layers);
+    }
   }
 
   handleCommand() {
