@@ -4,7 +4,7 @@ import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
 import { ScrollPanel } from "primereact/scrollpanel";
 import { handleRequest } from "../../../utility/requesthandler";
-import { Layer } from "../layerswitcher/Layer";
+import Layer from "../layerswitcher/Layer";
 import API from "../../../../services/API";
 import "./Tools.scss";
 
@@ -92,7 +92,12 @@ export class ToolsComponent extends React.Component {
             </h6>
             <ScrollPanel style={{ height: "100px" }}>
               {this.props.layers.map(layer => (
-                <Layer key={layer.id} layer={layer} />
+                <Layer
+                  key={layer.id}
+                  layer={layer}
+                  zoomToLayer={this.props.zoomToLayer}
+                  toggleLayer={this.props.toggleLayer}
+                />
               ))}
             </ScrollPanel>
           </div>
@@ -111,5 +116,7 @@ ToolsComponent.propTypes = {
   ),
   signOut: PropTypes.func.isRequired,
   zoomFit: PropTypes.func.isRequired,
-  changeStyle: PropTypes.func.isRequired
+  changeStyle: PropTypes.func.isRequired,
+  zoomToLayer: PropTypes.func.isRequired,
+  toggleLayer: PropTypes.func.isRequired
 };

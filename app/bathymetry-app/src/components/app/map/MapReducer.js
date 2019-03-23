@@ -26,6 +26,8 @@ function layers(state = [], action) {
         if (layer.id === action.payload.layerId) {
           layer.visible = !layer.visible;
         }
+
+        return layer;
       });
     default:
       return state;

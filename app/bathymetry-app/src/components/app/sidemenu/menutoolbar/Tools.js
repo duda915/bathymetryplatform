@@ -1,9 +1,9 @@
 import { connect } from "react-redux";
 import { removeTokens } from "../../../../services/Token";
 import { changeLoginState } from "../../../login/LoginActions";
-import { sendMapCommand } from "../../map/MapActions";
 import { Commands } from "../../map/MapCommands";
 import { ToolsComponent } from "./ToolsComponent";
+import { toggleLayer, sendMapCommand } from "../../map/MapActions";
 
 function signOut(dispatch) {
   removeTokens();
@@ -30,7 +30,15 @@ const mapDispatchToProps = dispatch => {
         sendMapCommand({
           commandType: Commands.ZOOM_TO_FIT
         })
-      )
+      ),
+    zoomToLayer: id =>
+      dispatch(
+        sendMapCommand({
+          commandType: Commands.ZOOM_TO_LAYER,
+          commandPayload: id
+        })
+      ),
+    toggleLayer: id => dispatch(toggleLayer(id))
   };
 };
 
