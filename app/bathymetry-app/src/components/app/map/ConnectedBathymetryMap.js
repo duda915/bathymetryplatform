@@ -114,7 +114,7 @@ export default class ConnectedBathymetryMap {
 
   _getOnClickFunction = () => {
     const layersParam = this._getCombinedLayersParam();
-    const wmsSource = this._buildWmsSource(layersParam);
+    const wmsSource = this._buildWmsSourceWithoutStyle(layersParam);
 
     const onClickFun = evt => {
       const resolution = this._map.getView().getResolution();
@@ -125,6 +125,8 @@ export default class ConnectedBathymetryMap {
         "EPSG:3857",
         { INFO_FORMAT: "application/json" }
       );
+
+      console.log(url);
 
       const coordinate = transform(evt.coordinate, "EPSG:3857", "EPSG:4326");
 
@@ -179,6 +181,22 @@ export default class ConnectedBathymetryMap {
     };
 
     this._map.addDragBoxInteraction(dragBoxInteractionFunction);
+  };
+
+  //wms params with style not working with feature info
+  _buildWmsSourceWithoutStyle = layersParam => {
+    const wmsParams = {
+      LAYERS: layersParam,
+      TILED: true
+    };
+
+    return new TileWMS({
+      url: geoServerAPI,
+      params: wmsParams,
+      serverType: "geoserver",
+      transition: 0,
+      projection: "EPSG:3857"
+    });
   };
 
   _buildWmsSource = layersParam => {
