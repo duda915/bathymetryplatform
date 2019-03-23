@@ -6,7 +6,7 @@ import {
 } from "./MapActions";
 import { combineReducers } from "redux";
 
-function command(state = {}, action) {
+function command(state = null, action) {
   switch (action.type) {
     case SEND_MAP_COMMAND:
       return action.payload;

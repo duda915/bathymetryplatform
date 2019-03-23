@@ -46,6 +46,10 @@ export class BathymetryMap {
     this._map.on("singleclick", interaction);
   };
 
+  removeOnClickInteraction = interaction => {
+    this._map.un("singleclick", interaction);
+  }
+
   addDragBoxInteraction = interaction => {
     const dragBox = new DragBox({
       condition: platformModifierKeyOnly

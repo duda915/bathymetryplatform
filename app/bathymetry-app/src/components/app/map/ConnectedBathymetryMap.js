@@ -16,15 +16,18 @@ export default class ConnectedBathymetryMap {
     this._map = new BathymetryMap();
     this._style = "primarystyle";
     this._layers = bathymetryLayers;
+
+    this._onClickInteraction = null;
+    this._onDragBoxInteraction = null;
+
     this._initializeLayers();
     this.zoomToFit();
   }
 
   _initializeLayers() {
     if (this.getVisibleLayers().length !== 0) {
-      this._map.removeLayers();
       this._initBathymetryLayers();
-      this._initOnClickFunction();
+      this._initOnClickInteraction();
       this._initDragBoxInteraction();
     }
   }
@@ -32,7 +35,7 @@ export default class ConnectedBathymetryMap {
   setLayers = layers => {
     this._layers = layers;
     this._initializeLayers();
-  }
+  };
 
   toggleLayer = layerId => {
     this._layers.forEach(layer => {
@@ -95,13 +98,21 @@ export default class ConnectedBathymetryMap {
   }
 
   _initBathymetryLayers = () => {
+    this._map.removeLayers();
+
     this.getVisibleLayers().forEach(layer => {
       const wmsSource = this._buildWmsSource(`bathymetry:${layer.id}`);
       this._map.addLayer(layer.id, wmsSource);
     });
   };
 
-  _initOnClickFunction = () => {
+  _initOnClickInteraction = () => {
+    this._map.removeOnClickInteraction(this._onClickInteraction);
+    this._onClickInteraction = this._getOnClickFunction();
+    this._map.addOnClickInteraction(this._onClickInteraction);
+  };
+
+  _getOnClickFunction = () => {
     const layersParam = this._getCombinedLayersParam();
     const wmsSource = this._buildWmsSource(layersParam);
 
@@ -128,7 +139,7 @@ export default class ConnectedBathymetryMap {
       );
     };
 
-    this._map.addOnClickInteraction(onClickFun);
+    return onClickFun;
   };
 
   _getCombinedLayersParam = () => {

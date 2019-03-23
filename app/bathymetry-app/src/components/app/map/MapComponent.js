@@ -18,20 +18,27 @@ export class MapComponent extends Component {
     };
   }
 
+  componentDidMount() {
+    this.map = new ConnectedBathymetryMap(this.props.layers);
+    console.log("mount");
+  }
+
   componentDidUpdate(prevProps) {
-    if (prevProps.command !== this.props.command) {
+    if (this.props.command != null) {
       this.handleCommand();
     }
 
-    if(prevProps.layers !== this.props.layers) {
+    if (prevProps.layers !== this.props.layers) {
       this.map.setLayers(this.props.layers);
     }
   }
 
   handleCommand() {
     const { commandType, commandPayload } = this.props.command;
-    console.log(commandPayload);
     const api = new API();
+    this.props.emptyCommand();
+
+    console.log(commandPayload);
 
     switch (commandType) {
       case Commands.FETCH_FEATURE_INFO:
@@ -83,10 +90,6 @@ export class MapComponent extends Component {
       default:
         console.log("unknown command");
     }
-  }
-
-  componentDidMount() {
-    this.map = new ConnectedBathymetryMap(this.props.layers);
   }
 
   downloadAccept = () => {
@@ -147,5 +150,6 @@ MapComponent.propTypes = {
       visible: PropTypes.bool.isRequired
     }).isRequired
   ),
-  command: PropTypes.object.isRequired
+  command: PropTypes.object,
+  emptyCommand: PropTypes.func.isRequired
 };
