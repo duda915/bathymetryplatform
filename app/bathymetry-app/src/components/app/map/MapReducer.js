@@ -1,10 +1,10 @@
 import { FETCH_FEATURE_INFO, MAP_DRAG_BOX } from "./MapActions";
 import { combineReducers } from "redux";
 
-function featureInfoURL(state = {}, action) {
+function featureInfoUrl(state = null, action) {
   switch (action.type) {
     case FETCH_FEATURE_INFO:
-      return action.payload.featureInfoURL;
+      return action.payload.featureInfoUrl;
     default:
       return state;
   }
@@ -20,7 +20,7 @@ function dragBoxCoordinates(state = {}, action) {
 }
 
 const map = combineReducers({
-  featureInfoURL,
+  featureInfoUrl,
   dragBoxCoordinates
 });
 

@@ -6,6 +6,9 @@ import API from "../../../services/API";
 import { transformExtent } from "ol/proj";
 import CoordinateDTO from "../../../services/dtos/CoordinateDTO";
 import BoundingBoxDTO from "../../../services/dtos/BoundingBoxDTO";
+import { fetchFeatureInfo, registerDragBox } from "./MapActions";
+import { store } from "../../store";
+import { boundingExtent } from "ol/extent";
 
 export default class ConnectedBathymetryMap {
   constructor(bathymetryLayers) {
@@ -19,7 +22,29 @@ export default class ConnectedBathymetryMap {
     if (this._layers.length !== 0) {
       this._initBathymetryLayers();
       this._initOnClickFunction();
+      this.zoomToFit();
     }
+  }
+
+  zoomToFit = () => {
+    const api = new API();
+    const layerIds = this._layers.map(layer => layer.id);
+
+    handleRequest({
+      requestPromise: api.restData().getActiveLayersBoundingBox(layerIds),
+      onSuccess: response => {
+        const extent = this._boxToExtentWithTransform(response.data);
+        this._map.zoomToExtent(extent);
+      }
+    });
+  };
+
+  _boxToExtentWithTransform({ upperLeftVertex, lowerRightVertex }) {
+    const coordsUL = [upperLeftVertex.x, upperLeftVertex.y];
+    const coordsLR = [lowerRightVertex.x, lowerRightVertex.y];
+    const extent = new boundingExtent([coordsUL, coordsLR]);
+    const transformedExtent = transformExtent(extent, "EPSG:4326", "EPSG:3857");
+    return transformedExtent;
   }
 
   _initBathymetryLayers = () => {
@@ -32,15 +57,8 @@ export default class ConnectedBathymetryMap {
   };
 
   _initOnClickFunction = () => {
-    let layersParam = "";
-    this._layers.forEach(layer => {
-      layersParam += `bathymetry:${layer.id},`;
-    });
-    layersParam = layersParam.substring(0, layersParam.length - 1);
-
+    const layersParam = this._getCombinedLayersParam();
     const wmsSource = this._buildWmsSource(layersParam);
-
-    const api = new API();
 
     const onClickFun = evt => {
       const resolution = this._map.getView().getResolution();
@@ -51,25 +69,23 @@ export default class ConnectedBathymetryMap {
         "EPSG:3857",
         { INFO_FORMAT: "application/json" }
       );
-
-      handleRequest({
-        requestPromise: api.geoServerAPI().getFeatureInfo(url),
-        onSuccessMessage: response => {
-          const features = response.data.features;
-          if (features.length === 0) {
-            return "point lies outside of selected layers";
-          }
-
-          return `measurement: ${features[0].properties.GRAY_INDEX}`;
-        }
-      });
+      store.dispatch(fetchFeatureInfo(url));
     };
 
     this._map.addOnClickInteraction(onClickFun);
   };
 
+  _getCombinedLayersParam = () => {
+    let layersParam = "";
+    this._layers.forEach(layer => {
+      layersParam += `bathymetry:${layer.id},`;
+    });
+    layersParam = layersParam.substring(0, layersParam.length - 1);
+    return layersParam;
+  };
+
   _initDragBoxInteraction = () => {
-    const dragBoxFunction = dragBox => {
+    const dragBoxInteractionFunction = dragBox => {
       const dragBoxExtent = dragBox.getGeometry().getExtent();
       const transformedExtent = transformExtent(
         dragBoxExtent,
@@ -86,7 +102,11 @@ export default class ConnectedBathymetryMap {
         transformedExtent[1]
       );
       const box = new BoundingBoxDTO(upperLeft, lowerRight);
+
+      store.dispatch(registerDragBox(box));
     };
+
+    this._map.addDragBoxInteraction(dragBoxInteractionFunction);
   };
 
   _buildWmsSource = layersParam => {
