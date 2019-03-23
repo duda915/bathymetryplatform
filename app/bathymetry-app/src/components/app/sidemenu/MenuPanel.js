@@ -1,13 +1,17 @@
 import React, { Component } from "react";
+import PropTypes from "prop-types";
 import { HashRouter } from "react-router-dom";
 import MenuButton from "./menubutton/MenuButton";
 import MenuButtonOnClick from "./menubutton/MenuButtonOnClick";
+import { connect } from "react-redux";
 import "./MenuPanel.scss";
 import Tools from "./menutoolbar/Tools";
 import API from "../../../services/API";
 import { handleRequest } from "../../utility/requesthandler";
+import { removeTokens } from "../../../services/Token";
+import { changeLoginState } from "../../login/LoginActions";
 
-class MenuPanel extends Component {
+class MenuPanelComponent extends Component {
   constructor(props) {
     super(props);
     this.state = {};
@@ -84,4 +88,27 @@ class MenuPanel extends Component {
   }
 }
 
+MenuPanelComponent.propTypes = {
+  signOut: PropTypes.func.isRequired
+};
+
+function logout(dispatch) {
+  removeTokens();
+  dispatch(changeLoginState(false));
+}
+
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    signOut: () => logout(dispatch)
+  };
+};
+
+const MenuPanel = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(MenuPanelComponent);
 export default MenuPanel;
