@@ -2,7 +2,10 @@ import axios from "axios";
 import { restBasicToken } from "./ServiceMetaData";
 import Cookies from "universal-cookie";
 
+registerInterceptor();
+
 export function registerInterceptor() {
+  console.log("registered");
   const cookies = new Cookies();
 
   axios.interceptors.response.use(null, error => {

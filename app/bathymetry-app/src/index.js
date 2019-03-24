@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 import { store } from "./components/store";
+import {} from "./services/RefreshTokenInterceptor";
 
 ReactDOM.render(
   <Provider store={store}>
