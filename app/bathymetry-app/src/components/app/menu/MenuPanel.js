@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { HashRouter } from "react-router-dom";
-import MenuButton from "./menubutton/MenuButton";
-import MenuButtonOnClick from "./menubutton/MenuButtonOnClick";
+import MenuButton from "./button/MenuButton";
+import MenuButtonOnClick from "./button/MenuButtonOnClick";
 import { connect } from "react-redux";
 import "./MenuPanel.scss";
-import Tools from "./menutoolbar/Tools";
+import Tools from "./toolbar/Tools";
 import API from "../../../services/API";
 import { handleRequest } from "../../utility/requesthandler";
 import { removeTokens } from "../../../services/Token";

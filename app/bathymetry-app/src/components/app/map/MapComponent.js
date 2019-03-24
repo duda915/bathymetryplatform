@@ -79,10 +79,6 @@ export class MapComponent extends Component {
         });
         return;
 
-      case Commands.TOGGLE_STYLE:
-        this.map.toggleStyle();
-        return;
-
       case Commands.ZOOM_TO_FIT:
         this.map.zoomToFit();
         return;

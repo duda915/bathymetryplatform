@@ -4,7 +4,7 @@ import "./AppWrapper.css";
 import DataManager from "./datamanager/DataManager";
 import DataSelector from "./dataselector/DataSelector";
 import Map from "./map/Map";
-import MenuPanel from "./sidemenu/MenuPanel";
+import MenuPanel from "./menu/MenuPanel";
 import Settings from "./usersettings/Settings";
 
 export default function AppWrapper() {
