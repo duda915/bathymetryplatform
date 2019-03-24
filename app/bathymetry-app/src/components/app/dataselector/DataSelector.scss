@@ -1,0 +1,9 @@
+@import "../../../theme/AppTheme.scss";
+
+.data-selector-container {
+  padding: 10px;
+}
+
+.data-selector-table {
+  height: calc(70vh - #{$top-bar-height} );
+}

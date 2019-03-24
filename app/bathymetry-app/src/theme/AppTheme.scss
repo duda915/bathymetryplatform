@@ -7,6 +7,15 @@ $accent-second: rgb(80, 141, 211);
 
 $disabled: #4C5C79;
 
+$background-color: #eeeeee;
+
+$top-bar-height: 60px;
+
+body {
+    background-color: $background-color;
+}
+
+
 .flat-button:hover {
     background-color: $secondary !important;
     color: $primary !important;
