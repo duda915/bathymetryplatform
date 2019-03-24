@@ -75,11 +75,12 @@ export class DataSelectorComponent extends Component {
         <div className="p-col-12 p-md-1" />
         <div className="p-col-12 p-md-10" style={{ padding: "10px" }}>
           Select Data
+          <hr/>
         </div>
         <div className="p-col-12 p-md-1" />
 
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-2" style={{ padding: "10px" }}>
+        <div className="p-col-12 p-md-2" style={{ padding: "5px" }}>
           <InputText
             style={{ width: "100%" }}
             type="search"
@@ -91,7 +92,7 @@ export class DataSelectorComponent extends Component {
         <div className="p-col-12 p-md-9" />
 
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-2" style={{ padding: "10px" }}>
+        <div className="p-col-12 p-md-2" style={{ padding: "5px" }}>
           <Button label="Show Selection" onClick={this.showOnMap} />
         </div>
         <div className="p-col-12 p-md-9" />
