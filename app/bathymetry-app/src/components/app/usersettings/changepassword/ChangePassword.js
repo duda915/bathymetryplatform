@@ -75,66 +75,68 @@ export class ChangePassword extends React.Component {
 
   render() {
     return (
-      <Panel header="Change Password">
-        <div className="p-grid p-nogutter p-justify-center">
-          <form onSubmit={this.handleSubmit}>
-            <div className="p-col-12">
-              <div className="p-inputgroup">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-key" />
-                </span>
-                <Password
-                  placeholder="Current password"
-                  feedback={false}
-                  name="password"
-                  value={this.state.password}
-                  onChange={this.handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="p-col-12">
-              <div className="p-inputgroup">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-key" />
-                </span>
-                <Password
-                  placeholder="New password"
-                  feedback={false}
-                  name="newPassword"
-                  value={this.state.newPassword}
-                  onChange={this.handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="p-col-12">
-              <div className="p-inputgroup">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-key" />
-                </span>
-                <Password
-                  placeholder="Confirm new password"
-                  feedback={false}
-                  name="confirmNewPassword"
-                  value={this.state.confirmNewPassword}
-                  onChange={this.handleChange}
-                />
-              </div>
-            </div>
-
-            <div className="p-col-12">
-              <Button
-                label="Change password"
-                type="submit"
-                style={{
-                  width: "100%"
-                }}
+      <form onSubmit={this.handleSubmit}>
+        <div className="p-grid p-nogutter p-fluid">
+        <div className="p-col-12">
+          Change Password
+          <hr/>
+        </div>
+          <div className="p-col-12" style={{padding: "10px"}}>
+            <div className="p-inputgroup">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-key" />
+              </span>
+              <Password
+                placeholder="Current password"
+                feedback={false}
+                name="password"
+                value={this.state.password}
+                onChange={this.handleChange}
               />
             </div>
-          </form>
+          </div>
+
+          <div className="p-col-12" style={{padding: "10px"}}>
+            <div className="p-inputgroup">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-key" />
+              </span>
+              <Password
+                placeholder="New password"
+                feedback={false}
+                name="newPassword"
+                value={this.state.newPassword}
+                onChange={this.handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="p-col-12" style={{padding: "10px"}}>
+            <div className="p-inputgroup">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-key" />
+              </span>
+              <Password
+                placeholder="Confirm new password"
+                feedback={false}
+                name="confirmNewPassword"
+                value={this.state.confirmNewPassword}
+                onChange={this.handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="p-col-12" style={{padding: "10px"}}>
+            <Button
+              label="Change password"
+              type="submit"
+              style={{
+                width: "100%"
+              }}
+            />
+          </div>
         </div>
-      </Panel>
+      </form>
     );
   }
 }

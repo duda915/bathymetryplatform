@@ -48,26 +48,29 @@ export default class Settings extends React.Component {
 
   render() {
     return (
-      <div className="bathymetry-app-padding">
-        <Panel header="Account">
-          <div className="p-grid">
-            <div className="p-col-4">
-              <Panel header="Info">
-                Username: {this.state.user.username} <br />
-                Email: {this.state.user.email} <br />
-                Uploaded datasets: {this.state.datasets} <br />
-                Authorities:
-                <ul>{this.state.user.authorities}</ul>
-              </Panel>
-            </div>
+      <div className="p-grid p-nogutter" style={{ padding: "10px" }}>
+        <div className="p-col-12 p-md-4" />
+        <div className="p-col-12 p-md-4" >
+          Account Info
+          <hr />
+        </div>
+        <div className="p-col-12 p-md-4" />
 
-            <div className="p-col-4">
-              <ChangePassword
-                username={this.state.user.username}
-              />
-            </div>
-          </div>
-        </Panel>
+        <div className="p-col-12 p-md-4" />
+        <div className="p-col-12 p-md-4" style={{ padding: "10px" }}>
+          Username: {this.state.user.username} <br />
+          Email: {this.state.user.email} <br />
+          Uploaded datasets: {this.state.datasets} <br />
+          Authorities:
+          <ul>{this.state.user.authorities}</ul>
+        </div>
+        <div className="p-col-12 p-md-4" />
+
+        <div className="p-col-12 p-md-4" />
+        <div className="p-col-12 p-md-4">
+          <ChangePassword username={this.state.user.username} />
+        </div>
+        <div className="p-col-12 p-md-4" />
       </div>
     );
   }
