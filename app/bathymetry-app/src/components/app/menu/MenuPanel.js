@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { HashRouter } from "react-router-dom";
 import MenuButton from "./button/MenuButton";
-import MenuButtonOnClick from "./button/MenuButtonOnClick";
 import { connect } from "react-redux";
 import "./MenuPanel.scss";
 import Tools from "./toolbar/Tools";
@@ -10,6 +9,7 @@ import API from "../../../services/API";
 import { handleRequest } from "../../utility/requesthandler";
 import { removeTokens } from "../../../services/Token";
 import { changeLoginState } from "../../login/LoginActions";
+import { showPanel } from "./MenuPanelActions";
 
 class MenuPanelComponent extends Component {
   constructor(props) {
@@ -47,18 +47,20 @@ class MenuPanelComponent extends Component {
               <div className="menu-top">
                 <div className="menu-header">Menu</div>
               </div>
-              <MenuButton to="/" label="Map" icon="pi pi-map-marker" />
-              <MenuButton
-                to="/select"
-                label="Select Data"
-                icon="pi pi-search"
-              />
-              <MenuButton
-                to="/mydata"
-                disabled={this.state.guest}
-                label="My Data"
-                icon="pi pi-cloud-upload"
-              />
+              <div onClick={this.props.hideMenu}>
+                <MenuButton to="/" label="Map" icon="pi pi-map-marker" />
+                <MenuButton
+                  to="/select"
+                  label="Select Data"
+                  icon="pi pi-search"
+                />
+                <MenuButton
+                  to="/mydata"
+                  disabled={this.state.guest}
+                  label="My Data"
+                  icon="pi pi-cloud-upload"
+                />
+              </div>
             </div>
           </HashRouter>
         </div>
@@ -66,7 +68,7 @@ class MenuPanelComponent extends Component {
 
         <div className="p-col-12 p-col-align-center">
           <HashRouter>
-            <div className="router-container">
+            <div className="router-container" onClick={this.props.hideMenu}>
               <MenuButton
                 to="/settings"
                 disabled={this.state.guest}
@@ -82,7 +84,8 @@ class MenuPanelComponent extends Component {
 }
 
 MenuPanelComponent.propTypes = {
-  signOut: PropTypes.func.isRequired
+  signOut: PropTypes.func.isRequired,
+  hideMenu: PropTypes.func.isRequired
 };
 
 function logout(dispatch) {
@@ -96,7 +99,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    signOut: () => logout(dispatch)
+    signOut: () => logout(dispatch),
+    hideMenu: () => dispatch(showPanel(false))
   };
 };
 
