@@ -1,8 +1,10 @@
 @import "../../../theme/AppTheme.scss";
 
-$top-bar-height: 60px;
-
 .top-bar {
+  top: 0;
+  position: fixed;
+  z-index: 1;
+  width: 100%;
   height: $top-bar-height;
   background-color: $primary;
 }

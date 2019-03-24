@@ -23,10 +23,9 @@ export function AppWrapperComponent(props) {
       >
         <MenuPanel />
       </Sidebar>
-      <div className="p-grid p-nogutter">
-        <div className="p-col-12">
-          <TopBar />
-        </div>
+      <TopBar />
+
+      <div className="p-grid p-nogutter content-container">
         <Router>
           <div className="p-col-12">
             <Route exact path="/" component={Map} />

@@ -1,8 +1,11 @@
 @import "../../theme/AppTheme.scss";
 
-
 .side-bar {
   background-color: $primary !important;
   border: none !important;
   padding: 0px !important;
+}
+
+.content-container {
+  margin-top: $top-bar-height;
 }
