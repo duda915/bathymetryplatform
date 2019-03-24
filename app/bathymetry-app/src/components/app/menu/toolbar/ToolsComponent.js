@@ -46,62 +46,56 @@ export class ToolsComponent extends React.Component {
           </div>
         </div>
 
-        <div className="p-col-12">
-          <Toolbar className="tools-toolbar">
-            <div className="p-toolbar-group-left">
-              <Button
-                style={{ marginRight: "10px" }}
-                className="p-button tools-button flat-button"
-                onClick={this.props.signOut}
-                icon="pi pi-sign-out"
-              />
-              <Button
-                style={{ marginRight: "10px" }}
-                className="p-button tools-button flat-button"
-                onClick={this.props.changeStyle}
-                icon="pi pi-eye"
-              />
-              <Button
-                style={{ marginRight: "10px" }}
-                className="p-button tools-button flat-button"
-                onClick={() =>
-                  this.setState({ showLayers: !this.state.showLayers })
-                }
-                icon="pi pi-image"
-              />
-              <Button
-                className="p-button tools-button flat-button"
-                onClick={this.props.zoomFit}
-                icon="pi pi-search"
-              />
+        {this.props.layers.length === 0 ? null : (
+          <>
+            <div className="p-col-12">
+              <Toolbar className="tools-toolbar">
+                <div className="p-toolbar-group-left">
+                  <Button
+                    className="p-button tools-button flat-button"
+                    onClick={() =>
+                      this.setState({ showLayers: !this.state.showLayers })
+                    }
+                    icon="pi pi-list"
+                  />
+                  <Button
+                    className="p-button tools-button flat-button"
+                    onClick={this.props.changeStyle}
+                    icon="pi pi-eye"
+                  />
+                  <Button
+                    className="p-button tools-button flat-button"
+                    onClick={this.props.zoomFit}
+                    icon="pi pi-search"
+                  />
+                </div>
+              </Toolbar>
             </div>
-          </Toolbar>
-        </div>
 
-        {this.state.showLayers ? (
-          <div className="p-col-12 layer-tool">
-            <h6
-              className="layer-tool-header"
-              style={{
-                marginTop: "5px",
-                marginBottom: "5px",
-                fontSize: "12px"
-              }}
-            >
-              Layers
-            </h6>
-            <ScrollPanel style={{ height: "100px" }}>
-              {this.props.layers.map(layer => (
-                <Layer
-                  key={layer.id}
-                  layer={layer}
-                  zoomToLayer={this.props.zoomToLayer}
-                  toggleLayer={this.props.toggleLayer}
-                />
-              ))}
-            </ScrollPanel>
-          </div>
-        ) : null}
+            {!this.state.showLayers ? null : (
+              <div className="p-col-12 layer-tool">
+                <h6
+                  className="layer-tool-header"
+                  style={{
+                    marginTop: "5px",
+                    marginBottom: "5px",
+                    fontSize: "13px"
+                  }}
+                >
+                  Layers
+                </h6>
+                {this.props.layers.map(layer => (
+                  <Layer
+                    key={layer.id}
+                    layer={layer}
+                    zoomToLayer={this.props.zoomToLayer}
+                    toggleLayer={this.props.toggleLayer}
+                  />
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </div>
     );
   }

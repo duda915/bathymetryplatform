@@ -20,14 +20,13 @@
 }
 
 .tools-button {
+  margin: 4px !important;
   width: 25px;
   height: 25px;
   text-align: center;
   background-color: $primary !important;
   border: 1px solid $secondary !important;
 }
-
-
 
 .tools-toolbar {
   background-color: $primary !important;
@@ -36,7 +35,6 @@
 }
 
 .tools-username-box {
-  // background-color: $accent;
   border-bottom: 1px solid $secondary;
   
 }
@@ -44,7 +42,7 @@
 .layer-tool {
   border-radius: 3px;
   background-color: $accent;
-  border: 1px solid $secondary;
+  border: none;
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 
@@ -61,10 +59,6 @@
 
     border-radius: 3px;
 }
-
-.layers-panel > div {
-}
-
 
 .layers-panel div {
     border: none !important;

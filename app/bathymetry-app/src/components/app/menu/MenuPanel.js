@@ -37,7 +37,6 @@ class MenuPanelComponent extends Component {
   render() {
     return (
       <div className="p-grid p-nogutter menu-panel">
-        <div className="p-col-12 brand" />
         <div className="p-col-12 " style={{ padding: "15px" }}>
           <Tools />
         </div>
@@ -63,7 +62,7 @@ class MenuPanelComponent extends Component {
             </div>
           </HashRouter>
         </div>
-        <div className="p-col-12 menu-spacer" style={{ height: "50px" }} />
+        <div className="p-col-12 menu-spacer" style={{ height: "25px" }} />
 
         <div className="p-col-12 p-col-align-center">
           <HashRouter>
@@ -73,12 +72,6 @@ class MenuPanelComponent extends Component {
                 disabled={this.state.guest}
                 label="Settings"
                 icon="pi pi-cog"
-              />
-              <MenuButtonOnClick
-                to="/"
-                label="Logout"
-                icon="pi pi-sign-out"
-                onClick={this.props.signOut}
               />
             </div>
           </HashRouter>
