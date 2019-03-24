@@ -1,4 +1,5 @@
 import { AutoComplete } from "primereact/autocomplete";
+import PropTypes from "prop-types";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { FileUpload } from "primereact/fileupload";
@@ -6,6 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
 import React from "react";
 import API from "../../../../services/API";
+import { handleRequest } from "../../../utility/requesthandler";
 
 export class AddDataForm extends React.Component {
   constructor(props) {
@@ -20,8 +22,6 @@ export class AddDataForm extends React.Component {
       epsgSuggestions: null
     };
 
-    this.api = new API();
-
     this.epsgCodes = [];
   }
 
@@ -32,16 +32,14 @@ export class AddDataForm extends React.Component {
   }
 
   fetchEpsgCodes() {
-    this.api
-      .restData()
-      .getEPSGCodes()
-      .then(
-        response =>
-          (this.epsgCodes = response.data.map(code => code.epsgCode.toString()))
-      )
-      .catch(() =>
-        this.props.messageService("error", "Error", "cannot fetch epsg codes")
-      );
+    const api = new API();
+
+    handleRequest({
+      requestPromise: api.restData().getEPSGCodes(),
+      onSuccess: response =>
+        (this.epsgCodes = response.data.map(code => code.epsgCode.toString())),
+      onErrorMessage: () => "cannot fetch epsg codes"
+    });
   }
 
   getTodaysDate() {
@@ -51,13 +49,14 @@ export class AddDataForm extends React.Component {
   }
 
   getUsername() {
-    this.api
-      .restUser()
-      .getUser()
-      .then(response => this.setState({ dataOwner: response.data.username }))
-      .catch(() =>
-        this.props.messageService("error", "Error", "cannot fetch username")
-      );
+    const api = new API();
+
+    handleRequest({
+      requestPromise: api.restUser().getUser(),
+      onSuccess: response =>
+        this.setState({ dataOwner: response.data.username }),
+      onErrorMessage: () => "cannot fetch username"
+    });
   }
 
   handleChange = event => {
@@ -84,6 +83,8 @@ export class AddDataForm extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
+    const api = new API();
+
     const newDataSet = {
       name: this.state.dataName,
       dataOwner: this.state.dataOwner,
@@ -91,19 +92,12 @@ export class AddDataForm extends React.Component {
       epsgCode: this.state.crs
     };
 
-
-    this.api
-      .restData()
-      .uploadData(newDataSet, this.state.file)
-      .then(() =>
-        this.props.messageService("success", "Success", "file upload success")
-      )
-      .catch(error =>
-        this.props.messageService("error", "Error", error.response.data.message)
-      )
-      .finally(() => {
-        this.props.fetchUserDataSets();
-      });
+    handleRequest({
+      requestPromise: api.restData().uploadData(newDataSet, this.state.file),
+      onSuccess: () => this.props.fetchUserDataSets(),
+      onSuccessMessage: () => "file upload success",
+      onErrorMessage: error => error.response.data.message
+    });
   };
 
   suggestEpsgCode(event) {
@@ -186,3 +180,7 @@ export class AddDataForm extends React.Component {
     );
   }
 }
+
+AddDataForm.propTypes = {
+  fetchUserDataSets: PropTypes.func.isRequired
+};

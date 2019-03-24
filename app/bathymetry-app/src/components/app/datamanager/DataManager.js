@@ -4,6 +4,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { ContextMenu } from "primereact/contextmenu";
 import API from "../../../services/API";
+import { handleRequest } from "../../utility/requesthandler";
 
 export default class DataManager extends Component {
   constructor(props) {
@@ -18,8 +19,6 @@ export default class DataManager extends Component {
         }
       ]
     };
-
-    this.api = new API();
   }
 
   componentDidMount() {
@@ -27,30 +26,24 @@ export default class DataManager extends Component {
   }
 
   fetchUserDataSets = () => {
+    const api = new API();
 
-    this.api
-      .restData()
-      .getUserDataSets()
-      .then(response => this.setState({ data: response.data }))
-      .catch(() =>
-        this.messageService("error", "Error", "cannot fetch user datasets")
-      )
+    handleRequest({
+      requestPromise: api.restData().getUserDataSets(),
+      onSuccess: response => this.setState({ data: response.data }),
+      onErrorMessage: () => "cannot fetch user datasets"
+    });
   };
 
   deleteDataSet(dataSet) {
-    this.props.loadingService(true);
+    const api = new API();
 
-    this.api
-      .restData()
-      .deleteData(dataSet.id)
-      .then(() => this.props.messageService("info", "Delete", "data deleted"))
-      .catch(() =>
-        this.props.messageService("error", "Error", "cannot delete data")
-      )
-      .finally(() => {
-        this.props.loadingService(false);
-        this.fetchUserDataSets();
-      });
+    handleRequest({
+      requestPromise: api.restData().deleteData(dataSet.id),
+      onSuccess: () => this.fetchUserDataSets(),
+      onSuccessMessage: () => "data deleted",
+      onErrorMessage: () => "cannot delete data"
+    });
   }
 
   render() {
@@ -60,8 +53,6 @@ export default class DataManager extends Component {
           <div className="p-col-4">
             <AddDataForm
               fetchUserDataSets={this.fetchUserDataSets}
-              loadingService={this.props.loadingService}
-              messageService={this.props.messageService}
             />
           </div>
           <div className="p-col-8 bathymetry-app-padding">
