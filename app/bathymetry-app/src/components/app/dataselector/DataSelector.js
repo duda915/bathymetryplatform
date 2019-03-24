@@ -73,7 +73,7 @@ export class DataSelectorComponent extends Component {
     return (
       <div className="p-grid p-nogutter p-justify-center data-selector-container">
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-10" style={{ padding: "10px" }}>
+        <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
           Select Data
           <hr/>
         </div>
@@ -98,7 +98,7 @@ export class DataSelectorComponent extends Component {
         <div className="p-col-12 p-md-9" />
 
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-10 data-selector-table">
+        <div className="p-col-12 p-md-10 ">
           <ContextMenu
             model={this.state.contextMenu}
             ref={el => (this.cm = el)}

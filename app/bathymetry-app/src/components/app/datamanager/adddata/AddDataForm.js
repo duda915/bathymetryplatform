@@ -110,73 +110,80 @@ export class AddDataForm extends React.Component {
 
   render() {
     return (
-      <Panel header="Add Data">
-        <form onSubmit={this.handleSubmit} autoComplete="off">
-          <div className="p-grid">
-            <div className="p-col-12">
-              <FileUpload
-                mode="basic"
-                accept="*"
-                maxFileSize={50000000}
-                onSelect={this.onFileSelect}
-                onBeforeSend={this.onSelectAbort}
-              />
-            </div>
-            <div className="p-col-12">
-              <div className="p-inputgroup">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-tag" />
-                </span>
-                <InputText
-                  placeholder="Data name"
-                  name="dataName"
-                  value={this.state.dataName}
-                  onChange={this.handleChange}
-                />
-              </div>
-            </div>
-            <div className="p-col-12">
-              <div className="p-inputgroup">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-user" />
-                </span>
-                <InputText
-                  placeholder="Data owner"
-                  name="dataOwner"
-                  value={this.state.dataOwner}
-                  onChange={this.handleChange}
-                />
-              </div>
-            </div>
-            <div className="p-col-12">
-              <Calendar
-                dateFormat="dd/mm/yy"
-                value={this.state.date}
-                onChange={e =>
-                  this.setState({
-                    date: e.value
-                  })
-                }
-                showIcon={true}
-              />
-            </div>
-            <div className="p-col-12">
-              <AutoComplete
-                placeholder="EPSG"
-                name="crs"
-                value={this.state.crs}
-                onChange={e => this.setState({ crs: e.value })}
-                suggestions={this.state.epsgSuggestions}
-                completeMethod={this.suggestEpsgCode.bind(this)}
-              />
-            </div>
+      <form onSubmit={this.handleSubmit} autoComplete="off">
+        <div className="p-grid p-fluid p-nogutter">
+          <div className="p-col-12" >
+            Add Data
+            <hr />
+          </div>
 
-            <div className="p-col-12">
-              <Button label="Upload" type="submit" />
+          <div className="p-col-12" style={{ padding: "5px" }}>
+            <FileUpload
+              mode="basic"
+              accept="*"
+              maxFileSize={50000000}
+              onSelect={this.onFileSelect}
+              onBeforeSend={this.onSelectAbort}
+            />
+          </div>
+          <div className="p-col-12" style={{ padding: "5px" }}>
+            <div className="p-inputgroup">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-tag" />
+              </span>
+              <InputText
+              style={{width: "100%"}}
+                placeholder="Data name"
+                name="dataName"
+                value={this.state.dataName}
+                onChange={this.handleChange}
+              />
             </div>
           </div>
-        </form>
-      </Panel>
+          <div className="p-col-12" style={{ padding: "5px" }}>
+            <div className="p-inputgroup">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-user" />
+              </span>
+              <InputText
+              style={{width: "100%"}}
+
+                placeholder="Data owner"
+                name="dataOwner"
+                value={this.state.dataOwner}
+                onChange={this.handleChange}
+              />
+            </div>
+          </div>
+          <div className="p-col-12" style={{ padding: "5px" }}>
+            <Calendar
+
+              dateFormat="dd/mm/yy"
+              value={this.state.date}
+              onChange={e =>
+                this.setState({
+                  date: e.value
+                })
+              }
+              showIcon={true}
+            />
+          </div>
+          <div className="p-col-12" style={{ padding: "5px" }}>
+            <AutoComplete
+              placeholder="EPSG"
+              name="crs"
+              value={this.state.crs}
+              onChange={e => this.setState({ crs: e.value })}
+              suggestions={this.state.epsgSuggestions}
+              completeMethod={this.suggestEpsgCode.bind(this)}
+            />
+          </div>
+
+          <div className="p-col-12" style={{ padding: "5px" }}>
+            <Button label="Upload" type="submit" />
+          </div>
+        </div>
+      </form>
     );
   }
 }

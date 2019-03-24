@@ -49,24 +49,32 @@ export default class DataManager extends Component {
   render() {
     return (
       <div className="bathymetry-app-padding">
-        <div className="p-grid p-fluid ">
-          <div className="p-col-4">
-            <AddDataForm
-              fetchUserDataSets={this.fetchUserDataSets}
-            />
+        <div className="p-grid p-nogutter" style={{ padding: "10px" }}>
+          <div className="p-col-12 p-md-4" />
+          <div className="p-col-12 p-md-4">
+            <AddDataForm fetchUserDataSets={this.fetchUserDataSets} />
           </div>
-          <div className="p-col-8 bathymetry-app-padding">
+          <div className="p-col-12 p-md-4" />
+
+          <div className="p-col-12 p-md-1" />
+          <div className="p-col-12 p-md-10" style={{ "paddingTop": "20px" }}>
+            My Datasets
+            <hr/>
+          </div>
+          <div className="p-col-12 p-md-1" />
+
+          <div className="p-col-12 p-md-1" />
+          <div className="p-col-12 p-md-10">
             <ContextMenu
               model={this.state.contextMenu}
               ref={el => (this.cm = el)}
               onHide={() => this.setState({ selectedData: null })}
             />
             <DataTable
-              header="My Datasets"
               value={this.state.data}
-              responsive={true}
-              scrollable={true}
-              scrollHeight="75vh"
+              paginator={true}
+              rows={10}
+              rowsPerPageOptions={[5, 10, 20]}
               contextMenuSelection={this.state.selectedData}
               onContextMenuSelectionChange={e =>
                 this.setState({ selectedData: e.value })
@@ -79,6 +87,7 @@ export default class DataManager extends Component {
               <Column field="dataOwner" header="Owner" sortable={true} />
             </DataTable>
           </div>
+          <div className="p-col-12 p-md-1" />
         </div>
       </div>
     );
