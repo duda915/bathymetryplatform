@@ -8,6 +8,7 @@ import { InputText } from "primereact/inputtext";
 import { addLayers, removeLayers } from "../map/MapActions";
 import React, { Component } from "react";
 import API from "../../../services/API";
+import { handleRequest } from "../../utility/requesthandler";
 
 export class DataSelectorComponent extends Component {
   constructor(props) {
@@ -20,10 +21,9 @@ export class DataSelectorComponent extends Component {
           icon: "pi pi-download",
           command: event => this.downloadData(this.state.selectedData)
         }
-      ]
+      ],
+      selection: []
     };
-
-    this.api = new API();
   }
 
   componentDidMount() {
@@ -31,21 +31,16 @@ export class DataSelectorComponent extends Component {
   }
 
   fetchDataSets() {
-    this.api
-      .restData()
-      .getAllDataSets()
-      .then(response => this.setState({ data: response.data }))
-      .catch(() =>
-        this.props.messageService("error", "Error", "cannot fetch datasets")
-      );
+    const api = new API();
+
+    handleRequest({
+      requestPromise: api.restData().getAllDataSets(),
+      onSuccess: response => this.setState({ data: response.data }),
+      onErrorMessage: () => "cannot fetch datasets"
+    });
   }
 
   showOnMap = () => {
-    if (this.state.selection === undefined) {
-      this.props.messageService("info", "Info", "Nothing is selected");
-      return;
-    }
-
     const layers = this.state.selection.map(value => {
       return {
         id: value.id,
@@ -59,16 +54,17 @@ export class DataSelectorComponent extends Component {
   };
 
   downloadData(selectedData) {
-    this.api
-      .restData()
-      .downloadDataSet(selectedData.id)
-      .then(response =>
+    const api = new API();
+
+    handleRequest({
+      requestPromise: api.restData().downloadDataSet(selectedData.id),
+      onSuccess: response =>
         downloadjs(
           response.data,
           `bathymetry${selectedData.id}.csv`,
           "text/plain"
         )
-      );
+    });
   }
 
   render() {
