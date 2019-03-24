@@ -1,17 +1,17 @@
-import { TOGGLE_PANEL } from "./MenuPanelActions";
+import { SHOW_PANEL } from "./MenuPanelActions";
 import { combineReducers } from "redux";
 
-function togglePanel(state = false, action) {
+function showPanel(state = false, action) {
   switch (action.type) {
-    case TOGGLE_PANEL:
-      return !state;
+    case SHOW_PANEL:
+      return action.payload.show;
     default:
       return state;
   }
 }
 
 const menuPanel = combineReducers({
-  togglePanel
+  showPanel
 });
 
 export default menuPanel;

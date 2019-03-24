@@ -1,4 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
+import { Sidebar } from "primereact/sidebar";
+import { connect } from "react-redux";
 import { HashRouter as Router, Route } from "react-router-dom";
 import "./AppWrapper.css";
 import DataManager from "./datamanager/DataManager";
@@ -6,10 +9,15 @@ import DataSelector from "./dataselector/DataSelector";
 import Map from "./map/Map";
 import TopBar from "./topbar/TopBar";
 import Settings from "./usersettings/Settings";
+import { showPanel } from "./menu/MenuPanelActions";
+import MenuPanel from './menu/MenuPanel'
 
-export default function AppWrapper() {
+export function AppWrapperComponent(props) {
   return (
     <div>
+      <Sidebar visible={props.menuPanel} onHide={props.hidePanel}>
+        <MenuPanel/>
+      </Sidebar>
       <div className="p-grid p-nogutter">
         <div className="p-col-12">
           <TopBar />
@@ -26,3 +34,25 @@ export default function AppWrapper() {
     </div>
   );
 }
+
+AppWrapperComponent.propTypes = {
+  menuPanel: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = state => {
+  return {
+    menuPanel: state.menuPanel.showPanel
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    hidePanel: () => dispatch(showPanel(false))
+  };
+};
+
+const AppWrapper = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AppWrapperComponent);
+export default AppWrapper;

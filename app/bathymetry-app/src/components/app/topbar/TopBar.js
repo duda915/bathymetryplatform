@@ -2,7 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import "./TopBar.scss";
-import { togglePanel } from "../menu/MenuPanelActions";
+import { showPanel } from "../menu/MenuPanelActions";
 import { changeLoginState } from "../../login/LoginActions";
 import { Button } from "primereact/button";
 import { removeTokens } from "../../../services/Token";
@@ -20,7 +20,7 @@ export function TopBarComponent(props) {
       <div className="p-grid p-nogutter ">
         <div className="p-col-3 ">
           <div className="p-grid p-nogutter">
-              <div className="top-bar__button" onClick={props.togglePanel}>
+              <div className="top-bar__button" onClick={props.showPanel}>
                 <i className="pi pi-bars" />
             </div>
           </div>
@@ -28,8 +28,8 @@ export function TopBarComponent(props) {
         <HashRouter>
           <NavLink
             className="p-col-6 top-bar__brand"
+            exact
             to="/"
-            onClick={e => e.preventDefault()}
           />
         </HashRouter>
         <div className="p-col-3">
@@ -45,7 +45,7 @@ export function TopBarComponent(props) {
 }
 
 TopBarComponent.propTypes = {
-  togglePanel: PropTypes.func.isRequired,
+  showPanel: PropTypes.func.isRequired,
   signOut: PropTypes.func.isRequired
 };
 
@@ -55,7 +55,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    togglePanel: () => dispatch(togglePanel()),
+    showPanel: () => dispatch(showPanel(true)),
     signOut: () => dispatch(changeLoginState(false))
   };
 };

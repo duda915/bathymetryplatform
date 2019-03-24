@@ -1,7 +1,10 @@
-export const TOGGLE_PANEL = "TOGGLE_PANEL";
+export const SHOW_PANEL = "SHOW_PANEL";
 
-export function togglePanel() {
+export function showPanel(show) {
   return {
-    type: TOGGLE_PANEL,
+    type: SHOW_PANEL,
+    payload: {
+      show
+    }
   };
 }
