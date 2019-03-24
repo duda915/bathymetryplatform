@@ -1,0 +1,14 @@
+@import "../../../theme/AppTheme.scss";
+
+.top-bar {
+  background-color: $primary;
+}
+
+.top-bar__brand {
+  height: 50px;
+  background-color: $primary;
+  background-image: url("../../../assets/logocolor.svg");
+  background-size: 80px;
+  background-position: center;
+  background-repeat: no-repeat;
+}
