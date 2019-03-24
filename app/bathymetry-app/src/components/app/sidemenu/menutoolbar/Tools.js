@@ -3,7 +3,7 @@ import { removeTokens } from "../../../../services/Token";
 import { changeLoginState } from "../../../login/LoginActions";
 import { Commands } from "../../map/MapCommands";
 import { ToolsComponent } from "./ToolsComponent";
-import { toggleLayer, sendMapCommand } from "../../map/MapActions";
+import { toggleLayer, sendMapCommand, toggleStyle } from "../../map/MapActions";
 
 function signOut(dispatch) {
   removeTokens();
@@ -19,12 +19,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     signOut: () => signOut(dispatch),
-    changeStyle: () =>
-      dispatch(
-        sendMapCommand({
-          commandType: Commands.TOGGLE_STYLE
-        })
-      ),
+    changeStyle: () => dispatch(toggleStyle()),
     zoomFit: () =>
       dispatch(
         sendMapCommand({

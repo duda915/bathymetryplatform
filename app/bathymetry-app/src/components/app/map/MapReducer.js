@@ -1,5 +1,6 @@
 import {
   SEND_MAP_COMMAND,
+  TOGGLE_STYLE,
   TOGGLE_LAYER,
   ADD_LAYERS,
   REMOVE_LAYERS
@@ -10,6 +11,19 @@ function command(state = {}, action) {
   switch (action.type) {
     case SEND_MAP_COMMAND:
       return action.payload;
+    default:
+      return state;
+  }
+}
+
+function style(state = "primarystyle", action) {
+  switch (action.type) {
+    case TOGGLE_STYLE:
+      if (state === "primarystyle") {
+        return "secondarystyle";
+      } else {
+        return "primarystyle";
+      }
     default:
       return state;
   }
@@ -36,7 +50,8 @@ function layers(state = [], action) {
 
 const map = combineReducers({
   command,
-  layers
+  layers,
+  style
 });
 
 export default map;

@@ -12,9 +12,9 @@ import { boundingExtent } from "ol/extent";
 import { Commands } from "./MapCommands";
 
 export default class ConnectedBathymetryMap {
-  constructor(bathymetryLayers) {
+  constructor(bathymetryLayers, style) {
     this._map = new BathymetryMap();
-    this._style = "primarystyle";
+    this._style = style;
     this._layers = bathymetryLayers;
 
     this._onClickInteraction = null;
@@ -45,15 +45,10 @@ export default class ConnectedBathymetryMap {
     this._initializeLayers();
   };
 
-  toggleStyle = () => {
-    if (this._style === "primarystyle") {
-      this._style = "secondarystyle";
-    } else {
-      this._style = "primarystyle";
-    }
-
+  setStyle = style => {
+    this._style = style;
     this._initializeLayers();
-  };
+  }
 
   zoomToLayer = layerId => {
     const api = new API();

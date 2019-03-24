@@ -2,6 +2,7 @@ export const SEND_MAP_COMMAND = "SEND_MAP_COMMAND";
 export const TOGGLE_LAYER = "TOGGLE_LAYER";
 export const ADD_LAYERS = "ADD_LAYERS";
 export const REMOVE_LAYERS = "REMOVE_LAYERS";
+export const TOGGLE_STYLE = "TOGGLE_STYLE";
 
 export function sendMapCommand({ commandType, commandPayload }) {
   return {
@@ -10,6 +11,12 @@ export function sendMapCommand({ commandType, commandPayload }) {
       commandType,
       commandPayload
     }
+  };
+}
+
+export function toggleStyle() {
+  return {
+    type: TOGGLE_STYLE,
   };
 }
 

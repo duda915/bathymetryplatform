@@ -19,7 +19,7 @@ export class MapComponent extends Component {
   }
 
   componentDidMount() {
-    this.map = new ConnectedBathymetryMap(this.props.layers);
+    this.map = new ConnectedBathymetryMap(this.props.layers, this.props.style);
   }
 
   componentDidUpdate(prevProps) {
@@ -29,6 +29,10 @@ export class MapComponent extends Component {
 
     if (prevProps.layers !== this.props.layers) {
       this.map.setLayers(this.props.layers);
+    }
+
+    if (prevProps.style !== this.props.style) {
+      this.map.setStyle(this.props.style);
     }
   }
 
@@ -52,7 +56,7 @@ export class MapComponent extends Component {
         if (this.map.getVisibleLayers().length === 0) {
           return;
         }
-        
+
         handleRequest({
           requestPromise: api
             .restData()
@@ -150,5 +154,6 @@ MapComponent.propTypes = {
       visible: PropTypes.bool.isRequired
     }).isRequired
   ),
-  command: PropTypes.object
+  command: PropTypes.object,
+  style: PropTypes.string.isRequired
 };

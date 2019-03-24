@@ -4,7 +4,8 @@ import { MapComponent } from "./MapComponent";
 const mapStateToProps = state => {
   return {
     layers: state.map.layers,
-    command: state.map.command
+    command: state.map.command,
+    style: state.map.style
   };
 };
 
