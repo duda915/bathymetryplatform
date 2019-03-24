@@ -3,20 +3,25 @@ import PropTypes from "prop-types";
 import { Sidebar } from "primereact/sidebar";
 import { connect } from "react-redux";
 import { HashRouter as Router, Route } from "react-router-dom";
-import "./AppWrapper.css";
+import "./AppWrapper.scss";
 import DataManager from "./datamanager/DataManager";
 import DataSelector from "./dataselector/DataSelector";
 import Map from "./map/Map";
 import TopBar from "./topbar/TopBar";
 import Settings from "./usersettings/Settings";
 import { showPanel } from "./menu/MenuPanelActions";
-import MenuPanel from './menu/MenuPanel'
+import MenuPanel from "./menu/MenuPanel";
 
 export function AppWrapperComponent(props) {
   return (
     <div>
-      <Sidebar visible={props.menuPanel} onHide={props.hidePanel}>
-        <MenuPanel/>
+      <Sidebar
+        className="side-bar"
+        visible={props.menuPanel}
+        onHide={props.hidePanel}
+        showCloseIcon={false}
+      >
+        <MenuPanel />
       </Sidebar>
       <div className="p-grid p-nogutter">
         <div className="p-col-12">
