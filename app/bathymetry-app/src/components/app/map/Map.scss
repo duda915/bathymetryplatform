@@ -1,0 +1,5 @@
+@import "../topbar/TopBar.scss";
+
+.map-container {
+  height: calc(100vh - #{$top-bar-height});
+}

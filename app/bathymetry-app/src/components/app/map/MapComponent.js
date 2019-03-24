@@ -7,6 +7,7 @@ import API from "../../../services/API";
 import ConnectedBathymetryMap from "./ConnectedBathymetryMap";
 import { handleRequest } from "../../utility/requesthandler";
 import { Commands } from "./MapCommands";
+import "./Map.scss";
 
 export class MapComponent extends Component {
   constructor(props) {
@@ -137,7 +138,7 @@ export class MapComponent extends Component {
         >
           Found {this.state.selectionRecords} records.
         </Dialog>
-        <div id="map" style={{ height: "100%" }} />
+        <div id="map" className="map-container" />
       </>
     );
   }

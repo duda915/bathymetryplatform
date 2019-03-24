@@ -7,7 +7,9 @@ export default class Layer extends React.Component {
   render() {
     return (
       <div className="p-grid p-nogutter p-align-center  layer-tool__layer">
-        <div className="p-col-8 layer-tool__layer__name">{this.props.layer.name}</div>
+        <div className="p-col-8 layer-tool__layer__name">
+          {this.props.layer.name}
+        </div>
         <div className="p-col-2">
           <Button
             className="p-button tools-button flat-button"
