@@ -1,14 +1,33 @@
 @import "../../../theme/AppTheme.scss";
 
+$top-bar-height: 60px;
+
 .top-bar {
+  height: $top-bar-height;
   background-color: $primary;
 }
 
 .top-bar__brand {
-  height: 50px;
+  height: $top-bar-height;
   background-color: $primary;
   background-image: url("../../../assets/logocolor.svg");
-  background-size: 80px;
+  background-size: 140px;
   background-position: center;
   background-repeat: no-repeat;
+}
+
+.top-bar__button {
+  font-size: 20px;
+  color: $secondary;
+  height: $top-bar-height;
+  width: $top-bar-height;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.top-bar__button:hover {
+  background-color: $accent-second;
+  cursor: pointer;
+  transition: background-color 300ms;
 }

@@ -6,6 +6,8 @@ import { togglePanel } from "../menu/MenuPanelActions";
 import { changeLoginState } from "../../login/LoginActions";
 import { Button } from "primereact/button";
 import { removeTokens } from "../../../services/Token";
+import { HashRouter } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export function TopBarComponent(props) {
   const signOut = () => {
@@ -14,14 +16,28 @@ export function TopBarComponent(props) {
   };
 
   return (
-    <div className="top-bar" style={{ height: "50px" }}>
-      <div className="p-grid p-nogutter p-justify-between">
-        <div className="p-col-2">
-          <Button icon="pi pi-bars" onClick={props.togglePanel} />
+    <div className="top-bar">
+      <div className="p-grid p-nogutter ">
+        <div className="p-col-3 ">
+          <div className="p-grid p-nogutter">
+              <div className="top-bar__button" onClick={props.togglePanel}>
+                <i className="pi pi-bars" />
+            </div>
+          </div>
         </div>
-        <div className="p-col-4 top-bar__brand"></div>
-        <div className="p-col-2">
-          <Button icon="pi pi-sign-out" onClick={signOut} />
+        <HashRouter>
+          <NavLink
+            className="p-col-6 top-bar__brand"
+            to="/"
+            onClick={e => e.preventDefault()}
+          />
+        </HashRouter>
+        <div className="p-col-3">
+          <div className="p-grid p-nogutter p-justify-end">
+              <div className="top-bar__button" onClick={signOut}>
+                <i className="pi pi-sign-out" />
+              </div>
+          </div>
         </div>
       </div>
     </div>
