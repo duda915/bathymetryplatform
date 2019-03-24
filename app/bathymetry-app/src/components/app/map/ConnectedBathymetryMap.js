@@ -25,9 +25,9 @@ export default class ConnectedBathymetryMap {
   }
 
   _initializeLayers() {
-      this._initBathymetryLayers();
-      this._initOnClickInteraction();
-      this._initDragBoxInteraction();
+    this._initBathymetryLayers();
+    this._initOnClickInteraction();
+    this._initDragBoxInteraction();
   }
 
   setLayers = layers => {
@@ -35,20 +35,10 @@ export default class ConnectedBathymetryMap {
     this._initializeLayers();
   };
 
-  toggleLayer = layerId => {
-    this._layers.forEach(layer => {
-      if (layer.id === layerId) {
-        layer.visible = !layer.visible;
-      }
-    });
-
-    this._initializeLayers();
-  };
-
   setStyle = style => {
     this._style = style;
     this._initializeLayers();
-  }
+  };
 
   zoomToLayer = layerId => {
     const api = new API();

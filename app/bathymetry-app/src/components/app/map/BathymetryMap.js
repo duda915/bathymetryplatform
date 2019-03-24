@@ -21,14 +21,6 @@ export class BathymetryMap {
     this._bathymetryLayers.getLayers().clear();
   };
 
-  toggleLayer = (name, visibility) => {
-    this._bathymetryLayers.getLayers().forEach(layer => {
-      if (layer.get("title") === name) {
-        layer.setVisible(visibility);
-      }
-    });
-  };
-
   zoomToExtent = extent => {
     this._map.getView().fit(extent);
   };
