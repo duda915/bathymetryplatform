@@ -44,6 +44,7 @@ export class DataSelectorComponent extends Component {
     const layers = this.state.selection.map(value => {
       return {
         id: value.id,
+        name: value.name,
         visible: true
       };
     });

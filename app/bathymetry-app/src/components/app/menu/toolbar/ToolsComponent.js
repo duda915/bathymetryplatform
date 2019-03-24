@@ -7,6 +7,7 @@ import { handleRequest } from "../../../utility/requesthandler";
 import Layer from "../layerswitcher/Layer";
 import API from "../../../../services/API";
 import "./Tools.scss";
+import LayerSwitcher from "../layerswitcher/LayerSwitcher";
 
 export class ToolsComponent extends React.Component {
   constructor(props) {
@@ -72,28 +73,7 @@ export class ToolsComponent extends React.Component {
               </Toolbar>
             </div>
 
-            {!this.state.showLayers ? null : (
-              <div className="p-col-12 layer-tool">
-                <h6
-                  className="layer-tool-header"
-                  style={{
-                    marginTop: "5px",
-                    marginBottom: "5px",
-                    fontSize: "13px"
-                  }}
-                >
-                  Layers
-                </h6>
-                {this.props.layers.map(layer => (
-                  <Layer
-                    key={layer.id}
-                    layer={layer}
-                    zoomToLayer={this.props.zoomToLayer}
-                    toggleLayer={this.props.toggleLayer}
-                  />
-                ))}
-              </div>
-            )}
+            {!this.state.showLayers ? null : <LayerSwitcher />}
           </>
         )}
       </div>
@@ -110,7 +90,5 @@ ToolsComponent.propTypes = {
   ),
   signOut: PropTypes.func.isRequired,
   zoomFit: PropTypes.func.isRequired,
-  changeStyle: PropTypes.func.isRequired,
-  zoomToLayer: PropTypes.func.isRequired,
-  toggleLayer: PropTypes.func.isRequired
+  changeStyle: PropTypes.func.isRequired
 };

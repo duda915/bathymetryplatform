@@ -39,29 +39,3 @@
   
 }
 
-.layer-tool {
-  border-radius: 3px;
-  background-color: $accent;
-  border: none;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-
-}
-
-.layer-tool-header {
-    padding: 5px;
-    border-bottom: 1px solid $secondary;
-}
-
-
-.layers-panel {
-    border: 1px solid black !important;
-
-    border-radius: 3px;
-}
-
-.layers-panel div {
-    border: none !important;
-
-    background-color: $primary !important;
-}
