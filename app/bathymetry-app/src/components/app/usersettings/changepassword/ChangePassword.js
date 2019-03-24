@@ -3,6 +3,7 @@ import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Panel } from "primereact/panel";
 import API from "../../../../services/API";
+import { handleRequest } from "../../../utility/requesthandler";
 
 export class ChangePassword extends React.Component {
   constructor(props) {
@@ -13,11 +14,11 @@ export class ChangePassword extends React.Component {
       newPassword: "",
       confirmNewPassword: ""
     };
-
-    this.api = new API();
   }
 
   async verifyNewPassword() {
+    const api = new API();
+
     return new Promise((resolve, reject) => {
       if (this.state.password === this.state.newPassword) {
         reject("New password is equal to current password");
@@ -27,52 +28,43 @@ export class ChangePassword extends React.Component {
         reject("newpassword cannot be empty");
       }
 
-      this.api
-        .restUser()
-        .loginUser(this.props.username, this.state.password)
-        .then(() => resolve())
-        .catch(() => reject("Actual password is not correct"));
+      handleRequest({
+        requestPromise: api
+          .restUser()
+          .loginUser(this.props.username, this.state.password),
+        onSuccess: () => resolve(),
+        onError: () => reject("actual password is not correct")
+      });
     });
   }
 
   handleSubmit = event => {
     event.preventDefault();
 
-    this.verifyNewPassword()
-      .then(() => {
-        this.props.loadingService(true);
+    const api = new API();
 
+    handleRequest({
+      requestPromise: this.verifyNewPassword(),
+      onSuccess: () => {
         const newPassword = {
           newPassword: this.state.newPassword
         };
 
-        this.api
-          .restUser()
-          .changePassword(newPassword)
-          .then(() =>
-            this.props.messageService(
-              "success",
-              "Success",
-              "Password changed successfully"
-            )
-          )
-          .catch(() =>
-            this.props.messageService(
-              "error",
-              "Error",
-              "Error occured while changing password"
-            )
-          )
-          .finally(() => this.props.loadingService(false));
-      })
-      .catch(error => this.props.messageService("error", "Error", error))
-      .finally(() =>
         this.setState({
           password: "",
           newPassword: "",
           confirmNewPassword: ""
-        })
-      );
+        });
+
+        handleRequest({
+          requestPromise: api.restUser().changePassword(newPassword),
+          onSuccessMessage: () => "password changed successfully",
+          onErrorMessage: () => "error occured while changing password",
+          onError: error => console.log(error.response)
+        });
+      },
+      onErrorMessage: error => error
+    });
   };
 
   handleChange = event => {
