@@ -1,10 +1,9 @@
 import { AutoComplete } from "primereact/autocomplete";
-import PropTypes from "prop-types";
 import { Button } from "primereact/button";
 import { Calendar } from "primereact/calendar";
 import { FileUpload } from "primereact/fileupload";
 import { InputText } from "primereact/inputtext";
-import { Panel } from "primereact/panel";
+import PropTypes from "prop-types";
 import React from "react";
 import API from "../../../../services/API";
 import { handleRequest } from "../../../utility/requesthandler";

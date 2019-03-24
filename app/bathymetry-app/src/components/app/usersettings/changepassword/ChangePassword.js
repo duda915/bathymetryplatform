@@ -1,7 +1,6 @@
-import React from "react";
-import { Password } from "primereact/password";
 import { Button } from "primereact/button";
-import { Panel } from "primereact/panel";
+import { Password } from "primereact/password";
+import React from "react";
 import API from "../../../../services/API";
 import { handleRequest } from "../../../utility/requesthandler";
 

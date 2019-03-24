@@ -1,13 +1,11 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 import { connect } from "react-redux";
-import "./TopBar.scss";
-import { showPanel } from "../menu/MenuPanelActions";
-import { changeLoginState } from "../../login/LoginActions";
-import { Button } from "primereact/button";
+import { HashRouter, NavLink } from "react-router-dom";
 import { removeTokens } from "../../../services/Token";
-import { HashRouter } from "react-router-dom";
-import { NavLink } from "react-router-dom";
+import { changeLoginState } from "../../login/LoginActions";
+import { showPanel } from "../menu/MenuPanelActions";
+import "./TopBar.scss";
 
 export function TopBarComponent(props) {
   const signOut = () => {

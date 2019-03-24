@@ -1,12 +1,8 @@
 import { endpoints, restBasicToken } from "./ServiceMetaData";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import { registerInterceptor } from "./RefreshTokenInterceptor";
 
 export default class API {
-  constructor() {
-    // registerInterceptor();
-  }
 
   restUser() {
     let rest = {};

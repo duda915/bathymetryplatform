@@ -1,8 +1,7 @@
-import { Panel } from "primereact/panel";
 import React from "react";
 import API from "../../../services/API";
-import { ChangePassword } from "./changepassword/ChangePassword";
 import { handleRequest } from "../../utility/requesthandler";
+import { ChangePassword } from "./changepassword/ChangePassword";
 
 export default class Settings extends React.Component {
   constructor(props) {

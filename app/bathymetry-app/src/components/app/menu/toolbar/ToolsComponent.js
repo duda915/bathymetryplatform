@@ -1,13 +1,11 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { Toolbar } from "primereact/toolbar";
 import { Button } from "primereact/button";
-import { ScrollPanel } from "primereact/scrollpanel";
-import { handleRequest } from "../../../utility/requesthandler";
-import Layer from "../layerswitcher/Layer";
+import { Toolbar } from "primereact/toolbar";
+import PropTypes from "prop-types";
+import React from "react";
 import API from "../../../../services/API";
-import "./Tools.scss";
+import { handleRequest } from "../../../utility/requesthandler";
 import LayerSwitcher from "../layerswitcher/LayerSwitcher";
+import "./Tools.scss";
 
 export class ToolsComponent extends React.Component {
   constructor(props) {
