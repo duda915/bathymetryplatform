@@ -5,12 +5,18 @@ import { default as LayerTile, default as TileLayer } from "ol/layer/Tile";
 import Map from "ol/Map";
 import SourceOSM from "ol/source/OSM";
 import View from "ol/View";
+import * as Polygon from "ol/geom/Polygon";
+import Feature from "ol/Feature";
+import { default as VectorSource } from "ol/source/Vector";
+import { default as VectorLayer } from "ol/layer/Vector";
 
 export class BathymetryMap {
   constructor() {
     this._view = this._initializers().initializeView();
     this._bathymetryLayers = this._initializers().initializeLayers();
     this._map = this._initializers().initializeMap();
+    this._vectorLayer = new VectorLayer();
+    this._map.addLayer(this._vectorLayer);
   }
 
   getView() {
@@ -53,6 +59,15 @@ export class BathymetryMap {
 
     this._map.addInteraction(dragBox);
   };
+
+  drawPolygon = extent => {
+    const polygon = Polygon.fromExtent(extent);
+    const feature = new Feature(polygon);
+    const vectorSource = new VectorSource();
+    vectorSource.addFeature(feature);
+
+    this._vectorLayer.setSource(vectorSource);
+  }
 
   _initializers = () => {
     const initializers = {

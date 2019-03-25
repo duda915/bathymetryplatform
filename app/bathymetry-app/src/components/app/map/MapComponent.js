@@ -54,6 +54,16 @@ export class MapComponent extends Component {
         return;
 
       case Commands.HANDLE_DRAG_BOX:
+        if (this.state.regressionService) {
+          if (this.map.checkIfBoxContainsInRegressioExtent(commandPayload)) {
+            this.setState({
+              regressionDialog: true,
+              regressionSelection: commandPayload
+            });
+          }
+          return;
+        }
+
         if (this.map.getVisibleLayers().length === 0) {
           return;
         }
@@ -88,6 +98,10 @@ export class MapComponent extends Component {
         this.map.zoomToLayer(commandPayload);
         return;
 
+      case Commands.TURN_ON_REGRESSION_SERVICE_INTERACTION:
+        this.setState({ regressionService: true });
+        this.map.turnOnRegressionService();
+        return;
       default:
         console.log("unknown command");
     }
@@ -114,6 +128,36 @@ export class MapComponent extends Component {
     this.setState({ downloadDialog: false, selectionRecords: 0 });
   };
 
+  hideRegressionDialog = () => {
+    this.setState({ regressionDialog: false });
+  };
+
+  publishRegression = () => {
+    const api = new API();
+
+    handleRequest({
+      requestPromise: api
+        .restData()
+        .publishRegressionResults(this.state.regressionSelection),
+      onSuccessMessage: () => "data published",
+      onError: error => console.log(error.response)
+    });
+
+    this.hideRegressionDialog();
+  };
+
+  downloadRegression = () => {
+    const api = new API();
+
+    handleRequest({
+      requestPromise: api
+        .restData()
+        .downloadRegressionResults(this.state.regressionSelection),
+      onSuccess: response =>
+        downloadjs(response.data, "regression.csv", "text/plain")
+    });
+  };
+
   render() {
     const dialogFooter = (
       <div>
@@ -123,6 +167,21 @@ export class MapComponent extends Component {
           onClick={this.downloadAccept}
         />
         <Button label="Cancel" icon="pi pi-times" onClick={this.hideDialog} />
+      </div>
+    );
+
+    const regressionFooter = (
+      <div>
+        <Button
+          label="Publish"
+          icon="pi pi-check"
+          onClick={this.publishRegression}
+        />
+        <Button
+          label="Download"
+          icon="pi pi-download"
+          onClick={this.downloadRegression}
+        />
       </div>
     );
 
@@ -137,6 +196,18 @@ export class MapComponent extends Component {
           onHide={this.hideDialog}
         >
           Found {this.state.selectionRecords} records.
+        </Dialog>
+
+        <Dialog
+          header="Regression Service"
+          footer={regressionFooter}
+          visible={this.state.regressionDialog}
+          width="350px"
+          modal={true}
+          onHide={this.hideRegressionDialog}
+        >
+          Regression Service will publish bathymetry data raster with resolution
+          based on selection size.
         </Dialog>
         <div id="map" className="map-container" />
       </>

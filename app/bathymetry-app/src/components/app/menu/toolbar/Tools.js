@@ -3,11 +3,23 @@ import { removeTokens } from "../../../../services/Token";
 import { changeLoginState } from "../../../login/LoginActions";
 import { Commands } from "../../map/MapCommands";
 import { ToolsComponent } from "./ToolsComponent";
-import { sendMapCommand, toggleStyle } from "../../map/MapActions";
+import { sendMapCommand, toggleStyle, removeLayers } from "../../map/MapActions";
+import {showPanel} from '../MenuPanelActions'
 
 function signOut(dispatch) {
   removeTokens();
   dispatch(changeLoginState(false));
+}
+
+function turnOnRegressionService(dispatch) {
+  dispatch(showPanel(false));
+  dispatch(removeLayers());
+  dispatch(
+    sendMapCommand({
+      commandType: Commands.TURN_ON_REGRESSION_SERVICE_INTERACTION,
+      commandPayload: Math.random()
+    })
+  );
 }
 
 const mapStateToProps = state => {
@@ -25,7 +37,8 @@ const mapDispatchToProps = dispatch => {
         sendMapCommand({
           commandType: Commands.ZOOM_TO_FIT
         })
-      )
+      ),
+    turnOnRegressionServiceInteraction: () => turnOnRegressionService(dispatch)
   };
 };
 

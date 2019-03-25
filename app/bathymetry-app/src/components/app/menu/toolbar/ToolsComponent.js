@@ -44,12 +44,11 @@ export class ToolsComponent extends React.Component {
             </div>
           </div>
         </div>
-
-        {this.props.layers.length === 0 ? null : (
-          <>
-            <div className="p-col-12">
-              <Toolbar className="tools-toolbar">
-                <div className="p-toolbar-group-left">
+        <div className="p-col-12">
+          <Toolbar className="tools-toolbar">
+            <div className="p-toolbar-group-left">
+              {this.props.layers.length === 0 ? null : (
+                <>
                   <Button
                     className="p-button tools-button flat-button"
                     onClick={() =>
@@ -67,12 +66,19 @@ export class ToolsComponent extends React.Component {
                     onClick={this.props.zoomFit}
                     icon="pi pi-search"
                   />
-                </div>
-              </Toolbar>
-            </div>
+                </>
+              )}
 
-            {!this.state.showLayers ? null : <LayerSwitcher />}
-          </>
+              <Button
+                className="p-button tools-button flat-button"
+                onClick={this.props.turnOnRegressionServiceInteraction}
+                icon="pi pi-paperclip"
+              />
+            </div>
+          </Toolbar>
+        </div>
+        {!this.state.showLayers || this.props.layers.length === 0 ? null : (
+          <LayerSwitcher />
         )}
       </div>
     );
@@ -88,5 +94,6 @@ ToolsComponent.propTypes = {
   ),
   signOut: PropTypes.func.isRequired,
   zoomFit: PropTypes.func.isRequired,
-  changeStyle: PropTypes.func.isRequired
+  changeStyle: PropTypes.func.isRequired,
+  turnOnRegressionServiceInteraction: PropTypes.func.isRequired
 };

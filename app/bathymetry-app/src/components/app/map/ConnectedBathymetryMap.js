@@ -8,7 +8,7 @@ import CoordinateDTO from "../../../services/dtos/CoordinateDTO";
 import BoundingBoxDTO from "../../../services/dtos/BoundingBoxDTO";
 import { sendMapCommand } from "./MapActions";
 import { store } from "../../store";
-import { boundingExtent } from "ol/extent";
+import { boundingExtent, containsExtent } from "ol/extent";
 import { Commands } from "./MapCommands";
 
 export default class ConnectedBathymetryMap {
@@ -17,6 +17,7 @@ export default class ConnectedBathymetryMap {
     this._style = style;
     this._layers = bathymetryLayers;
 
+    this._regressionExtent = null;
     this._onClickInteraction = null;
     this._onDragBoxInteraction = null;
 
@@ -71,6 +72,31 @@ export default class ConnectedBathymetryMap {
   getVisibleLayers = () => {
     return this._layers.filter(layer => layer.visible);
   };
+
+  turnOnRegressionService = () => {
+    const api = new API();
+
+    handleRequest({
+      requestPromise: api.restData().getRegressionBounds(),
+      onSuccess: response => {
+        this._regressionExtent = this._boxToExtentWithTransform(response.data);
+        this._map.drawPolygon(this._regressionExtent);
+        this._map.zoomToExtent(this._regressionExtent);
+      },
+      onSuccessMessage: () =>
+        "select area inside bounds to calculate bathymetry with neural network"
+    });
+  };
+
+  checkIfBoxContainsInRegressioExtent = box => {
+    const extent = this._boxToExtentWithTransform(box);
+    return containsExtent(this._regressionExtent, extent);
+  }
+
+  getRegressionExtent = () => {
+    console.log(this._regressionExtent);
+    return this._regressionExtent;
+  }
 
   _boxToExtentWithTransform({ upperLeftVertex, lowerRightVertex }) {
     const coordsUL = [upperLeftVertex.x, upperLeftVertex.y];
