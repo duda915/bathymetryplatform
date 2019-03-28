@@ -91,7 +91,7 @@ export class DataSelectorComponent extends Component {
     return (
       <div className="p-grid p-nogutter p-justify-center data-selector-container">
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
+        <div className="p-col-12 p-md-10" >
           Select Data
           <hr />
         </div>
