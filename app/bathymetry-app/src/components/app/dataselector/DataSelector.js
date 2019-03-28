@@ -1,4 +1,5 @@
 import downloadjs from "downloadjs";
+import PropTypes from "prop-types";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { ContextMenu } from "primereact/contextmenu";
@@ -31,28 +32,49 @@ export class DataSelectorComponent extends Component {
     this.fetchDataSets();
   }
 
+  componentWillReceiveProps(props) {
+    this.generateVisibleData(props.layers);
+  }
+
   fetchDataSets() {
     const api = new API();
 
     handleRequest({
       requestPromise: api.restData().getAllDataSets(),
-      onSuccess: response => this.setState({ data: response.data }),
+      onSuccess: response => {
+        const data = response.data;
+        this.setState({ data }, () =>
+          this.generateVisibleData(this.props.layers)
+        );
+      },
       onErrorMessage: () => "cannot fetch datasets"
     });
   }
 
-  showOnMap = () => {
-    const layers = this.state.selection.map(value => {
-      return {
-        id: value.id,
-        name: value.name,
-        visible: true
-      };
-    });
-
-    this.props.removeLayers();
-    this.props.addLayersToMap(layers);
+  goToMap = () => {
     window.location.hash = "/";
+  };
+
+  onSelectionChange = event => {
+    const layer = event.value;
+    layer.visible = true;
+    this.props.addLayersToMap([layer]);
+  };
+
+  clearSelection = () => {
+    this.props.removeLayers();
+  };
+
+  generateVisibleData = layers => {
+    const layersAdapter = layers.map(layer => layer.id);
+    const visibleData = this.state.data.filter(entry => {
+      if (layersAdapter.includes(entry.id)) {
+        console.log(`includes ${entry.id}`);
+      }
+
+      return !layersAdapter.includes(entry.id);
+    });
+    this.setState({ visibleData });
   };
 
   downloadData(selectedData) {
@@ -72,24 +94,6 @@ export class DataSelectorComponent extends Component {
   render() {
     return (
       <div className="p-grid p-nogutter p-justify-center data-selector-container">
-        
-        <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
-          Selected
-          <hr />
-        </div>
-        <div className="p-col-12 p-md-1" />
-
-        <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-2" style={{ paddingBottom: "5px" }}>
-          <Button
-            label="Go To Map"
-            onClick={this.showOnMap}
-            style={{ width: "100%" }}
-          />
-        </div>
-        <div className="p-col-12 p-md-9" />
-
         <div className="p-col-12 p-md-1" />
         <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
           Select Data
@@ -97,10 +101,8 @@ export class DataSelectorComponent extends Component {
         </div>
         <div className="p-col-12 p-md-1" />
 
-        
-
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-5" style={{ paddingBottom: "5px" }}>
+        <div className="p-col-12 p-md-5" style={{ padding: "5px" }}>
           <InputText
             style={{ width: "100%" }}
             type="search"
@@ -112,7 +114,7 @@ export class DataSelectorComponent extends Component {
         <div className="p-col-12 p-md-6" />
 
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-10 ">
+        <div className="p-col-12 p-md-10 " style={{padding: "5px"}}>
           <ContextMenu
             model={this.state.contextMenu}
             ref={el => (this.cm = el)}
@@ -122,13 +124,12 @@ export class DataSelectorComponent extends Component {
             sortField="id"
             sortOrder={-1}
             globalFilter={this.state.globalFilter}
-            value={this.state.data}
+            value={this.state.visibleData}
             paginator={true}
-            rows={20}
+            rows={10}
             rowsPerPageOptions={[5, 10, 20]}
-            selectionMode="multiple"
-            selection={this.state.selection}
-            onSelectionChange={e => this.setState({ selection: e.value })}
+            selectionMode="single"
+            onSelectionChange={this.onSelectionChange}
             metaKeySelection={false}
             contextMenuSelection={this.state.selectedData}
             onContextMenuSelectionChange={e =>
@@ -143,13 +144,63 @@ export class DataSelectorComponent extends Component {
           </DataTable>
         </div>
         <div className="p-col-12 p-md-1" />
+
+        <div className="p-col-12 p-md-1" />
+        <div
+          className="p-col-12 p-md-2"
+          style={{ paddingBottom: "5px", paddingTop: "5px" }}
+        >
+          <Button
+            label="Go To Map"
+            onClick={this.goToMap}
+            style={{ width: "100%" }}
+          />
+        </div>
+        <div className="p-col-12 p-md-9" />
+
+        {this.props.layers.length === 0 ? null : (
+          <>
+            <div className="p-col-12 p-md-1" />
+            <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
+              Selected
+              <hr />
+            </div>
+            <div className="p-col-12 p-md-1" />
+            <div className="p-col-12 p-md-1" />
+            <div className="p-col-12 p-md-2" style={{ padding: "5px" }}>
+              <Button
+                label="Clear selection"
+                onClick={this.clearSelection}
+                style={{ width: "100%" }}
+              />
+            </div>
+            <div className="p-col-12 p-md-9" />
+            {this.props.layers.map(layer => (
+              <React.Fragment key={layer.id}>
+                <div className="p-col-12 p-md-1" />
+                <div className="p-col-12 p-md-10" style={{ padding: "5px" }}>
+                  <div className="selected-data">{layer.name}</div>
+                </div>
+                <div className="p-md-1" />
+              </React.Fragment>
+            ))}
+          </>
+        )}
       </div>
     );
   }
 }
 
+DataSelectorComponent.propTypes = {
+  layers: PropTypes.array.isRequired,
+  removeLayers: PropTypes.func.isRequired,
+  addLayersToMap: PropTypes.func.isRequired
+};
+
 const mapStateToProps = state => {
-  return {};
+  return {
+    layers: state.map.layers
+  };
 };
 
 const mapDispatchToProps = dispatch => {

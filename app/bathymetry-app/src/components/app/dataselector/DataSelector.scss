@@ -7,3 +7,12 @@
 .data-selector-table {
   height: calc(70vh - #{$top-bar-height} );
 }
+
+.selected-data {
+  border: 1px solid $primary;
+  border-radius: 5px;
+  padding: 5px !important;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
