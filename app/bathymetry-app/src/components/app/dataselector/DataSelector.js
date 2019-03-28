@@ -106,7 +106,7 @@ export class DataSelectorComponent extends Component {
           />
           <DataTable
             sortField="id"
-            sortOrder="-1"
+            sortOrder={-1}
             globalFilter={this.state.globalFilter}
             value={this.state.data}
             paginator={true}

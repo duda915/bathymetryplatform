@@ -72,7 +72,7 @@ export default class DataManager extends Component {
             />
             <DataTable
               sortField="id"
-              sortOrder="-1"
+              sortOrder={-1}
               value={this.state.data}
               paginator={true}
               rows={10}
