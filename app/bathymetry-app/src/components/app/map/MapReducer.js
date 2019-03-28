@@ -3,7 +3,7 @@ import {
   TOGGLE_STYLE,
   TOGGLE_LAYER,
   ADD_LAYERS,
-  REMOVE_LAYERS
+  REMOVE_LAYERS,
 } from "./MapActions";
 import { combineReducers } from "redux";
 

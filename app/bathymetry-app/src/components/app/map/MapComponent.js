@@ -21,10 +21,11 @@ export class MapComponent extends Component {
 
   componentDidMount() {
     this.map = new ConnectedBathymetryMap(this.props.layers, this.props.style);
+    this.handleCommand();
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.command !== this.props.command) {
+    if (this.props.command.commandType !== Commands.EMPTY) {
       this.handleCommand();
     }
 
@@ -40,6 +41,7 @@ export class MapComponent extends Component {
   handleCommand() {
     const { commandType, commandPayload } = this.props.command;
     const api = new API();
+    this.props.sendEmptyCommand();
 
     switch (commandType) {
       case Commands.FETCH_FEATURE_INFO:
@@ -102,8 +104,11 @@ export class MapComponent extends Component {
         this.setState({ regressionService: true });
         this.map.turnOnRegressionService();
         return;
+
+      case Commands.EMPTY:
+        return;
       default:
-        console.log("unknown command");
+        return;
     }
   }
 
@@ -223,5 +228,6 @@ MapComponent.propTypes = {
     }).isRequired
   ),
   command: PropTypes.object,
-  style: PropTypes.string.isRequired
+  style: PropTypes.string.isRequired,
+  sendEmptyCommand: PropTypes.func.isRequired
 };

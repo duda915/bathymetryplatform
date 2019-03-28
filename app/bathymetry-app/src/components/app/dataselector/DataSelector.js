@@ -67,13 +67,9 @@ export class DataSelectorComponent extends Component {
 
   generateVisibleData = layers => {
     const layersAdapter = layers.map(layer => layer.id);
-    const visibleData = this.state.data.filter(entry => {
-      if (layersAdapter.includes(entry.id)) {
-        console.log(`includes ${entry.id}`);
-      }
-
-      return !layersAdapter.includes(entry.id);
-    });
+    const visibleData = this.state.data.filter(
+      entry => !layersAdapter.includes(entry.id)
+    );
     this.setState({ visibleData });
   };
 
@@ -114,7 +110,7 @@ export class DataSelectorComponent extends Component {
         <div className="p-col-12 p-md-6" />
 
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-10 " style={{padding: "5px"}}>
+        <div className="p-col-12 p-md-10 " style={{ padding: "5px" }}>
           <ContextMenu
             model={this.state.contextMenu}
             ref={el => (this.cm = el)}

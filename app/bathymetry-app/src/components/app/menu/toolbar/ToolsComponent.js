@@ -92,7 +92,6 @@ ToolsComponent.propTypes = {
       visible: PropTypes.bool.isRequired
     }).isRequired
   ),
-  signOut: PropTypes.func.isRequired,
   zoomFit: PropTypes.func.isRequired,
   changeStyle: PropTypes.func.isRequired,
   turnOnRegressionServiceInteraction: PropTypes.func.isRequired

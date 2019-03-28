@@ -1,23 +1,41 @@
 import { connect } from "react-redux";
-import { removeTokens } from "../../../../services/Token";
-import { changeLoginState } from "../../../login/LoginActions";
+import {
+  removeLayers,
+  sendMapCommand,
+  toggleStyle
+} from "../../map/MapActions";
 import { Commands } from "../../map/MapCommands";
+import { showPanel } from "../MenuPanelActions";
 import { ToolsComponent } from "./ToolsComponent";
-import { sendMapCommand, toggleStyle, removeLayers } from "../../map/MapActions";
-import {showPanel} from '../MenuPanelActions'
 
-function signOut(dispatch) {
-  removeTokens();
-  dispatch(changeLoginState(false));
+function sendToMap() {
+  window.location.hash = "/";
 }
 
 function turnOnRegressionService(dispatch) {
+  sendToMap();
   dispatch(showPanel(false));
   dispatch(removeLayers());
   dispatch(
     sendMapCommand({
       commandType: Commands.TURN_ON_REGRESSION_SERVICE_INTERACTION,
       commandPayload: Math.random()
+    })
+  );
+}
+
+function toggleStyleFun(dispatch) {
+  sendToMap();
+  dispatch(showPanel(false));
+  dispatch(toggleStyle());
+}
+
+function zoomFit(dispatch) {
+  sendToMap();
+  dispatch(showPanel(false));
+  dispatch(
+    sendMapCommand({
+      commandType: Commands.ZOOM_TO_FIT
     })
   );
 }
@@ -30,14 +48,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    signOut: () => signOut(dispatch),
-    changeStyle: () => dispatch(toggleStyle()),
-    zoomFit: () =>
-      dispatch(
-        sendMapCommand({
-          commandType: Commands.ZOOM_TO_FIT
-        })
-      ),
+    changeStyle: () => toggleStyleFun(dispatch),
+    zoomFit: () => zoomFit(dispatch),
     turnOnRegressionServiceInteraction: () => turnOnRegressionService(dispatch)
   };
 };
