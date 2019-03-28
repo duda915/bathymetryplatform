@@ -75,7 +75,7 @@ export class DataSelectorComponent extends Component {
         <div className="p-col-12 p-md-1" />
         <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
           Select Data
-          <hr/>
+          <hr />
         </div>
         <div className="p-col-12 p-md-1" />
 
@@ -105,11 +105,13 @@ export class DataSelectorComponent extends Component {
             onHide={() => this.setState({ selectedData: null })}
           />
           <DataTable
+            sortField="id"
+            sortOrder="-1"
             globalFilter={this.state.globalFilter}
             value={this.state.data}
             paginator={true}
             rows={20}
-            rowsPerPageOptions={[5,10,20]}
+            rowsPerPageOptions={[5, 10, 20]}
             selectionMode="multiple"
             selection={this.state.selection}
             onSelectionChange={e => this.setState({ selection: e.value })}
