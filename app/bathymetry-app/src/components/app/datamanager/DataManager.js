@@ -5,6 +5,7 @@ import { Column } from "primereact/column";
 import { ContextMenu } from "primereact/contextmenu";
 import API from "../../../services/API";
 import { handleRequest } from "../../utility/requesthandler";
+import { InputText } from "primereact/inputtext";
 
 export default class DataManager extends Component {
   constructor(props) {
@@ -63,6 +64,18 @@ export default class DataManager extends Component {
           </div>
           <div className="p-col-12 p-md-1" />
 
+          <div className="p-col-12 p-md-1"/>
+          <div className="p-col-12 p-md-3" style={{ paddingBottom: "5px" }}>
+          <InputText
+            style={{ width: "100%" }}
+            type="search"
+            onInput={e => this.setState({ globalFilter: e.target.value })}
+            placeholder="Search"
+            size="2"
+          />
+          </div>
+          <div className="p-col-12 p-md-8"/>
+
           <div className="p-col-12 p-md-1" />
           <div className="p-col-12 p-md-10">
             <ContextMenu
@@ -71,6 +84,7 @@ export default class DataManager extends Component {
               onHide={() => this.setState({ selectedData: null })}
             />
             <DataTable
+            globalFilter={this.state.globalFilter}
               sortField="id"
               sortOrder={-1}
               value={this.state.data}

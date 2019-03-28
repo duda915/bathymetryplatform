@@ -72,6 +72,24 @@ export class DataSelectorComponent extends Component {
   render() {
     return (
       <div className="p-grid p-nogutter p-justify-center data-selector-container">
+        
+        <div className="p-col-12 p-md-1" />
+        <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
+          Selected
+          <hr />
+        </div>
+        <div className="p-col-12 p-md-1" />
+
+        <div className="p-col-12 p-md-1" />
+        <div className="p-col-12 p-md-2" style={{ paddingBottom: "5px" }}>
+          <Button
+            label="Go To Map"
+            onClick={this.showOnMap}
+            style={{ width: "100%" }}
+          />
+        </div>
+        <div className="p-col-12 p-md-9" />
+
         <div className="p-col-12 p-md-1" />
         <div className="p-col-12 p-md-10" style={{ paddingTop: "5px" }}>
           Select Data
@@ -79,8 +97,10 @@ export class DataSelectorComponent extends Component {
         </div>
         <div className="p-col-12 p-md-1" />
 
+        
+
         <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-2" style={{ padding: "5px" }}>
+        <div className="p-col-12 p-md-5" style={{ paddingBottom: "5px" }}>
           <InputText
             style={{ width: "100%" }}
             type="search"
@@ -89,13 +109,7 @@ export class DataSelectorComponent extends Component {
             size="2"
           />
         </div>
-        <div className="p-col-12 p-md-9" />
-
-        <div className="p-col-12 p-md-1" />
-        <div className="p-col-12 p-md-2" style={{ padding: "5px" }}>
-          <Button label="Show Selection" onClick={this.showOnMap} />
-        </div>
-        <div className="p-col-12 p-md-9" />
+        <div className="p-col-12 p-md-6" />
 
         <div className="p-col-12 p-md-1" />
         <div className="p-col-12 p-md-10 ">
