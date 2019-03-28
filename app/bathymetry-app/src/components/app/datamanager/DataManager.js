@@ -65,7 +65,7 @@ export default class DataManager extends Component {
           <div className="p-col-12 p-md-1" />
 
           <div className="p-col-12 p-md-1"/>
-          <div className="p-col-12 p-md-3" style={{ paddingBottom: "5px" }}>
+          <div className="p-col-12 p-md-3" style={{ padding: "5px" }}>
           <InputText
             style={{ width: "100%" }}
             type="search"
@@ -77,7 +77,7 @@ export default class DataManager extends Component {
           <div className="p-col-12 p-md-8"/>
 
           <div className="p-col-12 p-md-1" />
-          <div className="p-col-12 p-md-10">
+          <div className="p-col-12 p-md-10" style={{padding: "5px"}}>
             <ContextMenu
               model={this.state.contextMenu}
               ref={el => (this.cm = el)}
