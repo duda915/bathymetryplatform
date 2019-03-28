@@ -57,9 +57,9 @@ export default class DataManager extends Component {
           <div className="p-col-12 p-md-4" />
 
           <div className="p-col-12 p-md-1" />
-          <div className="p-col-12 p-md-10" style={{ "paddingTop": "20px" }}>
+          <div className="p-col-12 p-md-10" style={{ paddingTop: "20px" }}>
             My Datasets
-            <hr/>
+            <hr />
           </div>
           <div className="p-col-12 p-md-1" />
 
@@ -71,6 +71,8 @@ export default class DataManager extends Component {
               onHide={() => this.setState({ selectedData: null })}
             />
             <DataTable
+              sortField="id"
+              sortOrder="-1"
               value={this.state.data}
               paginator={true}
               rows={10}
