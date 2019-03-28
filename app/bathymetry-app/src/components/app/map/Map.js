@@ -1,7 +1,7 @@
 import { connect } from "react-redux";
 import { MapComponent } from "./MapComponent";
-import {sendMapCommand} from './MapActions'
-import {Commands} from './MapCommands'
+import { sendMapCommand, addLayers } from "./MapActions";
+import { Commands } from "./MapCommands";
 
 const mapStateToProps = state => {
   return {
@@ -13,9 +13,13 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    sendEmptyCommand: () => dispatch(sendMapCommand({
-      commandType: Commands.EMPTY
-    }))
+    sendEmptyCommand: () =>
+      dispatch(
+        sendMapCommand({
+          commandType: Commands.EMPTY
+        })
+      ),
+    addLayer: layer => dispatch(addLayers([layer]))
   };
 };
 

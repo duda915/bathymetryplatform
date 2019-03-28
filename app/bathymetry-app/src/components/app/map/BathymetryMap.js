@@ -25,6 +25,7 @@ export class BathymetryMap {
 
   removeLayers = () => {
     this._bathymetryLayers.getLayers().clear();
+    this._vectorLayer.unset("source");
   };
 
   zoomToExtent = extent => {

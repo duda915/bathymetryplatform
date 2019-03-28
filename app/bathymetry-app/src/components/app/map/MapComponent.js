@@ -31,6 +31,7 @@ export class MapComponent extends Component {
 
     if (prevProps.layers !== this.props.layers) {
       this.map.setLayers(this.props.layers);
+      this.map.zoomToFit();
     }
 
     if (prevProps.style !== this.props.style) {
@@ -144,6 +145,15 @@ export class MapComponent extends Component {
       requestPromise: api
         .restData()
         .publishRegressionResults(this.state.regressionSelection),
+      onSuccess: response => {
+        const regressionLayer = {
+          id: response.data.id,
+          name: "Regression Layer",
+          visible:true
+        };
+        this.props.addLayer(regressionLayer);
+        this.forceUpdate();
+      },
       onSuccessMessage: () => "data published",
       onError: error => console.log(error.response)
     });
@@ -229,5 +239,6 @@ MapComponent.propTypes = {
   ),
   command: PropTypes.object,
   style: PropTypes.string.isRequired,
-  sendEmptyCommand: PropTypes.func.isRequired
+  sendEmptyCommand: PropTypes.func.isRequired,
+  addLayer: PropTypes.func.isRequired
 };

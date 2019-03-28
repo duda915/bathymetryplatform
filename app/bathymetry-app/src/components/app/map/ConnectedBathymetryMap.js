@@ -84,19 +84,19 @@ export default class ConnectedBathymetryMap {
         this._map.zoomToExtent(this._regressionExtent);
       },
       onSuccessMessage: () =>
-        "select area inside bounds to calculate bathymetry with neural network"
+        "select area with ctrl inside bounds to calculate bathymetry with neural network"
     });
   };
 
   checkIfBoxContainsInRegressioExtent = box => {
     const extent = this._boxToExtentWithTransform(box);
     return containsExtent(this._regressionExtent, extent);
-  }
+  };
 
   getRegressionExtent = () => {
     console.log(this._regressionExtent);
     return this._regressionExtent;
-  }
+  };
 
   _boxToExtentWithTransform({ upperLeftVertex, lowerRightVertex }) {
     const coordsUL = [upperLeftVertex.x, upperLeftVertex.y];
