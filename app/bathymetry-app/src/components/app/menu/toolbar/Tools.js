@@ -26,13 +26,11 @@ function turnOnRegressionService(dispatch) {
 
 function toggleStyleFun(dispatch) {
   sendToMap();
-  dispatch(showPanel(false));
   dispatch(toggleStyle());
 }
 
 function zoomFit(dispatch) {
   sendToMap();
-  dispatch(showPanel(false));
   dispatch(
     sendMapCommand({
       commandType: Commands.ZOOM_TO_FIT

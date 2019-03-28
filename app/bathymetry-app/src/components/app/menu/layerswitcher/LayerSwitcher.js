@@ -50,15 +50,19 @@ const mapStateToProps = state => {
   };
 };
 
+function zoomToLayer(dispatch, id) {
+  window.location.hash = "/";
+  dispatch(
+    sendMapCommand({
+      commandType: Commands.ZOOM_TO_LAYER,
+      commandPayload: id
+    })
+  );
+}
+
 const mapDispatchToProps = dispatch => {
   return {
-    zoomToLayer: id =>
-      dispatch(
-        sendMapCommand({
-          commandType: Commands.ZOOM_TO_LAYER,
-          commandPayload: id
-        })
-      ),
+    zoomToLayer: id => zoomToLayer(dispatch, id),
     toggleLayer: id => dispatch(toggleLayer(id))
   };
 };
